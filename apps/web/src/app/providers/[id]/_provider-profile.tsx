@@ -9,6 +9,10 @@ import {
   MessageCircle, ChevronRight, Calendar, Package, Award,
 } from 'lucide-react'
 import Link from 'next/link'
+import { lazy, Suspense } from 'react'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
+
+const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -55,6 +59,7 @@ const MOCK_REVIEWS = [
 const DAY_LABELS = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา']
 
 export default function ProviderProfileClient() {
+  useAuthGuard()
   const provider = MOCK_PROVIDER
 
   return (
@@ -286,6 +291,28 @@ export default function ProviderProfileClient() {
           </div>
         </div>
       </section>
+      {/* ── Location map ── */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}>
+          <h2 className="text-lg font-extrabold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-blue-500" /> พื้นที่ให้บริการ
+          </h2>
+          <Suspense fallback={<div className="w-full h-64 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />}>
+            <MapView
+              listings={[{
+                id: provider.id, title: provider.name, provider: provider.name,
+                price: 80, unit: 'กล่อง', lat: 13.724, lng: 100.484,
+                category: 'FOOD', status: provider.online ? 'available' : 'offline',
+                rating: provider.rating, image: provider.avatar,
+              }]}
+              centerLat={13.724}
+              centerLng={100.484}
+              zoom={15}
+            />
+          </Suspense>
+        </motion.div>
+      </section>
+
       <AppFooter />
     </main>
   )
