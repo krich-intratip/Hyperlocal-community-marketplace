@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff } from 'lucide-react'
+import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart } from 'lucide-react'
 import Link from 'next/link'
-import { useState, lazy, Suspense } from 'react'
+import { useState, lazy, Suspense, useCallback } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
 import { useT } from '@/hooks/useT'
 import { formatDateShort } from '@/lib/date'
@@ -67,6 +67,16 @@ function StockBar({ stock, max }: { stock: number; max: number }) {
 
 
 export default function MarketplacePage() {
+  const [wishlist, setWishlist] = useState<Set<string>>(new Set())
+  const toggleWishlist = useCallback((id: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setWishlist(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }, [])
   const t = useT()
   const [activeCategory, setActiveCategory] = useState('ALL')
   const [search, setSearch] = useState('')
@@ -265,11 +275,17 @@ export default function MarketplacePage() {
                       <div className="absolute top-3 left-3">
                         <ProviderStatusBadge status={listing.status} size="sm" />
                       </div>
-                      {listing.providerVerified && (
-                        <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center" title="ยืนยันแล้ว">
-                          <span className="text-white text-xs font-bold">✓</span>
-                        </div>
-                      )}
+                      <button
+                        onClick={(e) => toggleWishlist(listing.id, e)}
+                        className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center transition-all shadow-sm ${
+                          wishlist.has(listing.id)
+                            ? 'bg-red-500 text-white'
+                            : 'bg-white/90 dark:bg-slate-700/90 text-slate-400 hover:text-red-400'
+                        }`}
+                        title={wishlist.has(listing.id) ? 'ถอดออกจาก Wishlist' : 'เพิ่มใน Wishlist'}
+                      >
+                        <Heart className={`h-3.5 w-3.5 ${wishlist.has(listing.id) ? 'fill-current' : ''}`} />
+                      </button>
                     </div>
 
                     <div className="p-4">
