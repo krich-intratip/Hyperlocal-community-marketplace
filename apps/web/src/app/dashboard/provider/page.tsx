@@ -9,6 +9,7 @@ import {
   PauseCircle, PlayCircle, LogOut, AlertTriangle, X, MapPin, ShieldCheck,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useDateFormat } from '@/hooks/useDateFormat'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -20,10 +21,10 @@ const fadeUp = {
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
 const MOCK_ORDERS = [
-  { id: 'O001', customer: 'คุณวิภา',      service: 'อาหารกล่อง ×3', date: '8 มี.ค. 2569', time: '11:00', status: 'confirmed', amount: 240 },
-  { id: 'O002', customer: 'คุณสมศักดิ์',  service: 'อาหารกล่อง ×2', date: '8 มี.ค. 2569', time: '12:00', status: 'pending',   amount: 160 },
-  { id: 'O003', customer: 'คุณนิตยา',     service: 'อาหารกล่อง ×5', date: '7 มี.ค. 2569', time: '11:30', status: 'completed', amount: 400 },
-  { id: 'O004', customer: 'คุณประหยัด',   service: 'อาหารกล่อง ×1', date: '6 มี.ค. 2569', time: '12:00', status: 'completed', amount: 80  },
+  { id: 'O001', customer: 'คุณวิภา',      service: 'อาหารกล่อง ×3', date: '2026-03-08', time: '11:00', status: 'confirmed', amount: 240 },
+  { id: 'O002', customer: 'คุณสมศักดิ์',  service: 'อาหารกล่อง ×2', date: '2026-03-08', time: '12:00', status: 'pending',   amount: 160 },
+  { id: 'O003', customer: 'คุณนิตยา',     service: 'อาหารกล่อง ×5', date: '2026-03-07', time: '11:30', status: 'completed', amount: 400 },
+  { id: 'O004', customer: 'คุณประหยัด',   service: 'อาหารกล่อง ×1', date: '2026-03-06', time: '12:00', status: 'completed', amount: 80  },
 ]
 
 const MOCK_LISTINGS = [
@@ -69,6 +70,7 @@ export default function ProviderDashboardPage() {
   const [leaveReason, setLeaveReason]       = useState('')
   const [actionDone, setActionDone]         = useState(false)
 
+  const { fmt } = useDateFormat()
   const thisMonthRevenue = MOCK_ORDERS.filter(o => o.status !== 'pending').reduce((s, o) => s + o.amount, 0)
   const completedOrders  = MOCK_ORDERS.filter(o => o.status === 'completed').length
   const statusCfg        = PROVIDER_STATUS_CONFIG[providerStatus]
@@ -151,7 +153,7 @@ export default function ProviderDashboardPage() {
                       <div className="font-semibold text-slate-800 text-sm">{order.customer}</div>
                       <div className="text-xs text-slate-500 mt-0.5">{order.service}</div>
                       <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
-                        <Clock className="h-3 w-3" />{order.date} · {order.time}
+                        <Clock className="h-3 w-3" />{fmt(order.date)} · {order.time}
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
