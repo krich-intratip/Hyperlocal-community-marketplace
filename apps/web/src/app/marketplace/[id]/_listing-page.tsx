@@ -11,6 +11,7 @@ import { ProviderStatusBadge } from '@/components/provider-status'
 import { useT } from '@/hooks/useT'
 import { getListingById } from '@/lib/mock-listings'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { useAuthStore } from '@/store/auth.store'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -92,6 +93,7 @@ const REVIEWS_BY_ID: Record<string, { id: string; user: string; rating: number; 
 export default function ListingDetailClient({ id }: { id: string }) {
   useAuthGuard()
   const t = useT()
+  const { user } = useAuthStore()
   const [selectedDate, setSelectedDate] = useState('')
   const [qty, setQty] = useState(1)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
@@ -355,7 +357,7 @@ export default function ListingDetailClient({ id }: { id: string }) {
               </div>
 
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-                <Link href="/auth/signin"
+                <Link href={user ? `/marketplace/${id}/book` : `/auth/signin?redirect=/marketplace/${id}/book`}
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors">
                   {t.marketplace.bookNow} <ChevronRight className="h-4 w-4" />
                 </Link>
