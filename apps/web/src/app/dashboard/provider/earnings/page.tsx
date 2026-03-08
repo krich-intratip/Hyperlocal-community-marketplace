@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
+import { AppFooter } from '@/components/app-footer'
 import {
   ChevronLeft, DollarSign, TrendingUp, Calendar, Download,
   CheckCircle, Clock, ArrowUpRight, ArrowDownRight,
@@ -189,6 +190,7 @@ export default function ProviderEarningsPage() {
         </motion.div>
 
       </section>
+      <AppFooter />
     </main>
   )
 }
