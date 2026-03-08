@@ -50,7 +50,13 @@ export default function HomePage() {
               Community<span className="text-blue-600"> Hyper</span>
             </span>
           </motion.div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-5">
+            <Link href="/guide" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors hidden sm:block">
+              คู่มือ
+            </Link>
+            <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors hidden sm:block">
+              เกี่ยวกับ
+            </Link>
             <Link
               href="/auth/signin"
               className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
