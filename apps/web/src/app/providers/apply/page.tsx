@@ -9,6 +9,7 @@ import {
   Upload, AlertTriangle, MapPin, Info, Navigation, Loader2, ShieldCheck,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useCommunities } from '@/hooks/useCommunities'
 import Link from 'next/link'
 
 const fadeUp = {
@@ -32,20 +33,12 @@ const CATEGORIES = [
   { slug: 'COMMUNITY_SHARING', name: 'Community Sharing',   icon: '🤝' },
 ]
 
-/* Mock — will come from API /communities (active only) */
-const MOCK_COMMUNITIES = [
-  { id: '1', name: 'หมู่บ้านศรีนคร',     area: 'บางแค, กรุงเทพฯ',    providers: 34,  emoji: '🏘️' },
-  { id: '2', name: 'คอนโด The Base',      area: 'ลาดพร้าว, กรุงเทพฯ', providers: 67,  emoji: '🏙️' },
-  { id: '3', name: 'ชุมชนเมืองทอง',       area: 'นนทบุรี',             providers: 120, emoji: '🌳' },
-  { id: '4', name: 'หมู่บ้านกรีนวิลล์',   area: 'สมุทรปราการ',         providers: 22,  emoji: '🌿' },
-  { id: '6', name: 'ชุมชนริมน้ำ',          area: 'ปทุมธานี',            providers: 31,  emoji: '🌊' },
-]
-
 const STEPS = ['เลือกชุมชน', 'เลือกหมวดหมู่', 'ข้อมูลของคุณ', 'ที่อยู่ & ยืนยันตัวตน', 'ยืนยัน']
 
 type GeoState = 'idle' | 'loading' | 'granted' | 'denied'
 
 export default function ProviderApplyPage() {
+  const { data: communities = [] } = useCommunities()
   const [step, setStep]                           = useState(1)
   const [selectedCommunity, setSelectedCommunity] = useState('')
   const [selectedCategory, setSelectedCategory]   = useState('')
@@ -60,7 +53,7 @@ export default function ProviderApplyPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value })
 
-  const selectedComm = MOCK_COMMUNITIES.find(c => c.id === selectedCommunity)
+  const selectedComm = communities.find(c => c.id === selectedCommunity)
 
   const pinMyLocation = () => {
     if (!navigator.geolocation) return
@@ -169,7 +162,7 @@ export default function ProviderApplyPage() {
                 เลือกชุมชนที่คุณอาศัยหรือให้บริการอยู่ — <strong className="text-amber-600">เปลี่ยนไม่ได้หลังยืนยัน</strong>
               </p>
               <div className="space-y-2.5">
-                {MOCK_COMMUNITIES.map((comm) => (
+                {communities.map((comm) => (
                   <motion.button key={comm.id} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedCommunity(comm.id)}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
@@ -177,11 +170,11 @@ export default function ProviderApplyPage() {
                         ? 'border-amber-400 bg-amber-50'
                         : 'border-slate-200 hover:border-amber-300 hover:bg-amber-50/40'
                     }`}>
-                    <span className="text-2xl flex-shrink-0">{comm.emoji}</span>
+                    <span className="text-2xl flex-shrink-0">{comm.image}</span>
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-sm text-slate-800">{comm.name}</div>
                       <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
-                        <MapPin className="h-3 w-3" />{comm.area}
+                        <MapPin className="h-3 w-3" />{comm.province}
                         <span className="ml-2 text-blue-600 font-medium">{comm.providers} Provider</span>
                       </div>
                     </div>
@@ -433,10 +426,10 @@ export default function ProviderApplyPage() {
               {/* Summary */}
               <div className="bg-slate-50 rounded-2xl p-5 text-left mb-5 space-y-2.5 text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">{selectedComm?.emoji}</span>
+                  <span className="text-lg">{selectedComm?.image}</span>
                   <div>
                     <span className="text-xs text-slate-400">ตลาดชุมชน (เปลี่ยนไม่ได้)</span>
-                    <p className="font-bold text-slate-800">{selectedComm?.name} — {selectedComm?.area}</p>
+                    <p className="font-bold text-slate-800">{selectedComm?.name} — {selectedComm?.province}</p>
                   </div>
                 </div>
                 <div className="h-px bg-slate-200" />

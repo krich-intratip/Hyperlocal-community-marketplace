@@ -7,6 +7,8 @@ import { MarketBackground } from '@/components/market-background'
 import { CalendarCheck, Star, MessageCircle, MapPin, ChevronRight, Clock, CheckCircle, XCircle, Package, DollarSign, Users, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useBookings } from '@/hooks/useBookings'
+import { useDateFormat } from '@/hooks/useDateFormat'
 
 type Role = 'customer' | 'provider' | 'admin' | 'superadmin'
 const ROLE_CONFIG: Record<Role, { label: string; emoji: string; color: string; bg: string; border: string }> = {
@@ -25,13 +27,6 @@ const fadeUp = {
 }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
-const MOCK_BOOKINGS = [
-  { id: 'B001', service: 'ทำอาหารกล่อง', provider: 'คุณแม่สมใจ', date: '8 มี.ค. 2569', time: '11:30', status: 'confirmed', price: 240, emoji: '🍱' },
-  { id: 'B002', service: 'ล้างแอร์', provider: 'ช่างสมชาย', date: '10 มี.ค. 2569', time: '09:00', status: 'pending', price: 500, emoji: '🔧' },
-  { id: 'B003', service: 'ทำความสะอาดบ้าน', provider: 'แม่บ้านสาวิตรี', date: '5 มี.ค. 2569', time: '13:00', status: 'completed', price: 800, emoji: '🧹' },
-  { id: 'B004', service: 'นวดแผนไทย', provider: 'หมอนวดประเสริฐ', date: '1 มี.ค. 2569', time: '16:00', status: 'cancelled', price: 400, emoji: '💆' },
-]
-
 const STATUS_CONFIG = {
   confirmed: { label: 'ยืนยันแล้ว', bg: 'bg-blue-50', text: 'text-blue-600', icon: CheckCircle, border: 'border-blue-100' },
   pending: { label: 'รอยืนยัน', bg: 'bg-amber-50', text: 'text-amber-600', icon: Clock, border: 'border-amber-100' },
@@ -41,8 +36,10 @@ const STATUS_CONFIG = {
 
 export default function CustomerDashboardPage() {
   const [role, setRole] = useState<Role>('customer')
-  const completed = MOCK_BOOKINGS.filter((b) => b.status === 'completed').length
-  const totalSpent = MOCK_BOOKINGS.filter((b) => b.status !== 'cancelled').reduce((s, b) => s + b.price, 0)
+  const { data: bookings = [] } = useBookings()
+  const { fmt } = useDateFormat()
+  const completed = bookings.filter((b) => b.status === 'completed').length
+  const totalSpent = bookings.filter((b) => b.status !== 'cancelled').reduce((s, b) => s + b.total, 0)
   const roleCfg = ROLE_CONFIG[role]
 
   const ROLE_DASHBOARD_LINKS: Record<Role, { href: string; label: string }> = {
@@ -107,7 +104,7 @@ export default function CustomerDashboardPage() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'การจองทั้งหมด', value: MOCK_BOOKINGS.length, icon: CalendarCheck, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'การจองทั้งหมด', value: bookings.length, icon: CalendarCheck, color: 'text-blue-600', bg: 'bg-blue-50' },
             { label: 'เสร็จแล้ว', value: completed, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
             { label: 'ยอดใช้จ่าย', value: `฿${totalSpent.toLocaleString()}`, icon: Star, color: 'text-amber-600', bg: 'bg-amber-50' },
             { label: 'ชุมชนที่เข้าร่วม', value: 2, icon: MapPin, color: 'text-purple-600', bg: 'bg-purple-50' },
@@ -134,23 +131,23 @@ export default function CustomerDashboardPage() {
             </Link>
           </div>
           <div className="divide-y divide-slate-100">
-            {MOCK_BOOKINGS.map((booking, i) => {
-              const cfg = STATUS_CONFIG[booking.status as keyof typeof STATUS_CONFIG]
+            {bookings.slice(0, 4).map((booking, i) => {
+              const cfg = STATUS_CONFIG[booking.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG['pending']
               return (
                 <motion.div key={booking.id} variants={fadeUp} custom={i}
                   className="flex items-center gap-4 p-5 hover:bg-slate-50/50 transition-colors">
                   <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
-                    {booking.emoji}
+                    {booking.listingImage}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-slate-800 text-sm">{booking.service}</div>
+                    <div className="font-semibold text-slate-800 text-sm">{booking.listingTitle}</div>
                     <div className="text-xs text-slate-500 mt-0.5">{booking.provider}</div>
                     <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />{booking.date} · {booking.time}
+                      <Clock className="h-3 w-3" />{fmt(booking.date)} · {booking.time}
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="font-bold text-slate-900 text-sm">฿{booking.price}</div>
+                    <div className="font-bold text-slate-900 text-sm">฿{booking.total.toLocaleString()}</div>
                     <div className={`inline-flex items-center gap-1 mt-1 text-xs px-2 py-0.5 rounded-full border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
                       <cfg.icon className="h-3 w-3" /> {cfg.label}
                     </div>

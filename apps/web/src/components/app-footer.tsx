@@ -1,8 +1,12 @@
+'use client'
+
 import { APP_VERSION, APP_UPDATED, APP_DEVELOPER, APP_NAME } from '@/lib/version'
+import { useDateFormat } from '@/hooks/useDateFormat'
 
 export function AppFooter() {
-  const [y, m, d] = APP_UPDATED.split('-')
-  const thDate = `${parseInt(d)} ${['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'][parseInt(m)]} ${parseInt(y) + 543}`
+  const { fmtShort, locale } = useDateFormat()
+  const updatedLabel = locale === 'en' ? 'Last updated' : 'อัพเดทล่าสุด'
+  const displayDate = fmtShort(APP_UPDATED)
 
   return (
     <footer className="border-t border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
@@ -13,7 +17,7 @@ export function AppFooter() {
             <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono">
               v{APP_VERSION}
             </span>
-            <span className="text-xs">อัพเดทล่าสุด {thDate}</span>
+            <span className="text-xs">{updatedLabel} {displayDate}</span>
             <span className="text-xs font-semibold text-blue-500">by {APP_DEVELOPER}</span>
           </div>
         </div>

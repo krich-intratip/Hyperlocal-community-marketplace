@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useDateFormat } from '@/hooks/useDateFormat'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -19,7 +20,8 @@ const fadeUp = {
 
 type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled'
 
-const MOCK_BOOKING = {
+
+const MOCK_BOOKING_DATA = {
   id: 'B240285',
   listingId: '7',
   title: 'นวดแผนไทย ออกนอกสถานที่',
@@ -29,7 +31,7 @@ const MOCK_BOOKING = {
   providerPhone: '08X-XXX-XXXX',
   providerRating: 4.9,
   image: '💆',
-  date: '5 มี.ค. 2569',
+  date: '2026-03-05',
   time: '18:00',
   qty: 1,
   unit: 'ชั่วโมง',
@@ -43,9 +45,9 @@ const MOCK_BOOKING = {
   status: 'completed' as BookingStatus,
   canReview: true,
   timeline: [
-    { label: 'สร้างการจอง', time: '4 มี.ค. 2569 20:15', done: true },
-    { label: 'ผู้ให้บริการยืนยัน', time: '4 มี.ค. 2569 21:02', done: true },
-    { label: 'ให้บริการแล้ว', time: '5 มี.ค. 2569 19:05', done: true },
+    { label: 'สร้างการจอง', time: '2026-03-04T20:15', done: true },
+    { label: 'ผู้ให้บริการยืนยัน', time: '2026-03-04T21:02', done: true },
+    { label: 'ให้บริการแล้ว', time: '2026-03-05T19:05', done: true },
     { label: 'รีวิวแล้ว', time: '', done: false },
   ],
 }
@@ -111,9 +113,10 @@ function ReviewModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (r:
 }
 
 export default function BookingDetailClient() {
-  const booking = MOCK_BOOKING
+  const booking = MOCK_BOOKING_DATA
   const cfg = STATUS_CONFIG[booking.status]
   const StatusIcon = cfg.icon
+  const { fmt, fmtDT } = useDateFormat()
 
   const [showReview, setShowReview] = useState(false)
   const [reviewed, setReviewed] = useState(false)
@@ -189,7 +192,7 @@ export default function BookingDetailClient() {
             {/* Details grid */}
             <div className="space-y-3">
               {[
-                { icon: Calendar, label: 'วันที่', value: booking.date },
+                { icon: Calendar, label: 'วันที่', value: fmt(booking.date) },
                 { icon: Clock,    label: 'เวลา',   value: `${booking.time} น.` },
                 { icon: Package,  label: 'จำนวน',  value: `${booking.qty} ${booking.unit}` },
                 { icon: MapPin,   label: 'ที่อยู่', value: booking.address },
@@ -282,7 +285,7 @@ export default function BookingDetailClient() {
                       <p className={`text-sm font-bold ${isDone ? 'text-slate-900' : 'text-slate-400'}`}>{step.label}</p>
                       {(step.time || (step.label === 'รีวิวแล้ว' && reviewed)) && (
                         <p className="text-xs text-slate-400 mt-0.5">
-                          {step.label === 'รีวิวแล้ว' && reviewed ? 'เพิ่งรีวิว' : step.time}
+                          {step.label === 'รีวิวแล้ว' && reviewed ? 'เพิ่งรีวิว' : fmtDT(step.time)}
                         </p>
                       )}
                     </div>

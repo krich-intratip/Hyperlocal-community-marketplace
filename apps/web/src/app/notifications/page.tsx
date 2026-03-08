@@ -11,6 +11,7 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { useNotifications, useMarkAllRead } from '@/hooks/useNotifications'
+import { useDateFormat } from '@/hooks/useDateFormat'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -47,6 +48,7 @@ const FILTER_TABS = [
 
 export default function NotificationsPage() {
   const { data: rawNotifs = [], isLoading } = useNotifications()
+  const { fmtShort } = useDateFormat()
   const markAllReadMutation = useMarkAllRead()
   const [activeTab, setActiveTab] = useState<string>('ALL')
   const [dismissed, setDismissed] = useState<Set<string>>(new Set())
@@ -59,7 +61,7 @@ export default function NotificationsPage() {
       type: n.type as NotifType,
       title: n.title,
       body: n.body,
-      time: new Date(n.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }),
+      time: fmtShort(n.createdAt),
       read: n.read || localRead.has(n.id),
       href: n.href,
     }))

@@ -10,6 +10,7 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { getListingById } from '@/lib/mock-listings'
+import { useDateFormat } from '@/hooks/useDateFormat'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -17,7 +18,8 @@ const fadeUp = {
 }
 
 const TIME_SLOTS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00']
-const DAY_LABELS = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา']
+const DAY_LABELS_TH = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา']
+const DAY_LABELS_EN = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su']
 const DAY_FULL = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์']
 
 function getNextDays(n: number) {
@@ -35,6 +37,8 @@ type Step = 'details' | 'confirm' | 'done'
 
 export default function BookingFormClient({ id }: { id: string }) {
   const listing = getListingById(id)
+  const { fmtLong, locale } = useDateFormat()
+  const DAY_LABELS = locale === 'en' ? DAY_LABELS_EN : DAY_LABELS_TH
   const [step, setStep] = useState<Step>('details')
   const [qty, setQty] = useState(1)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -313,7 +317,7 @@ export default function BookingFormClient({ id }: { id: string }) {
 
               {/* Details */}
               {[
-                { label: 'วันที่', value: selectedDate?.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) ?? '' },
+                { label: 'วันที่', value: selectedDate ? fmtLong(selectedDate) : '' },
                 { label: 'เวลา', value: `${selectedTime} น.` },
                 { label: 'จำนวน', value: `${qty} ${listing.unit}` },
                 { label: 'ที่อยู่', value: address },
@@ -377,7 +381,7 @@ export default function BookingFormClient({ id }: { id: string }) {
             <p className="text-slate-500 text-sm mb-1">หมายเลขการจอง</p>
             <p className="text-2xl font-extrabold text-blue-600 mb-4">{bookingId}</p>
             <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 text-sm text-blue-700 text-left space-y-1">
-              <p>📅 {selectedDate?.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long' })} เวลา {selectedTime} น.</p>
+              <p>📅 {fmtLong(selectedDate)} เวลา {selectedTime} น.</p>
               <p>👤 {listing.provider} จะโทรยืนยันภายใน 1 ชั่วโมง</p>
               <p>📍 {address}</p>
             </div>

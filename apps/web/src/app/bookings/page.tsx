@@ -11,6 +11,7 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { useBookings } from '@/hooks/useBookings'
+import { useDateFormat } from '@/hooks/useDateFormat'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -39,6 +40,7 @@ export default function BookingsPage() {
   const [activeFilter, setActiveFilter] = useState<BookingStatus | 'ALL'>('ALL')
   const [search, setSearch] = useState('')
   const { data: allBookings = [], isLoading } = useBookings()
+  const { fmt } = useDateFormat()
 
   const filtered = allBookings
     .filter(b => activeFilter === 'ALL' || b.status === activeFilter)
@@ -150,7 +152,7 @@ export default function BookingsPage() {
 
                           <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
                             <span className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" /> {booking.date}
+                              <Calendar className="h-3 w-3" /> {fmt(booking.date)}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" /> {booking.time} น.
