@@ -33,7 +33,10 @@ import { HealthModule } from './modules/health/health.module'
         logging: configService.get<string>('APP_ENV') === 'development',
         ssl:
           configService.get<string>('APP_ENV') === 'production'
-            ? { rejectUnauthorized: false }
+            ? {
+                rejectUnauthorized:
+                  configService.get<string>('DB_SSL_REJECT_UNAUTHORIZED', 'true') !== 'false',
+              }
             : false,
       }),
     }),

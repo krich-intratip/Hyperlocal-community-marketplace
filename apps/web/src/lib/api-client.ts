@@ -1,21 +1,18 @@
 import axios from 'axios'
 
+/**
+ * Token is stored as an httpOnly cookie (set by the API on OAuth callback).
+ * withCredentials: true ensures the cookie is sent automatically on every request.
+ * No manual token handling needed — the browser handles it securely.
+ */
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1',
-  withCredentials: true,
+  withCredentials: true,   // sends httpOnly cookie on every cross-origin request
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',  // helps backend distinguish AJAX from browser nav
   },
-})
-
-apiClient.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('access_token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-  }
-  return config
 })
 
 apiClient.interceptors.response.use(
@@ -23,7 +20,6 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('access_token')
         window.location.href = '/auth/signin'
       }
     }

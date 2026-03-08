@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy, VerifyCallback } from 'passport-google-oauth20'
+import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20'
 import { ConfigService } from '@nestjs/config'
 
 @Injectable()
@@ -17,14 +17,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   async validate(
     _accessToken: string,
     _refreshToken: string,
-    profile: any,
+    profile: Profile,
     done: VerifyCallback,
   ) {
-    const { emails, displayName, photos } = profile
+    const email = profile.emails?.[0]?.value
+    if (!email) {
+      return done(new UnauthorizedException('Google account has no verified email'), undefined)
+    }
     const user = {
-      email: emails[0].value,
-      displayName,
-      avatarUrl: photos?.[0]?.value,
+      email,
+      displayName: profile.displayName,
+      avatarUrl: profile.photos?.[0]?.value ?? null,
       provider: 'google' as const,
     }
     done(null, user)

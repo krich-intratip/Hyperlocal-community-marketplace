@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm'
-import { UserRole } from '@chm/shared-types'
+import { UserRole, KycStatus } from '@chm/shared-types'
 
 @Entity('users')
 export class User {
@@ -37,6 +37,26 @@ export class User {
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean
+
+  /* ── KYC / Identity & Location fields ── */
+
+  @Column({ name: 'kyc_status', type: 'enum', enum: KycStatus, default: KycStatus.UNVERIFIED })
+  kycStatus: KycStatus
+
+  @Column({ name: 'address', nullable: true, type: 'text' })
+  address: string | null
+
+  @Column({ name: 'location_lat', nullable: true, type: 'double precision' })
+  locationLat: number | null
+
+  @Column({ name: 'location_lng', nullable: true, type: 'double precision' })
+  locationLng: number | null
+
+  @Column({ name: 'id_card_url', nullable: true })
+  idCardUrl: string | null
+
+  @Column({ name: 'id_verified_at', nullable: true, type: 'timestamptz' })
+  idVerifiedAt: Date | null
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

@@ -41,8 +41,18 @@ export default function CustomerDashboardPage() {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
         {/* Header */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-8">
-          <p className="text-sm text-slate-500 mb-1">ยินดีต้อนรับกลับ 👋</p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">แดชบอร์ดของฉัน</h1>
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <p className="text-sm text-slate-500 mb-1">👋 ยินดีต้อนรับกลับ — วันนี้มีการจอง 2 รายการรอยืนยัน</p>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">แดชบอร์ดของฉัน</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link href="/marketplace"
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-blue-200 hover:bg-blue-700 transition-colors">
+                🛍️ ค้นหาบริการ
+              </Link>
+            </div>
+          </div>
         </motion.div>
 
         {/* Stats */}
@@ -112,7 +122,7 @@ export default function CustomerDashboardPage() {
             { href: '/providers/apply', icon: '⭐', label: 'เป็นผู้ให้บริการ', desc: 'สร้างรายได้จากทักษะ' },
           ].map((action, i) => (
             <motion.div key={action.href} variants={fadeUp} custom={i} whileHover={{ y: -3 }}>
-              <Link href={action.href}
+              <Link href={action.href as any}
                 className="flex items-center gap-4 p-5 rounded-2xl bg-white/85 backdrop-blur-sm border border-slate-100 shadow-sm hover:border-blue-200 transition-all group">
                 <span className="text-3xl">{action.icon}</span>
                 <div>

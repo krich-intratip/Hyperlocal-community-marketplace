@@ -3,13 +3,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
-import { MarketBackground as _MB } from '@/components/market-background'
 import {
-  Building2, MapPin, User, Phone, FileText, ChevronRight,
-  ChevronLeft, CheckCircle, DollarSign, Users, TrendingUp, Shield
+  Building2, MapPin, User, ChevronRight,
+  ChevronLeft, CheckCircle, TrendingUp, Info
 } from 'lucide-react'
 import { useState } from 'react'
 import { formatDate } from '@/lib/date'
+import Link from 'next/link'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -17,15 +17,16 @@ const fadeUp = {
 }
 
 const STEPS = [
-  { id: 1, label: 'ข้อมูลพื้นที่', icon: MapPin },
-  { id: 2, label: 'ข้อมูลผู้สมัคร', icon: User },
-  { id: 3, label: 'แผนธุรกิจ', icon: TrendingUp },
+  { id: 1, label: 'ขอพื้นที่', icon: MapPin },
+  { id: 2, label: 'ข้อมูลตัวคุณ', icon: User },
+  { id: 3, label: 'แรงจูงใจ', icon: TrendingUp },
   { id: 4, label: 'ยืนยัน', icon: CheckCircle },
 ]
 
 const PROVINCES = [
   'กรุงเทพมหานคร', 'เชียงใหม่', 'ภูเก็ต', 'ขอนแก่น', 'นครราชสีมา',
   'ชลบุรี', 'เชียงราย', 'อุดรธานี', 'สงขลา', 'นนทบุรี',
+  'สมุทรปราการ', 'ปทุมธานี', 'นครปฐม', 'ระยอง', 'สุราษฎร์ธานี',
 ]
 
 const COMMUNITY_TYPES = [
@@ -41,27 +42,27 @@ export default function FranchiseApplyPage() {
   const [step, setStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({
-    // Step 1
-    communityName: '',
-    communityType: '',
-    province: '',
-    district: '',
-    address: '',
+    // Step 1 — ขอพื้นที่ (ยังไม่ใช่ชุมชน)
+    requestedCommunityType: '',
+    requestedProvince: '',
+    requestedDistrict: '',
+    requestedSubDistrict: '',
+    targetCommunityName: '',
     estimatedHouseholds: '',
-    // Step 2
+    // Step 2 — ข้อมูลผู้สมัคร
     fullName: '',
     idCard: '',
     phone: '',
     email: '',
     lineId: '',
     occupation: '',
-    // Step 3
+    // Step 3 — แรงจูงใจ
     why: '',
     experience: '',
-    capitalReady: '',
     marketingPlan: '',
     agreeTerms: false,
     agreeRevShare: false,
+    agreeRules: false,
   })
 
   function update(field: string, value: string | boolean) {
@@ -69,6 +70,8 @@ export default function FranchiseApplyPage() {
   }
 
   const today = formatDate(new Date())
+
+  const step3Valid = form.agreeTerms && form.agreeRevShare && form.agreeRules
 
   if (submitted) {
     return (
@@ -82,29 +85,47 @@ export default function FranchiseApplyPage() {
             </div>
             <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-3">ส่งใบสมัครสำเร็จ!</h1>
             <p className="text-lg text-slate-500 dark:text-slate-400 mb-2">
-              เราได้รับใบสมัครของ <strong className="text-slate-800 dark:text-slate-200">{form.fullName}</strong> แล้ว
+              ใบสมัครของ <strong className="text-slate-800 dark:text-slate-200">{form.fullName}</strong> ถูกรับแล้ว
             </p>
-            <p className="text-base text-slate-400 dark:text-slate-500 mb-8">
-              ทีมงานจะตรวจสอบและติดต่อกลับภายใน <strong className="text-blue-600">3–5 วันทำการ</strong> ทาง {form.email || form.phone}
+            <p className="text-base text-slate-400 dark:text-slate-500 mb-6">
+              Super Admin จะตรวจสอบและ<strong className="text-blue-600"> กำหนดพื้นที่</strong>ให้คุณภายใน 3–5 วันทำการ
+              เมื่อได้รับการอนุมัติ คุณจะสามารถ<strong className="text-blue-600"> สร้างตลาดชุมชน</strong>และ<strong className="text-blue-600">อนุมัติ Provider</strong>ในพื้นที่นั้นได้
             </p>
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl p-5 mb-6 text-left space-y-2">
-              <p className="font-bold text-blue-800 dark:text-blue-300 text-base mb-3">สรุปใบสมัคร</p>
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl p-5 mb-4 text-left space-y-3">
+              <p className="font-extrabold text-blue-800 dark:text-blue-300 text-sm mb-2">ขั้นตอนถัดไปหลังได้รับอนุมัติ</p>
               {[
-                ['ชุมชนที่สมัคร', form.communityName],
-                ['จังหวัด', form.province],
+                { n: '1', t: 'Super Admin อนุมัติ + กำหนดพื้นที่', d: 'ทีมงานตรวจสอบและระบุโลเคชั่นชุมชนให้คุณ' },
+                { n: '2', t: 'คุณสร้างตลาดชุมชนในพื้นที่ที่ได้รับ', d: 'ตั้งชื่อ กำหนด Zone และเปิดตลาด' },
+                { n: '3', t: 'ตรวจ/อนุมัติ Provider เข้าร่วม', d: 'ผู้ค้าและผู้ให้บริการสมัครเข้าตลาดของคุณ' },
+                { n: '4', t: 'ลูกค้าใช้งานตลาด — คุณรับ Revenue Share', d: 'ลูกค้าสมัครฟรี ค้นหาบริการในรัศมี' },
+              ].map(s => (
+                <div key={s.n} className="flex gap-3 items-start">
+                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-extrabold flex items-center justify-center flex-shrink-0 mt-0.5">{s.n}</div>
+                  <div>
+                    <p className="font-bold text-blue-800 dark:text-blue-300 text-sm">{s.t}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{s.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 mb-6 text-left space-y-1.5">
+              <p className="font-bold text-slate-700 dark:text-slate-200 text-sm mb-2">สรุปใบสมัคร</p>
+              {[
+                ['พื้นที่ที่ขอ', `${form.requestedProvince} / ${form.requestedDistrict}`],
+                ['ชุมชนเป้าหมาย', form.targetCommunityName || '(Super Admin กำหนดให้)'],
                 ['ผู้สมัคร', form.fullName],
                 ['เบอร์โทร', form.phone],
                 ['วันที่สมัคร', today],
               ].map(([k, v]) => (
                 <div key={k} className="flex gap-2 text-sm">
-                  <span className="text-slate-500 dark:text-slate-400 min-w-[120px]">{k}:</span>
+                  <span className="text-slate-400 min-w-[120px]">{k}:</span>
                   <span className="font-semibold text-slate-800 dark:text-slate-200">{v}</span>
                 </div>
               ))}
             </div>
-            <a href="/franchise" className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white hover:bg-blue-700 transition-colors">
-              ดูข้อมูล Franchise
-            </a>
+            <Link href="/franchise" className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white hover:bg-blue-700 transition-colors">
+              กลับหน้า Franchise
+            </Link>
           </motion.div>
         </div>
       </main>
@@ -118,7 +139,7 @@ export default function FranchiseApplyPage() {
 
       <section className="max-w-2xl mx-auto px-4 sm:px-6 pt-10 pb-20">
         {/* Header */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-8">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
               <Building2 className="h-5 w-5 text-amber-600" />
@@ -129,21 +150,26 @@ export default function FranchiseApplyPage() {
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">สมัครเป็นผู้จัดการตลาดชุมชน</h1>
           <p className="text-base text-slate-500 dark:text-slate-400 mt-1">
-            เป็นเจ้าของตลาดบริการชุมชนในพื้นที่ของคุณ รับ Revenue Share จากทุก Transaction
+            ขอพื้นที่เปิดตลาด → Super Admin อนุมัติ + กำหนดโลเคชั่น → สร้างตลาด → อนุมัติ Provider → รับ Revenue Share
           </p>
         </motion.div>
 
-        {/* Benefits strip */}
+        {/* Flow banner */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="grid grid-cols-3 gap-3 mb-8">
+          className="flex items-center bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 mb-6 overflow-x-auto gap-0">
           {[
-            { icon: DollarSign, label: 'Revenue Share 10%', color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/30' },
-            { icon: Users, label: 'จัดการชุมชนเอง', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/30' },
-            { icon: Shield, label: 'ช่วงทดลองฟรี', color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/30' },
-          ].map(b => (
-            <div key={b.label} className={`${b.bg} rounded-xl p-3 text-center`}>
-              <b.icon className={`h-5 w-5 ${b.color} mx-auto mb-1`} />
-              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{b.label}</p>
+            { icon: '📝', label: 'สมัครขอพื้นที่' },
+            { icon: '✅', label: 'Super Admin อนุมัติ' },
+            { icon: '🏘️', label: 'สร้างตลาดชุมชน' },
+            { icon: '🛒', label: 'Approve Provider' },
+            { icon: '💰', label: 'Revenue Share' },
+          ].map((f, i, arr) => (
+            <div key={f.label} className="flex items-center flex-shrink-0">
+              <div className="flex flex-col items-center px-2">
+                <span className="text-lg mb-0.5">{f.icon}</span>
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 text-center leading-tight max-w-[72px]">{f.label}</span>
+              </div>
+              {i < arr.length - 1 && <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 mx-1" />}
             </div>
           ))}
         </motion.div>
@@ -179,20 +205,29 @@ export default function FranchiseApplyPage() {
             transition={{ duration: 0.3 }}
             className="bg-white/90 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
 
-            {/* ────── STEP 1: ข้อมูลพื้นที่ ────── */}
+            {/* ── STEP 1: ขอพื้นที่ ── */}
             {step === 1 && (
               <div className="space-y-5">
-                <h2 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-blue-500" /> ข้อมูลพื้นที่ชุมชน
-                </h2>
+                <div>
+                  <h2 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                    <MapPin className="h-5 w-5 text-blue-500" /> ขอพื้นที่เปิดตลาดชุมชน
+                  </h2>
+                  <div className="flex items-start gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl px-4 py-3">
+                    <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      คุณกำลัง<strong> ขอพื้นที่</strong> — Super Admin จะเป็นผู้<strong>อนุมัติและกำหนด</strong>โลเคชั่นสุดท้ายให้คุณ
+                      หลังอนุมัติแล้วคุณจึงจะ<strong>สร้างตลาดชุมชน</strong>ได้
+                    </p>
+                  </div>
+                </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">ประเภทชุมชน *</label>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">ประเภทชุมชนที่ต้องการ *</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {COMMUNITY_TYPES.map(ct => (
-                      <button key={ct.id} type="button" onClick={() => update('communityType', ct.id)}
+                      <button key={ct.id} type="button" onClick={() => update('requestedCommunityType', ct.id)}
                         className={`p-3 rounded-xl border text-left transition-all ${
-                          form.communityType === ct.id
+                          form.requestedCommunityType === ct.id
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                             : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
                         }`}>
@@ -204,17 +239,10 @@ export default function FranchiseApplyPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">ชื่อชุมชน / โครงการ *</label>
-                  <input value={form.communityName} onChange={e => update('communityName', e.target.value)}
-                    placeholder="เช่น หมู่บ้านศรีนคร, คอนโด The Base Rama9"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-                </div>
-
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">จังหวัด *</label>
-                    <select value={form.province} onChange={e => update('province', e.target.value)}
+                    <select value={form.requestedProvince} onChange={e => update('requestedProvince', e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300">
                       <option value="">เลือกจังหวัด</option>
                       {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
@@ -222,10 +250,25 @@ export default function FranchiseApplyPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">เขต/อำเภอ *</label>
-                    <input value={form.district} onChange={e => update('district', e.target.value)}
+                    <input value={form.requestedDistrict} onChange={e => update('requestedDistrict', e.target.value)}
                       placeholder="เช่น บางรัก, เมือง"
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">แขวง/ตำบล (ถ้ามี)</label>
+                  <input value={form.requestedSubDistrict} onChange={e => update('requestedSubDistrict', e.target.value)}
+                    placeholder="เช่น สีลม, ท่าแพ"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">ชื่อชุมชน/โครงการที่ตั้งใจ (ถ้ามี)</label>
+                  <input value={form.targetCommunityName} onChange={e => update('targetCommunityName', e.target.value)}
+                    placeholder="เช่น หมู่บ้านศรีนคร, คอนโด The Base Rama9"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Super Admin อาจกำหนดพื้นที่ที่แตกต่างออกไปได้</p>
                 </div>
 
                 <div>
@@ -276,64 +319,51 @@ export default function FranchiseApplyPage() {
               </div>
             )}
 
-            {/* ────── STEP 3: แผนธุรกิจ ────── */}
+            {/* ── STEP 3: แรงจูงใจ + ข้อตกลง ── */}
             {step === 3 && (
               <div className="space-y-5">
                 <h2 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-blue-500" /> แผนธุรกิจและแรงจูงใจ
+                  <TrendingUp className="h-5 w-5 text-blue-500" /> แรงจูงใจและแผนงาน
                 </h2>
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-                    ทำไมคุณถึงอยากเป็นผู้จัดการตลาดชุมชนในพื้นที่นี้? *
+                    ทำไมคุณถึงอยากเปิดตลาดชุมชนในพื้นที่นี้? *
                   </label>
                   <textarea value={form.why} onChange={e => update('why', e.target.value)}
-                    rows={3} placeholder="เล่าแรงบันดาลใจและความผูกพันกับชุมชน..."
+                    rows={3} placeholder="เล่าความผูกพันกับชุมชนและแรงบันดาลใจ..."
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-                    ประสบการณ์ที่เกี่ยวข้อง (บริหารชุมชน, ธุรกิจ, IT)
+                    ประสบการณ์ที่เกี่ยวข้อง
                   </label>
                   <textarea value={form.experience} onChange={e => update('experience', e.target.value)}
-                    rows={2} placeholder="เช่น เคยเป็นนิติบุคคลหมู่บ้าน 3 ปี, เคยทำธุรกิจขายออนไลน์..."
+                    rows={2} placeholder="เช่น เคยเป็นนิติบุคคลหมู่บ้าน 3 ปี, เคยทำธุรกิจออนไลน์..."
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-                    ทุนเริ่มต้นที่พร้อม (สำหรับ marketing ชุมชน)
-                  </label>
-                  <select value={form.capitalReady} onChange={e => update('capitalReady', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                    <option value="">เลือกช่วงทุน</option>
-                    <option value="0">ยังไม่มี (ใช้ช่วงทดลองฟรีก่อน)</option>
-                    <option value="5000-20000">5,000–20,000 บาท</option>
-                    <option value="20000-50000">20,000–50,000 บาท</option>
-                    <option value="50000+">50,000 บาทขึ้นไป</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
-                    แผนการดึงดูด Provider เข้ามาในตลาด
+                    แผนดึง Provider เข้าร่วมตลาดหลังเปิด
                   </label>
                   <textarea value={form.marketingPlan} onChange={e => update('marketingPlan', e.target.value)}
-                    rows={2} placeholder="เช่น ติดประกาศในหมู่บ้าน, โพสต์กลุ่ม LINE ชุมชน, จัดกิจกรรม..."
+                    rows={2} placeholder="เช่น ติดประกาศในหมู่บ้าน โพสต์กลุ่ม LINE ชุมชน..."
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
                 </div>
 
-                {/* Agreement checkboxes */}
-                <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-700">
+                <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+                  <p className="text-sm font-extrabold text-slate-700 dark:text-slate-200">ข้อตกลงที่ต้องยอมรับ *</p>
                   {[
-                    { field: 'agreeTerms', label: 'ฉันยอมรับ ข้อกำหนดและเงื่อนไข Franchise และ กฎของแพลตฟอร์ม' },
-                    { field: 'agreeRevShare', label: 'ฉันเข้าใจโครงสร้าง Revenue Share (10% จากยอด Commission ในพื้นที่) และ กรณีที่อาจถูก Suspend หรือ Transfer ชุมชน' },
+                    { field: 'agreeTerms', label: 'ฉันยอมรับข้อกำหนดและเงื่อนไข Franchise ของแพลตฟอร์ม' },
+                    { field: 'agreeRevShare', label: 'ฉันเข้าใจโครงสร้าง Revenue Share (10% ของ Commission) และยอมรับว่า Super Admin มีสิทธิ์ Suspend, Takeover หรือโอนย้ายชุมชนได้ตามกฎ' },
+                    { field: 'agreeRules', label: 'ฉันยืนยันว่าข้อมูลที่ให้เป็นความจริง และยินดีให้ Super Admin ตรวจสอบก่อนอนุมัติ' },
                   ].map(ag => (
                     <label key={ag.field} className="flex items-start gap-3 cursor-pointer">
                       <input type="checkbox" checked={form[ag.field as keyof typeof form] as boolean}
                         onChange={e => update(ag.field, e.target.checked)}
-                        className="mt-1 w-4 h-4 accent-blue-600 flex-shrink-0" />
+                        className="mt-0.5 w-4 h-4 accent-blue-600 flex-shrink-0" />
                       <span className="text-sm text-slate-600 dark:text-slate-300">{ag.label}</span>
                     </label>
                   ))}
@@ -341,24 +371,39 @@ export default function FranchiseApplyPage() {
               </div>
             )}
 
-            {/* ────── STEP 4: ยืนยัน ────── */}
+            {/* ── STEP 4: ยืนยัน ── */}
             {step === 4 && (
               <div className="space-y-5">
                 <h2 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-500" /> ตรวจสอบข้อมูลก่อนส่ง
+                  <CheckCircle className="h-5 w-5 text-green-500" /> ตรวจสอบก่อนส่ง
                 </h2>
 
                 <div className="space-y-3">
                   {[
-                    { section: '📍 พื้นที่', items: [['ประเภท', COMMUNITY_TYPES.find(c => c.id === form.communityType)?.label ?? '-'], ['ชุมชน', form.communityName], ['จังหวัด', `${form.province} / ${form.district}`], ['ครัวเรือน', form.estimatedHouseholds]] },
-                    { section: '👤 ผู้สมัคร', items: [['ชื่อ', form.fullName], ['โทร', form.phone], ['Email', form.email], ['LINE', form.lineId || '-']] },
-                    { section: '📋 แผนธุรกิจ', items: [['ทุนพร้อม', form.capitalReady || '-'], ['ประสบการณ์', form.experience ? '✓ มีข้อมูล' : '-']] },
+                    {
+                      section: '📍 พื้นที่ที่ขอ',
+                      items: [
+                        ['ประเภท', COMMUNITY_TYPES.find(c => c.id === form.requestedCommunityType)?.label ?? '-'],
+                        ['จังหวัด / อำเภอ', `${form.requestedProvince} / ${form.requestedDistrict}`],
+                        ['ชุมชนเป้าหมาย', form.targetCommunityName || '(Super Admin กำหนดให้)'],
+                        ['ขนาด', form.estimatedHouseholds],
+                      ],
+                    },
+                    {
+                      section: '👤 ผู้สมัคร',
+                      items: [
+                        ['ชื่อ', form.fullName],
+                        ['โทร', form.phone],
+                        ['Email', form.email],
+                        ['LINE', form.lineId || '-'],
+                      ],
+                    },
                   ].map(s => (
                     <div key={s.section} className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4">
                       <p className="font-bold text-slate-700 dark:text-slate-200 text-sm mb-2">{s.section}</p>
                       {s.items.map(([k, v]) => (
                         <div key={k} className="flex gap-2 text-sm py-0.5">
-                          <span className="text-slate-400 min-w-[100px]">{k}:</span>
+                          <span className="text-slate-400 min-w-[120px]">{k}:</span>
                           <span className="font-semibold text-slate-700 dark:text-slate-200 truncate">{v}</span>
                         </div>
                       ))}
@@ -366,10 +411,10 @@ export default function FranchiseApplyPage() {
                   ))}
                 </div>
 
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-4">
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    หลังส่งใบสมัคร Super Admin จะตรวจสอบและติดต่อกลับภายใน <strong>3–5 วันทำการ</strong>
-                    หากผ่าน คุณจะได้รับ <strong>Community Admin Dashboard</strong> พร้อมช่วงทดลองใช้งานฟรี
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-4">
+                  <p className="text-sm text-green-700 dark:text-green-300">
+                    หลังส่งใบสมัคร <strong>Super Admin</strong> จะอนุมัติและ<strong>กำหนดโลเคชั่น</strong>ให้คุณภายใน 3–5 วันทำการ
+                    จากนั้นคุณจะสามารถ<strong>สร้างตลาดชุมชน</strong>และ<strong>อนุมัติ Provider</strong>ในพื้นที่นั้นได้
                   </p>
                 </div>
               </div>
@@ -387,14 +432,14 @@ export default function FranchiseApplyPage() {
               {step < 4 ? (
                 <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   onClick={() => setStep(s => s + 1)}
-                  className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors">
+                  disabled={step === 3 && !step3Valid}
+                  className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                   ถัดไป <ChevronRight className="h-4 w-4" />
                 </motion.button>
               ) : (
                 <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   onClick={() => setSubmitted(true)}
-                  disabled={!form.agreeTerms || !form.agreeRevShare}
-                  className="flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-green-200 hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  className="flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-green-200 hover:bg-green-700 transition-colors">
                   <CheckCircle className="h-5 w-5" /> ส่งใบสมัคร
                 </motion.button>
               )}

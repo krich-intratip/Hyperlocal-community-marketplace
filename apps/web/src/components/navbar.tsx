@@ -43,7 +43,7 @@ export function Navbar() {
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
+              href={link.href as any}
               className={`text-base font-semibold transition-colors ${
                 pathname === link.href || pathname.startsWith(link.href + '/')
                   ? 'text-blue-600 dark:text-blue-400'
@@ -84,7 +84,7 @@ export function Navbar() {
           className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 px-4 py-4 space-y-3"
         >
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
+            <Link key={link.href} href={link.href as any} onClick={() => setMenuOpen(false)}
               className="block text-base font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 py-1.5">
               {link.label}
             </Link>

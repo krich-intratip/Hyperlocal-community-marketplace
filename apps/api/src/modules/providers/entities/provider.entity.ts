@@ -1,15 +1,21 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn,
+  CreateDateColumn, UpdateDateColumn, Index,
 } from 'typeorm'
-import { VerificationStatus } from '@chm/shared-types'
+import { VerificationStatus, ProviderStatus } from '@chm/shared-types'
 
+/**
+ * Business rule: 1 user account = 1 provider profile = 1 community.
+ * If a provider wants to operate in multiple communities they must use separate accounts.
+ * Enforced at DB level via UNIQUE(user_id) and at service level via ConflictException.
+ */
 @Entity('providers')
 export class Provider {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ name: 'user_id' })
+  @Index({ unique: true })          // ← 1 account → 1 provider profile only
+  @Column({ name: 'user_id', unique: true })
   userId: string
 
   @Column({ name: 'community_id' })
@@ -46,6 +52,39 @@ export class Provider {
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean
+
+  /**
+   * Operational status — controlled by the provider themselves.
+   * LEFT means they vacated this community (e.g. moved away).
+   * When LEFT, the unique userId constraint is released so they can
+   * re-apply to a new community with the same account.
+   */
+  @Column({
+    name: 'provider_status',
+    type: 'enum',
+    enum: ProviderStatus,
+    default: ProviderStatus.ACTIVE,
+  })
+  providerStatus: ProviderStatus
+
+  @Column({ name: 'left_community_at', nullable: true, type: 'timestamptz' })
+  leftCommunityAt: Date | null
+
+  @Column({ name: 'left_reason', nullable: true, type: 'text' })
+  leftReason: string | null
+
+  /* ── Location / KYC fields ── */
+  @Column({ name: 'address', nullable: true, type: 'text' })
+  address: string | null
+
+  @Column({ name: 'location_lat', nullable: true, type: 'double precision' })
+  locationLat: number | null
+
+  @Column({ name: 'location_lng', nullable: true, type: 'double precision' })
+  locationLng: number | null
+
+  @Column({ name: 'id_card_url', nullable: true })
+  idCardUrl: string | null
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

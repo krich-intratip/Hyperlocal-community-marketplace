@@ -22,6 +22,11 @@ export class Community {
   @Column({ name: 'logo_url', nullable: true })
   logoUrl: string
 
+  /**
+   * Primary admin of this community (from the original franchise application).
+   * Additional admins are tracked via community_admin_grants table.
+   * A single user can be admin of multiple communities — see CommunityAdminGrant entity.
+   */
   @Column({ name: 'admin_id' })
   adminId: string
 
