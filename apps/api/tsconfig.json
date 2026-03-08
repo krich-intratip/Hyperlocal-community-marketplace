@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2021",
+    "lib": ["ES2021", "ES2021.String"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@chm/shared-types": ["../../packages/shared-types/src/index.ts"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "../../packages/shared-types/src"],
+  "exclude": ["node_modules", "dist", "test"]
+}
