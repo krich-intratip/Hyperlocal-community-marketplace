@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useNotifications, useMarkAllRead } from '@/hooks/useNotifications'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -29,44 +30,6 @@ interface Notification {
   href?: string
 }
 
-const MOCK_NOTIFS: Notification[] = [
-  {
-    id: 'n1', type: 'booking', title: 'ยืนยันการจองแล้ว!',
-    body: 'คุณแม่สมใจ ยืนยันการจอง "อาหารกล่อง ×3" ในวันที่ 12 มี.ค. เวลา 11:00 น.',
-    time: 'เมื่อกี้', read: false, href: '/bookings/B240301',
-  },
-  {
-    id: 'n2', type: 'announcement', title: 'ประกาศชุมชน: ตลาดนัดเสาร์นี้',
-    body: 'หมู่บ้านศรีนคร จัดงานตลาดนัดชุมชน วันเสาร์ที่ 15 มี.ค. 08:00–14:00 น. มี Provider กว่า 20 ราย',
-    time: '2 ชม. ที่แล้ว', read: false, href: '/communities/1',
-  },
-  {
-    id: 'n3', type: 'review', title: 'รีวิวของคุณถูกตอบกลับ',
-    body: 'หมอนวดประเสริฐ ตอบกลับรีวิว 5 ดาวของคุณ: "ขอบคุณมากครับ ยินดีให้บริการเสมอ!"',
-    time: '5 ชม. ที่แล้ว', read: false, href: '/bookings/B240285',
-  },
-  {
-    id: 'n4', type: 'booking', title: 'บริการเสร็จสิ้น — รีวิวได้เลย!',
-    body: '"นวดแผนไทย" เสร็จสิ้นแล้ว ช่วยรีวิวเพื่อช่วยผู้ให้บริการและชุมชน',
-    time: 'เมื่อวาน', read: true, href: '/bookings/B240285',
-  },
-  {
-    id: 'n5', type: 'system', title: 'ยืนยันอีเมลสำเร็จ',
-    body: 'บัญชีของคุณได้รับการยืนยันอีเมลแล้ว ตอนนี้สามารถรับการแจ้งเตือนครบทุกช่องทาง',
-    time: '2 วันที่แล้ว', read: true,
-  },
-  {
-    id: 'n6', type: 'announcement', title: 'Provider ใหม่ในชุมชนของคุณ',
-    body: '"ครูน้องใหม่" ได้รับการอนุมัติเป็น Provider สอนภาษาอังกฤษในหมู่บ้านศรีนคร',
-    time: '3 วันที่แล้ว', read: true, href: '/providers/3',
-  },
-  {
-    id: 'n7', type: 'payment', title: 'ชำระเงินสำเร็จ ฿420',
-    body: 'ชำระค่า "นวดแผนไทย" จำนวน ฿420 เรียบร้อยแล้ว (รหัส #B240285)',
-    time: '5 วันที่แล้ว', read: true, href: '/bookings/B240285',
-  },
-]
-
 const TYPE_CONFIG: Record<NotifType, { icon: React.ElementType; color: string; bg: string }> = {
   booking:      { icon: Package,     color: 'text-blue-600',  bg: 'bg-blue-100'   },
   review:       { icon: Star,        color: 'text-amber-600', bg: 'bg-amber-100'  },
@@ -83,8 +46,23 @@ const FILTER_TABS = [
 ]
 
 export default function NotificationsPage() {
-  const [notifs, setNotifs] = useState<Notification[]>(MOCK_NOTIFS)
+  const { data: rawNotifs = [], isLoading } = useNotifications()
+  const markAllReadMutation = useMarkAllRead()
   const [activeTab, setActiveTab] = useState<string>('ALL')
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set())
+  const [localRead, setLocalRead] = useState<Set<string>>(new Set())
+
+  const notifs: Notification[] = rawNotifs
+    .filter(n => !dismissed.has(n.id))
+    .map(n => ({
+      id: n.id,
+      type: n.type as NotifType,
+      title: n.title,
+      body: n.body,
+      time: new Date(n.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }),
+      read: n.read || localRead.has(n.id),
+      href: n.href,
+    }))
 
   const unreadCount = notifs.filter(n => !n.read).length
 
@@ -95,15 +73,16 @@ export default function NotificationsPage() {
   })
 
   function markRead(id: string) {
-    setNotifs(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
+    setLocalRead(prev => new Set([...prev, id]))
   }
 
   function markAllRead() {
-    setNotifs(prev => prev.map(n => ({ ...n, read: true })))
+    setLocalRead(new Set(notifs.map(n => n.id)))
+    markAllReadMutation.mutate()
   }
 
   function dismiss(id: string) {
-    setNotifs(prev => prev.filter(n => n.id !== id))
+    setDismissed(prev => new Set([...prev, id]))
   }
 
   return (

@@ -11,6 +11,7 @@ import { ProviderStatusBadge } from '@/components/provider-status'
 import { useT } from '@/hooks/useT'
 import { formatDateShort } from '@/lib/date'
 import type { MapListing } from '@/components/map-view'
+import { useListings } from '@/hooks/useListings'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -46,15 +47,6 @@ const CAT_NAMES: Record<string, string> = {
 
 type ProviderStatus = 'available' | 'busy' | 'offline'
 
-interface MenuStock { name: string; stock: number; max: number }
-interface Listing {
-  id: string; title: string; provider: string; category: string
-  price: number; unit: string; rating: number; reviews: number
-  community: string; distance: string; image: string; tags: string[]
-  verified: boolean; status: ProviderStatus; lat: number; lng: number
-  menuStock?: MenuStock[]; availableDays?: number[]; openTime?: string; closeTime?: string
-}
-
 const DAY_LABELS = ['จ','อ','พ','พฤ','ศ','ส','อา']
 
 function StockBar({ stock, max }: { stock: number; max: number }) {
@@ -73,36 +65,23 @@ function StockBar({ stock, max }: { stock: number; max: number }) {
   )
 }
 
-const MOCK_LISTINGS: Listing[] = [
-  { id:'1', title:'ทำอาหารกล่องส่งถึงที่', provider:'คุณแม่สมใจ', category:'FOOD', price:80, unit:'กล่อง', rating:4.9, reviews:128, community:'หมู่บ้านศรีนคร', distance:'0.3 กม.', image:'🍱', tags:['ข้าว','ส้มตำ','ลาบ'], verified:true, status:'available', lat:13.726, lng:100.482, availableDays:[0,1,2,3,4], openTime:'07:00', closeTime:'17:00', menuStock:[{name:'ข้าวราดแกง',stock:8,max:20},{name:'ส้มตำ',stock:3,max:15},{name:'ลาบหมู',stock:0,max:10}] },
-  { id:'2', title:'ซ่อมแอร์บ้าน ล้างแอร์', provider:'ช่างสมชาย', category:'REPAIR', price:500, unit:'ครั้ง', rating:4.8, reviews:87, community:'หมู่บ้านศรีนคร', distance:'0.8 กม.', image:'🔧', tags:['แอร์','ซ่อม','ล้าง'], verified:true, status:'busy', lat:13.721, lng:100.487, availableDays:[0,1,2,3,4,5], openTime:'08:00', closeTime:'18:00' },
-  { id:'3', title:'สอนภาษาอังกฤษเด็กประถม', provider:'ครูน้องใหม่', category:'TUTORING', price:300, unit:'ชั่วโมง', rating:5.0, reviews:42, community:'คอนโด The Base', distance:'1.2 กม.', image:'📚', tags:['ภาษาอังกฤษ','ประถม','Online'], verified:true, status:'available', lat:13.729, lng:100.479, availableDays:[1,2,3,4,5,6], openTime:'14:00', closeTime:'20:00' },
-  { id:'4', title:'ทำความสะอาดบ้านรายวัน', provider:'บริษัท Clean Home', category:'HOME_SERVICES', price:800, unit:'ครั้ง', rating:4.7, reviews:203, community:'คอนโด The Base', distance:'0.5 กม.', image:'🏠', tags:['บ้าน','คอนโด','รายวัน'], verified:true, status:'available', lat:13.724, lng:100.490, availableDays:[0,1,2,3,4,5], openTime:'08:00', closeTime:'17:00' },
-  { id:'5', title:'ดูแลผู้สูงอายุกลางวัน', provider:'คุณสมศรี', category:'ELDERLY_CARE', price:1200, unit:'วัน', rating:4.9, reviews:31, community:'ชุมชนเมืองทอง', distance:'2.1 กม.', image:'👴', tags:['ผู้สูงอายุ','กลางวัน','บ้าน'], verified:false, status:'offline', lat:13.718, lng:100.483, availableDays:[0,1,2,3,4], openTime:'08:00', closeTime:'17:00' },
-  { id:'6', title:'กระเป๋าผ้าทอมือ handmade', provider:'ร้านป้าแดง', category:'HANDMADE', price:350, unit:'ใบ', rating:4.8, reviews:56, community:'เมืองเชียงใหม่ซิตี้', distance:'3.4 กม.', image:'🎨', tags:['กระเป๋า','ผ้าทอ','Handmade'], verified:true, status:'available', lat:13.732, lng:100.476, availableDays:[0,1,2,3,4,5,6], openTime:'09:00', closeTime:'18:00', menuStock:[{name:'กระเป๋าสีแดง',stock:5,max:10},{name:'กระเป๋าสีน้ำเงิน',stock:2,max:8}] },
-  { id:'7', title:'นวดแผนไทย ออกนอกสถานที่', provider:'หมอนวดประเสริฐ', category:'HEALTH_WELLNESS', price:400, unit:'ชั่วโมง', rating:4.9, reviews:74, community:'หมู่บ้านกรีนวิลล์', distance:'1.8 กม.', image:'💆', tags:['นวด','แผนไทย','ถึงบ้าน'], verified:true, status:'available', lat:13.715, lng:100.493, availableDays:[1,2,3,4,5,6], openTime:'10:00', closeTime:'21:00' },
-  { id:'8', title:'ผักออร์แกนิคส่งรายสัปดาห์', provider:'สวนคุณลุงทอง', category:'AGRICULTURE', price:250, unit:'ชุด', rating:4.7, reviews:38, community:'ชุมชนริมน้ำ', distance:'4.2 กม.', image:'🌿', tags:['ผัก','ออร์แกนิค','ส่งบ้าน'], verified:false, status:'busy', lat:13.737, lng:100.471, availableDays:[0,3,6], openTime:'06:00', closeTime:'10:00' },
-  { id:'9', title:'ออกแบบ Logo & Brand Identity', provider:'ดีไซเนอร์เอ', category:'FREELANCE', price:3500, unit:'งาน', rating:4.8, reviews:19, community:'คอนโด The Base', distance:'0.9 กม.', image:'💻', tags:['Logo','Design','Brand'], verified:true, status:'available', lat:13.722, lng:100.485, availableDays:[0,1,2,3,4], openTime:'09:00', closeTime:'18:00' },
-  { id:'10', title:'ยืม-คืนอุปกรณ์ทำครัว', provider:'Community Pool', category:'COMMUNITY_SHARING', price:50, unit:'วัน', rating:4.6, reviews:22, community:'ชุมชนเมืองทอง', distance:'0.7 กม.', image:'🤝', tags:['ยืม','อุปกรณ์','แชร์'], verified:false, status:'available', lat:13.726, lng:100.480, availableDays:[0,1,2,3,4,5,6], openTime:'08:00', closeTime:'20:00' },
-  { id:'11', title:'ซ่อมท่อน้ำ-ประปา', provider:'ช่างวิชัย', category:'REPAIR', price:400, unit:'ครั้ง', rating:4.6, reviews:52, community:'หมู่บ้านศรีนคร', distance:'0.6 กม.', image:'🔧', tags:['ท่อน้ำ','ประปา','ด่วน'], verified:true, status:'available', lat:13.723, lng:100.488, availableDays:[0,1,2,3,4,5], openTime:'07:00', closeTime:'19:00' },
-  { id:'12', title:'อาหารคลีนออเดอร์ล่วงหน้า', provider:'ครัวคลีนคลีน', category:'FOOD', price:120, unit:'กล่อง', rating:4.9, reviews:95, community:'คอนโด The Base', distance:'1.0 กม.', image:'🥗', tags:['คลีน','ไดเอท','รายวัน'], verified:true, status:'busy', lat:13.727, lng:100.483, availableDays:[0,1,2,3,4], openTime:'08:00', closeTime:'14:00', menuStock:[{name:'ไก่อบสมุนไพร',stock:12,max:20},{name:'ปลานึ่งมะนาว',stock:6,max:15},{name:'สลัดโรลล์',stock:1,max:10}] },
-]
 
 export default function MarketplacePage() {
   const t = useT()
   const [activeCategory, setActiveCategory] = useState('ALL')
   const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState('rating')
+  const [sortBy, setSortBy] = useState<'rating' | 'price'>('rating')
   const [statusFilter, setStatusFilter] = useState<ProviderStatus | 'ALL'>('ALL')
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
   const [radiusKm, setRadiusKm] = useState(5)
 
-  const filtered = MOCK_LISTINGS
+  const { data: allListings = [], isLoading } = useListings({ sortBy })
+
+  const filtered = allListings
     .filter(l => activeCategory === 'ALL' || l.category === activeCategory)
     .filter(l => statusFilter === 'ALL' || l.status === statusFilter)
     .filter(l => !search || l.title.includes(search) || l.provider.includes(search) || l.tags.some(tag => tag.includes(search)))
     .filter(l => parseFloat(l.distance) <= radiusKm)
-    .sort((a, b) => sortBy === 'rating' ? b.rating - a.rating : a.price - b.price)
 
   const mapListings = filtered.map(l => ({
     id: l.id, title: l.title, provider: l.provider,
@@ -121,7 +100,7 @@ export default function MarketplacePage() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-1">
             {t.marketplace.title}
           </h1>
-          <p className="text-lg text-slate-500 dark:text-slate-400 mb-5">พบ {MOCK_LISTINGS.length} บริการในชุมชนของคุณ</p>
+          <p className="text-lg text-slate-500 dark:text-slate-400 mb-5">พบ {allListings.length} บริการในชุมชนของคุณ</p>
         </motion.div>
 
         {/* Search + sort */}
@@ -133,7 +112,7 @@ export default function MarketplacePage() {
               value={search} onChange={e => setSearch(e.target.value)}
               className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all" />
           </div>
-          <select value={sortBy} onChange={e => setSortBy(e.target.value)}
+          <select value={sortBy} onChange={e => setSortBy(e.target.value as 'rating' | 'price')}
             className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800 text-base text-slate-700 dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 cursor-pointer">
             <option value="rating">{t.marketplace.sortRating}</option>
             <option value="price">{t.marketplace.sortPrice}</option>
@@ -190,8 +169,8 @@ export default function MarketplacePage() {
           <div className="flex md:hidden gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {CATEGORIES.map(cat => {
               const count = cat.slug === 'ALL'
-                ? MOCK_LISTINGS.length
-                : MOCK_LISTINGS.filter(l => l.category === cat.slug).length
+                ? allListings.length
+                : allListings.filter(l => l.category === cat.slug).length
               return (
                 <motion.button key={cat.slug} whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveCategory(cat.slug)}
@@ -216,8 +195,8 @@ export default function MarketplacePage() {
           <div className="hidden md:flex flex-wrap gap-2">
             {CATEGORIES.map(cat => {
               const count = cat.slug === 'ALL'
-                ? MOCK_LISTINGS.length
-                : MOCK_LISTINGS.filter(l => l.category === cat.slug).length
+                ? allListings.length
+                : allListings.filter(l => l.category === cat.slug).length
               const isActive = activeCategory === cat.slug
               return (
                 <motion.button key={cat.slug} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
@@ -256,9 +235,17 @@ export default function MarketplacePage() {
       {/* List view */}
       {viewMode === 'list' && (
         <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <p className="text-base text-slate-500 dark:text-slate-400 font-medium mb-4">{filtered.length} รายการ</p>
+          <p className="text-base text-slate-500 dark:text-slate-400 font-medium mb-4">
+            {isLoading ? 'กำลังโหลด...' : `${filtered.length} รายการ`}
+          </p>
 
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 h-64 animate-pulse" />
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24">
               <div className="text-6xl mb-4">🔍</div>
               <p className="text-xl text-slate-500 dark:text-slate-400">{t.marketplace.noResults}</p>
@@ -278,7 +265,7 @@ export default function MarketplacePage() {
                       <div className="absolute top-3 left-3">
                         <ProviderStatusBadge status={listing.status} size="sm" />
                       </div>
-                      {listing.verified && (
+                      {listing.providerVerified && (
                         <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center" title="ยืนยันแล้ว">
                           <span className="text-white text-xs font-bold">✓</span>
                         </div>

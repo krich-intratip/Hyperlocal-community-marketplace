@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useBookings } from '@/hooks/useBookings'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -17,71 +18,19 @@ const fadeUp = {
 }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } }
 
-type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled'
-
-interface Booking {
-  id: string
-  listingId: string
-  title: string
-  provider: string
-  image: string
-  date: string
-  time: string
-  qty: number
-  unit: string
-  price: number
-  total: number
-  address: string
-  community: string
-  status: BookingStatus
-  canReview: boolean
-  rating?: number
-}
-
-const MOCK_BOOKINGS: Booking[] = [
-  {
-    id: 'B240301', listingId: '1', title: 'ทำอาหารกล่องส่งถึงที่', provider: 'คุณแม่สมใจ',
-    image: '🍱', date: '12 มี.ค. 2569', time: '11:00', qty: 3, unit: 'กล่อง',
-    price: 80, total: 252, address: '123/4 ซ.ศรีนคร 5', community: 'หมู่บ้านศรีนคร',
-    status: 'confirmed', canReview: false,
-  },
-  {
-    id: 'B240298', listingId: '3', title: 'สอนภาษาอังกฤษเด็กประถม', provider: 'ครูน้องใหม่',
-    image: '📚', date: '10 มี.ค. 2569', time: '15:00', qty: 2, unit: 'ชั่วโมง',
-    price: 300, total: 630, address: 'คอนโด The Base ห้อง 802', community: 'คอนโด The Base',
-    status: 'pending', canReview: false,
-  },
-  {
-    id: 'B240285', listingId: '7', title: 'นวดแผนไทย ออกนอกสถานที่', provider: 'หมอนวดประเสริฐ',
-    image: '💆', date: '5 มี.ค. 2569', time: '18:00', qty: 1, unit: 'ชั่วโมง',
-    price: 400, total: 420, address: '88 หมู่บ้านกรีนวิลล์', community: 'หมู่บ้านกรีนวิลล์',
-    status: 'completed', canReview: true,
-  },
-  {
-    id: 'B240270', listingId: '4', title: 'ทำความสะอาดบ้านรายวัน', provider: 'บริษัท Clean Home',
-    image: '🏠', date: '28 ก.พ. 2569', time: '09:00', qty: 1, unit: 'ครั้ง',
-    price: 800, total: 840, address: 'คอนโด The Base ห้อง 802', community: 'คอนโด The Base',
-    status: 'completed', canReview: false, rating: 5,
-  },
-  {
-    id: 'B240255', listingId: '2', title: 'ซ่อมแอร์บ้าน ล้างแอร์', provider: 'ช่างสมชาย',
-    image: '🔧', date: '20 ก.พ. 2569', time: '10:00', qty: 1, unit: 'ครั้ง',
-    price: 500, total: 525, address: '123/4 ซ.ศรีนคร 5', community: 'หมู่บ้านศรีนคร',
-    status: 'cancelled', canReview: false,
-  },
-]
+type BookingStatus = 'upcoming' | 'pending' | 'completed' | 'cancelled'
 
 const STATUS_CONFIG: Record<BookingStatus, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
+  upcoming:  { label: 'ยืนยันแล้ว', color: 'text-blue-700',   bg: 'bg-blue-50',   border: 'border-blue-200',   icon: Clock },
   pending:   { label: 'รอยืนยัน',   color: 'text-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200',  icon: AlertCircle },
-  confirmed: { label: 'ยืนยันแล้ว', color: 'text-blue-700',   bg: 'bg-blue-50',   border: 'border-blue-200',   icon: Clock },
   completed: { label: 'เสร็จสิ้น',  color: 'text-green-700',  bg: 'bg-green-50',  border: 'border-green-200',  icon: CheckCircle },
   cancelled: { label: 'ยกเลิก',     color: 'text-slate-500',  bg: 'bg-slate-50',  border: 'border-slate-200',  icon: XCircle },
 }
 
 const FILTER_TABS: { key: BookingStatus | 'ALL'; label: string }[] = [
   { key: 'ALL',       label: 'ทั้งหมด' },
+  { key: 'upcoming',  label: 'ยืนยันแล้ว' },
   { key: 'pending',   label: 'รอยืนยัน' },
-  { key: 'confirmed', label: 'ยืนยันแล้ว' },
   { key: 'completed', label: 'เสร็จสิ้น' },
   { key: 'cancelled', label: 'ยกเลิก' },
 ]
@@ -89,12 +38,13 @@ const FILTER_TABS: { key: BookingStatus | 'ALL'; label: string }[] = [
 export default function BookingsPage() {
   const [activeFilter, setActiveFilter] = useState<BookingStatus | 'ALL'>('ALL')
   const [search, setSearch] = useState('')
+  const { data: allBookings = [], isLoading } = useBookings()
 
-  const filtered = MOCK_BOOKINGS
+  const filtered = allBookings
     .filter(b => activeFilter === 'ALL' || b.status === activeFilter)
-    .filter(b => !search || b.title.includes(search) || b.provider.includes(search) || b.id.includes(search))
+    .filter(b => !search || b.listingTitle.includes(search) || b.provider.includes(search) || b.id.includes(search))
 
-  const counts = MOCK_BOOKINGS.reduce((acc, b) => {
+  const counts = allBookings.reduce((acc, b) => {
     acc[b.status] = (acc[b.status] ?? 0) + 1
     return acc
   }, {} as Record<BookingStatus, number>)
@@ -118,7 +68,7 @@ export default function BookingsPage() {
         {/* Stats row */}
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-4 gap-3 mb-6">
-          {(['pending', 'confirmed', 'completed', 'cancelled'] as BookingStatus[]).map((s, i) => {
+          {(['upcoming', 'pending', 'completed', 'cancelled'] as BookingStatus[]).map((s, i) => {
             const cfg = STATUS_CONFIG[s]
             return (
               <motion.button key={s} variants={fadeUp} custom={i}
@@ -155,7 +105,13 @@ export default function BookingsPage() {
 
         {/* Bookings list */}
         <AnimatePresence mode="wait">
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="rounded-2xl bg-white/80 border border-slate-100 h-28 animate-pulse" />
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
             <motion.div key="empty"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               className="text-center py-16">
@@ -171,7 +127,7 @@ export default function BookingsPage() {
             <motion.div key="list" variants={stagger} initial="hidden" animate="show"
               className="space-y-3">
               {filtered.map((booking, i) => {
-                const cfg = STATUS_CONFIG[booking.status]
+                const cfg = STATUS_CONFIG[booking.status as BookingStatus] ?? STATUS_CONFIG['upcoming']
                 const StatusIcon = cfg.icon
                 return (
                   <motion.div key={booking.id} variants={fadeUp} custom={i} whileHover={{ y: -2 }}>
@@ -179,12 +135,12 @@ export default function BookingsPage() {
                       className="block bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 hover:border-blue-200 shadow-sm hover:shadow-md transition-all p-5 group">
                       <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
-                          {booking.image}
+                          {booking.listingImage}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 flex-wrap">
                             <div>
-                              <h3 className="font-bold text-slate-900 text-sm">{booking.title}</h3>
+                              <h3 className="font-bold text-slate-900 text-sm">{booking.listingTitle}</h3>
                               <p className="text-xs text-slate-500 mt-0.5">{booking.provider} · {booking.community}</p>
                             </div>
                             <span className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border flex-shrink-0 ${cfg.color} ${cfg.bg} ${cfg.border}`}>
@@ -207,14 +163,9 @@ export default function BookingsPage() {
                           <div className="flex items-center justify-between mt-3">
                             <div>
                               <span className="text-xs text-slate-400">#{booking.id}</span>
-                              {booking.rating && (
-                                <span className="ml-2 flex items-center gap-0.5 text-xs text-amber-600 font-bold">
-                                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> {booking.rating}
-                                </span>
-                              )}
                             </div>
                             <div className="flex items-center gap-2">
-                              {booking.canReview && (
+                              {booking.reviewLeft === false && booking.status === 'completed' && (
                                 <span className="text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
                                   รอรีวิว
                                 </span>
@@ -234,7 +185,7 @@ export default function BookingsPage() {
         </AnimatePresence>
 
         {/* CTA for empty state */}
-        {MOCK_BOOKINGS.length === 0 && (
+        {!isLoading && allBookings.length === 0 && (
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
             className="text-center py-16">
             <Package className="h-16 w-16 text-slate-200 mx-auto mb-4" />
