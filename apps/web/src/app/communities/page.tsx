@@ -7,6 +7,12 @@ import { Navbar } from '@/components/navbar'
 import { MapPin, Users, Calendar, ChevronRight, Search, Star, Navigation, Loader2, AlertCircle, X, SlidersHorizontal } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
+
+const CommunityMap = dynamic(
+  () => import('@/components/community-map').then(m => ({ default: m.CommunityMap })),
+  { ssr: false, loading: () => <div className="h-64 w-full rounded-2xl bg-slate-100 animate-pulse" /> }
+)
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -218,6 +224,27 @@ export default function CommunitiesPage() {
             พบ <strong className="text-blue-600">{filtered.length} ชุมชน</strong> ในรัศมี {searchRadius} กม. จากตำแหน่งของคุณ
           </motion.p>
         )}
+      </section>
+
+      {/* Map view */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}>
+          <CommunityMap
+            markers={filtered.map(c => ({
+              id: c.id,
+              lat: c.lat,
+              lng: c.lng,
+              title: c.name,
+              description: c.area,
+              color: c.trial ? 'amber' : 'blue',
+            }))}
+            center={userPos ? [userPos.lat, userPos.lng] : [13.75, 100.52]}
+            zoom={userPos ? 11 : 9}
+            className="h-64 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm"
+            onMarkerClick={(id) => { window.location.href = `/communities/${id}` }}
+          />
+          <p className="text-xs text-slate-400 mt-1.5 text-center">คลิกที่ pin เพื่อดูรายละเอียดชุมชน</p>
+        </motion.div>
       </section>
 
       {/* Community Grid */}

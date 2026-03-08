@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { formatDate } from '@/lib/date'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -126,6 +127,7 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
 ]
 
 export default function SuperAdminFranchisePage() {
+  useAuthGuard(['superadmin'])
   const [communities, setCommunities] = useState<CommunityManager[]>(MOCK_COMMUNITIES)
   const [activeTab, setActiveTab] = useState<'applications' | 'communities' | 'announcements'>('applications')
   const [announcements, setAnnouncements] = useState<Announcement[]>(MOCK_ANNOUNCEMENTS)

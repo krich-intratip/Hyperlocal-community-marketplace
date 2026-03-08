@@ -5,7 +5,7 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import {
   ChevronLeft, Calendar, Clock, Users, MessageSquare,
-  CheckCircle, Star, Shield, MapPin, ArrowRight, Minus, Plus,
+  CheckCircle, Star, Shield, MapPin, ArrowRight, Minus, Plus, Copy, Smartphone,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -33,7 +33,8 @@ function getNextDays(n: number) {
   return days
 }
 
-type Step = 'details' | 'confirm' | 'done'
+type Step = 'details' | 'confirm' | 'payment' | 'done'
+type PayMethod = 'promptpay' | 'cash'
 
 export default function BookingFormClient({ id }: { id: string }) {
   const listing = getListingById(id)
@@ -48,6 +49,9 @@ export default function BookingFormClient({ id }: { id: string }) {
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
   const [bookingId] = useState(`B${Date.now().toString().slice(-6)}`)
+  const [payMethod, setPayMethod] = useState<PayMethod>('promptpay')
+  const [payLoading, setPayLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const days = getNextDays(14)
   const total = (listing?.price ?? 0) * qty
@@ -66,7 +70,18 @@ export default function BookingFormClient({ id }: { id: string }) {
 
   function handleConfirm() {
     setLoading(true)
-    setTimeout(() => { setLoading(false); setStep('done') }, 1500)
+    setTimeout(() => { setLoading(false); setStep('payment') }, 800)
+  }
+
+  function handlePayConfirm() {
+    setPayLoading(true)
+    setTimeout(() => { setPayLoading(false); setStep('done') }, 1800)
+  }
+
+  function copyPromptPay() {
+    navigator.clipboard?.writeText('0812345678').catch(() => {})
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const isAvailableDay = (date: Date) => {
@@ -358,11 +373,110 @@ export default function BookingFormClient({ id }: { id: string }) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                   </svg>
-                ) : <>✅ ยืนยันและชำระเงิน ฿{grandTotal.toLocaleString()}</>}
+                ) : <>ไปชำระเงิน ฿{grandTotal.toLocaleString()} <ArrowRight className="h-4 w-4" /></>}
               </motion.button>
               <button onClick={() => setStep('details')}
                 className="w-full text-center text-sm text-slate-500 hover:text-blue-600 py-2 transition-colors">
                 ← แก้ไขข้อมูล
+              </button>
+            </motion.div>
+          </>
+        )}
+
+        {/* ── Step: payment ── */}
+        {step === 'payment' && (
+          <>
+            <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
+              className="text-center mb-5">
+              <h1 className="text-2xl font-extrabold text-slate-900">ชำระเงิน</h1>
+              <p className="text-sm text-slate-500 mt-1">เลือกวิธีชำระ</p>
+            </motion.div>
+
+            {/* Payment method selector */}
+            <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
+              className="grid grid-cols-2 gap-3 mb-5">
+              {([['promptpay', '🇹🇭 PromptPay', 'โอนผ่าน QR Code'], ['cash', '💵 เงินสด', 'ชำระเมื่อผู้ให้บริการมาถึง']] as const).map(([id, label, desc]) => (
+                <button key={id} onClick={() => setPayMethod(id)}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                    payMethod === id
+                      ? 'border-blue-400 bg-blue-50'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
+                  }`}>
+                  <p className="font-bold text-sm text-slate-900">{label}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
+                </button>
+              ))}
+            </motion.div>
+
+            {/* PromptPay QR */}
+            {payMethod === 'promptpay' && (
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
+                className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5 text-center">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-4">สแกน QR เพื่อชำระ</p>
+                {/* Mock QR — SVG-based */}
+                <div className="mx-auto w-48 h-48 bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
+                  <svg width="160" height="160" viewBox="0 0 160 160" className="rounded-xl">
+                    <rect width="160" height="160" fill="white"/>
+                    {/* QR pattern mock */}
+                    {[0,1,2,3,4,5,6].map(r => [0,1,2,3,4,5,6].map(c => {
+                      const inCorner = (r<3&&c<3)||(r<3&&c>3)||(r>3&&c<3)
+                      const val = inCorner ? 1 : ((r*7+c*3+r+c)%3===0 ? 1 : 0)
+                      return val ? <rect key={`${r}-${c}`} x={8+c*20} y={8+r*20} width="18" height="18" rx="2" fill="#1e293b"/> : null
+                    }))}
+                    <rect x="8" y="8" width="58" height="58" rx="4" fill="none" stroke="#1e293b" strokeWidth="4"/>
+                    <rect x="94" y="8" width="58" height="58" rx="4" fill="none" stroke="#1e293b" strokeWidth="4"/>
+                    <rect x="8" y="94" width="58" height="58" rx="4" fill="none" stroke="#1e293b" strokeWidth="4"/>
+                    <rect x="18" y="18" width="38" height="38" rx="2" fill="#1e293b"/>
+                    <rect x="104" y="18" width="38" height="38" rx="2" fill="#1e293b"/>
+                    <rect x="18" y="104" width="38" height="38" rx="2" fill="#1e293b"/>
+                  </svg>
+                </div>
+                <p className="font-extrabold text-2xl text-blue-700 mb-1">฿{grandTotal.toLocaleString()}</p>
+                <p className="text-xs text-slate-500 mb-4">โอนให้ <span className="font-bold text-slate-700">{listing.provider}</span></p>
+                <div className="flex items-center justify-center gap-2 bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-200">
+                  <Smartphone className="h-4 w-4 text-slate-400 flex-shrink-0" />
+                  <span className="font-bold text-slate-700 text-sm tracking-wider">081-234-5678</span>
+                  <button onClick={copyPromptPay}
+                    className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors ml-1">
+                    <Copy className="h-3.5 w-3.5" />
+                    {copied ? 'คัดลอกแล้ว' : 'คัดลอก'}
+                  </button>
+                </div>
+                <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mt-4">
+                  ⚠️ QR นี้เป็นตัวอย่าง Demo — อย่าโอนเงินจริง
+                </p>
+              </motion.div>
+            )}
+
+            {/* Cash info */}
+            {payMethod === 'cash' && (
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
+                className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-green-50 border border-green-200 flex items-center justify-center flex-shrink-0 text-xl">💵</div>
+                  <div>
+                    <p className="font-bold text-slate-900 mb-1">ชำระเงินสดเมื่อผู้ให้บริการมาถึง</p>
+                    <p className="text-sm text-slate-500">เตรียมเงินสด <span className="font-bold text-slate-800">฿{grandTotal.toLocaleString()}</span> ไว้ให้พร้อม ผู้ให้บริการจะออกใบเสร็จให้หลังจีนหน้า</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="space-y-3">
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                disabled={payLoading}
+                onClick={handlePayConfirm}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-4 text-base font-bold text-white shadow-lg shadow-green-200 hover:bg-green-700 transition-colors disabled:opacity-60">
+                {payLoading ? (
+                  <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                  </svg>
+                ) : <>✅ {payMethod === 'promptpay' ? 'โอนแล้ว ยืนยันการจอง' : 'ยืนยันการจอง'} <ArrowRight className="h-4 w-4" /></>}
+              </motion.button>
+              <button onClick={() => setStep('confirm')}
+                className="w-full text-center text-sm text-slate-500 hover:text-blue-600 py-2 transition-colors">
+                ← กลับไปยืนยันรายละเอียด
               </button>
             </motion.div>
           </>

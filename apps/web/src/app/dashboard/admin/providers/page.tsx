@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -140,6 +141,7 @@ function DetailModal({ provider, onClose, onAction }: {
 }
 
 export default function AdminProvidersPage() {
+  useAuthGuard(['admin', 'superadmin'])
   const [providers, setProviders] = useState<Provider[]>(MOCK_PROVIDERS)
   const [activeFilter, setActiveFilter] = useState<ProviderStatus | 'ALL'>('ALL')
   const [search, setSearch] = useState('')

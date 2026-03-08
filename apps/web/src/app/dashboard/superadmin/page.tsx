@@ -10,6 +10,7 @@ import {
   Megaphone, Settings, ChevronRight, AlertTriangle, Globe,
 } from 'lucide-react'
 import { useT } from '@/hooks/useT'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -59,6 +60,7 @@ const QUICK_LINKS = [
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export default function SuperAdminDashboardPage() {
+  useAuthGuard(['superadmin'])
   const t = useT()
 
   return (

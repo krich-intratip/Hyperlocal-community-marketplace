@@ -1,10 +1,10 @@
+import { PageSkeleton } from '@/components/skeleton'
+
 export default function DashboardLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
-        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">กำลังโหลด...</p>
-      </div>
+    <div className="min-h-screen bg-white dark:bg-slate-950">
+      <div className="h-16 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 animate-pulse" />
+      <PageSkeleton />
     </div>
   )
 }

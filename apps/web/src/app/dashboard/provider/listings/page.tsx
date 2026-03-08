@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -42,6 +43,7 @@ const EMPTY_FORM: FormData = { title: '', category: 'FOOD', price: '', unit: '�
 const EMOJI_OPTIONS = ['🍱', '🥗', '🍛', '🍖', '🔧', '🏠', '📚', '💆', '🎨', '🌿', '💻', '🤝', '👴']
 
 export default function ProviderListingsPage() {
+  useAuthGuard(['provider', 'admin', 'superadmin'])
   const [listings, setListings] = useState<Listing[]>(INITIAL_LISTINGS)
   const [showModal, setShowModal] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)

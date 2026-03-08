@@ -11,6 +11,7 @@ import {
   Megaphone, Pencil, Trash2,
 } from 'lucide-react'
 import { useState } from 'react'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -142,6 +143,7 @@ function CreateMarketPanel({ location, onCreated }: { location: string; onCreate
 }
 
 export default function CommunityAdminDashboardPage() {
+  useAuthGuard(['admin', 'superadmin'])
   const [communities, setCommunities] = useState(INITIAL_COMMUNITIES)
   const [activeCommunityId, setActiveCommunityId] = useState('C001')
   const [caAnnouncements, setCaAnnouncements] = useState<CAAnnouncement[]>(INIT_CA_ANNOUNCEMENTS)

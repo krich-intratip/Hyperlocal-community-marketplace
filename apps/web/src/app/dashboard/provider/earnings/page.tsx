@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -44,6 +45,7 @@ const RECENT_TRANSACTIONS = [
 ]
 
 export default function ProviderEarningsPage() {
+  useAuthGuard(['provider', 'admin', 'superadmin'])
   const [period, setPeriod] = useState<Period>('30d')
 
   const chartData = period === '7d' ? WEEKLY_DATA : MONTHLY_DATA
