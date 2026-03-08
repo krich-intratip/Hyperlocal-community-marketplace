@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
 import { PwaInstallBanner } from '@/components/pwa-install-banner'
+import { ErrorBoundary } from '@/components/error-boundary'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -20,7 +21,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <ErrorBoundary>
+        {children}
+      </ErrorBoundary>
       <PwaInstallBanner />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

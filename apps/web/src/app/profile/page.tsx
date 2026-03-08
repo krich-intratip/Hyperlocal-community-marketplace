@@ -6,10 +6,10 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import {
   User, Mail, Phone, MapPin, Camera, CheckCircle,
-  Star, Package, Shield, ChevronRight, Pencil, X, Save,
+  Star, Package, Shield, ChevronRight, Pencil, X, Save, Bell,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useAuthStore } from '@/store/auth.store'
 
@@ -33,8 +33,6 @@ const MENU_ITEMS = [
   { href: '/notifications', icon: Bell, label: 'การแจ้งเตือน', desc: 'ข่าวสารและ Updates', badge: '3 ใหม่' },
 ]
 
-import { Bell } from 'lucide-react'
-
 export default function ProfilePage() {
   const { user } = useAuthGuard()
   const { updateUser, logout } = useAuthStore()
@@ -45,6 +43,10 @@ export default function ProfilePage() {
     address: '',
   })
   const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    if (user) setForm(f => ({ ...f, name: user.name }))
+  }, [user?.name])
 
   function handleSave() {
     updateUser({ name: form.name })

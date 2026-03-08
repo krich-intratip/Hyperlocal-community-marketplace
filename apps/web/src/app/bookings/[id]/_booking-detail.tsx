@@ -12,6 +12,7 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -113,6 +114,7 @@ function ReviewModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (r:
 }
 
 export default function BookingDetailClient() {
+  useAuthGuard()
   const booking = MOCK_BOOKING_DATA
   const cfg = STATUS_CONFIG[booking.status]
   const StatusIcon = cfg.icon
