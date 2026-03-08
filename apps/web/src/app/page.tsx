@@ -91,7 +91,7 @@ export default function HomePage() {
             </motion.div>
 
             <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-5 leading-tight">
+              className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 mb-5 leading-snug">
               {t.home.headline1}
               <br />
               <span className="relative inline-block">

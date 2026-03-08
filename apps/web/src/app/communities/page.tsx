@@ -118,7 +118,7 @@ export default function CommunitiesPage() {
       {/* Hero */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-6 text-center">
         <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={0}
-          className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+          className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-3">
           ตลาดชุมชน<span className="text-blue-600">ใกล้คุณ</span>
         </motion.h1>
         <motion.p variants={fadeUp} initial="hidden" animate="show" custom={1}

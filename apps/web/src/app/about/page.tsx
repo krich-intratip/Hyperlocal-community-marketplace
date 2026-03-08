@@ -56,7 +56,7 @@ export default function AboutPage() {
           เกี่ยวกับเรา
         </motion.div>
         <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-6 leading-tight">
+          className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-6 leading-snug">
           Local Economy
           <span className="text-blue-600"> Operating System</span>
         </motion.h1>

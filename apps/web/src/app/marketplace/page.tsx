@@ -107,10 +107,10 @@ export default function MarketplacePage() {
       {/* Hero / Search */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-4">
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-1">
             {t.marketplace.title}
           </h1>
-          <p className="text-lg text-slate-500 dark:text-slate-400 mb-5">พบ {allListings.length} บริการในชุมชนของคุณ</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">พบ {allListings.length} บริการในชุมชนของคุณ</p>
         </motion.div>
 
         {/* Search + sort */}

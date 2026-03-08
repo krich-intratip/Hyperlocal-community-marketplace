@@ -83,7 +83,7 @@ export default function ProviderApplyPage() {
             <Star className="h-4 w-4" />
             สมัครเป็นผู้ให้บริการ / ผู้ค้า
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">
             เริ่มสร้างรายได้<span className="text-amber-500">จากทักษะ</span>
           </h1>
           <p className="text-slate-500 text-sm">กรอกข้อมูลไม่กี่ขั้นตอน Community Admin จะตรวจสอบและอนุมัติภายใน 24–48 ชั่วโมง</p>

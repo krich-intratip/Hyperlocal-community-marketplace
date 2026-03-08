@@ -59,11 +59,11 @@ export default function FranchisePage() {
           </span>
         </motion.div>
         <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 leading-tight">
+          className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-4 leading-snug">
           เป็นเจ้าของ<span className="text-amber-500">ตลาดชุมชน</span><br />ในพื้นที่ของคุณ
         </motion.h1>
         <motion.p variants={fadeUp} initial="hidden" animate="show" custom={2}
-          className="text-xl text-slate-500 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+          className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
           Community Franchise Model — บริหารตลาดบริการชุมชน รับ Revenue Share จาก Booking ทุกรายการ
           ไม่ต้องลงทุนระบบ เราสร้างเทคโนโลยีให้คุณแล้ว
         </motion.p>

@@ -58,7 +58,7 @@ export default function GuidePage() {
           คู่มือการใช้งาน
         </motion.div>
         <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
+          className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-4">
           เริ่มต้นใช้งาน
           <span className="text-blue-600"> ง่ายมาก</span>
         </motion.h1>
