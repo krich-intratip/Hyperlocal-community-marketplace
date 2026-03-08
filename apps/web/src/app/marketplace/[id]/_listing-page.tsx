@@ -3,12 +3,12 @@
 import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package } from 'lucide-react'
+import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
-import { formatDate } from '@/lib/date'
 import { useT } from '@/hooks/useT'
+import { getListingById } from '@/lib/mock-listings'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -19,39 +19,6 @@ const fadeUp = {
 }
 
 const DAY_LABELS = ['จ','อ','พ','พฤ','ศ','ส','อา']
-
-const MOCK_LISTING = {
-  id: '1',
-  title: 'ทำอาหารกล่องส่งถึงที่',
-  description: 'รับทำอาหารกล่องหลากหลายเมนู ทั้งข้าวราดแกง อาหารตามสั่ง ส้มตำ ลาบ ทำจากวัตถุดิบสด ปรุงรสอร่อย สั่งล่วงหน้า 1 วัน จัดส่งถึงบ้านในรัศมี 3 กม. ราคาเหมาะสม รับทั้งแบบรายวันและรายเดือน',
-  provider: 'คุณแม่สมใจ',
-  providerAvatar: '👩‍🍳',
-  providerSince: 'ม.ค. 2567',
-  providerVerified: true,
-  providerTrustScore: 98,
-  status: 'available' as const,
-  category: 'FOOD',
-  price: 80,
-  unit: 'กล่อง',
-  rating: 4.9,
-  reviews: 128,
-  community: 'หมู่บ้านศรีนคร',
-  area: 'บางแค, กรุงเทพฯ',
-  distance: '0.3 กม.',
-  image: '🍱',
-  tags: ['ข้าว', 'ส้มตำ', 'ลาบ', 'อาหารตามสั่ง', 'ส่งถึงบ้าน'],
-  availableDays: [0,1,2,3,4],
-  openTime: '07:00',
-  closeTime: '17:00',
-  responseTime: 'ตอบกลับใน < 1 ชั่วโมง',
-  completedBookings: 342,
-  menuStock: [
-    { name: 'ข้าวราดแกง', stock: 8, max: 20, price: 80 },
-    { name: 'ส้มตำ', stock: 3, max: 15, price: 60 },
-    { name: 'ลาบหมู', stock: 0, max: 10, price: 70 },
-    { name: 'ต้มยำกุ้ง', stock: 5, max: 8, price: 120 },
-  ],
-}
 
 function StockBar({ stock, max }: { stock: number; max: number }) {
   const pct = max > 0 ? (stock / max) * 100 : 0
@@ -69,20 +36,81 @@ function StockBar({ stock, max }: { stock: number; max: number }) {
   )
 }
 
-const MOCK_REVIEWS = [
-  { id: '1', user: 'คุณวิภา', rating: 5, comment: 'อร่อยมาก ส้มตำรสจัดถูกใจ ส่งตรงเวลาทุกวัน', date: '5 มี.ค. 2569', avatar: '👩' },
-  { id: '2', user: 'คุณสมศักดิ์', rating: 5, comment: 'สั่งรายเดือนมา 3 เดือนแล้ว ไม่เคยผิดหวัง ราคาคุ้มมาก', date: '28 ก.พ. 2569', avatar: '👨' },
-  { id: '3', user: 'คุณนิตยา', rating: 4, comment: 'รสชาติดี วัตถุดิบสด ปริมาณพอดี แนะนำเมนูลาบ', date: '20 ก.พ. 2569', avatar: '👩‍💼' },
-]
+const REVIEWS_BY_ID: Record<string, { id: string; user: string; rating: number; comment: string; date: string; avatar: string }[]> = {
+  '1': [
+    { id: 'r1', user: 'คุณวิภา', rating: 5, comment: 'อร่อยมาก ส้มตำรสจัดถูกใจ ส่งตรงเวลาทุกวัน', date: '5 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'คุณสมศักดิ์', rating: 5, comment: 'สั่งรายเดือนมา 3 เดือนแล้ว ไม่เคยผิดหวัง ราคาคุ้มมาก', date: '28 ก.พ. 2569', avatar: '👨' },
+    { id: 'r3', user: 'คุณนิตยา', rating: 4, comment: 'รสชาติดี วัตถุดิบสด ปริมาณพอดี แนะนำเมนูลาบ', date: '20 ก.พ. 2569', avatar: '👩‍💼' },
+  ],
+  '2': [
+    { id: 'r1', user: 'คุณประหยัด', rating: 5, comment: 'ช่างมาตรงเวลา ล้างแอร์สะอาดมาก แอร์เย็นขึ้นชัดเจน', date: '4 มี.ค. 2569', avatar: '👨' },
+    { id: 'r2', user: 'คุณสมหญิง', rating: 5, comment: 'ราคาสมเหตุสมผล งานเรียบร้อย มีใบรับประกัน แนะนำเลย', date: '25 ก.พ. 2569', avatar: '👩' },
+  ],
+  '3': [
+    { id: 'r1', user: 'คุณแม่บี', rating: 5, comment: 'ครูสอนเก่งมาก ลูกชอบมาก คะแนนอังกฤษดีขึ้นเยอะ', date: '6 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'คุณพ่อต้น', rating: 5, comment: 'วิธีสอนสนุก ลูกไม่เบื่อ ครูใจดีอธิบายชัดเจน', date: '1 มี.ค. 2569', avatar: '👨' },
+  ],
+  '4': [
+    { id: 'r1', user: 'คุณมาลี', rating: 5, comment: 'ทีมงานขยัน ทำสะอาดทั่วถึงทุกมุม ห้องน้ำเงาเลย', date: '7 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'คุณวิรัตน์', rating: 4, comment: 'บริการดี ตรงเวลา แต่อยากให้ใช้น้ำยาอ่อนกว่านี้หน่อย', date: '22 ก.พ. 2569', avatar: '👨' },
+  ],
+  '5': [
+    { id: 'r1', user: 'คุณลูกสาว', rating: 5, comment: 'คุณสมศรีใจดีมาก ดูแลคุณตาเหมือนญาติ ไว้วางใจได้', date: '3 มี.ค. 2569', avatar: '👩' },
+  ],
+  '6': [
+    { id: 'r1', user: 'คุณเจน', rating: 5, comment: 'กระเป๋าสวยมาก งานละเอียด ผ้าทนทาน สีไม่ตก คุ้มค่ามาก', date: '5 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'คุณฝ้าย', rating: 5, comment: 'ซื้อเป็นของขวัญ ผู้รับชอบมาก สั่งทำลายพิเศษได้ด้วย', date: '27 ก.พ. 2569', avatar: '👩‍💼' },
+  ],
+  '7': [
+    { id: 'r1', user: 'คุณปิยะ', rating: 5, comment: 'หมอนวดฝีมือดีมาก นวดถูกจุด ปวดหายเลย นัดซ้ำแน่นอน', date: '8 มี.ค. 2569', avatar: '👨' },
+    { id: 'r2', user: 'คุณนก', rating: 5, comment: 'นวดแล้วผ่อนคลายมาก มือนวดดีมาก แนะนำเมนูนวดกดจุด', date: '2 มี.ค. 2569', avatar: '👩' },
+  ],
+  '8': [
+    { id: 'r1', user: 'คุณสุ', rating: 5, comment: 'ผักสดมาก รสชาติดีกว่าซื้อห้างชัดเจน คุ้มมาก', date: '4 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'คุณบอล', rating: 4, comment: 'ผักสดดี แต่บางสัปดาห์เมนูซ้ำ ถ้าหลากหลายกว่านี้จะ 5 ดาว', date: '19 ก.พ. 2569', avatar: '👨' },
+  ],
+  '9': [
+    { id: 'r1', user: 'คุณเต้', rating: 5, comment: 'โลโก้ออกมาสวยมาก ตรงใจ แก้ไขให้จนพอใจ มืออาชีพมาก', date: '6 มี.ค. 2569', avatar: '👨' },
+  ],
+  '10': [
+    { id: 'r1', user: 'คุณแก้ว', rating: 5, comment: 'ยืมหม้อทอดมาทำงานเลี้ยง สะดวกมาก ของสะอาด ราคาถูก', date: '3 มี.ค. 2569', avatar: '👩' },
+  ],
+  '11': [
+    { id: 'r1', user: 'คุณดาว', rating: 5, comment: 'ช่างมาเร็วมาก ท่อรั่วซ่อมเสร็จในชั่วโมงเดียว ราคาตรงไปตรงมา', date: '7 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'คุณอ้น', rating: 4, comment: 'งานดี เรียบร้อย แต่โทรหาค่อนข้างยาก ควรตอบเร็วกว่านี้', date: '21 ก.พ. 2569', avatar: '👨' },
+  ],
+  '12': [
+    { id: 'r1', user: 'คุณเอ', rating: 5, comment: 'อาหารสะอาด อร่อย แคลอรี่ชัดเจน ลดน้ำหนักได้ผลจริง', date: '8 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'คุณโอ๊ต', rating: 5, comment: 'สั่งรายเดือน อาหารสม่ำเสมอ ส่งตรงเวลาทุกวัน ประทับใจ', date: '3 มี.ค. 2569', avatar: '👨' },
+  ],
+}
 
-export default function ListingDetailClient() {
+export default function ListingDetailClient({ id }: { id: string }) {
   const t = useT()
   const [selectedDate, setSelectedDate] = useState('')
   const [qty, setQty] = useState(1)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
-  const listing = MOCK_LISTING
+  const listing = getListingById(id)
 
-  const selectedMenuStock = listing.menuStock.find(m => m.name === selectedMenu)
+  if (!listing) {
+    return (
+      <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
+        <MarketBackground />
+        <Navbar />
+        <div className="max-w-3xl mx-auto px-4 pt-20 pb-20 text-center">
+          <AlertCircle className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+          <h1 className="text-2xl font-extrabold text-slate-700 dark:text-white mb-2">ไม่พบ Listing นี้</h1>
+          <p className="text-slate-500 mb-6">Listing หมายเลข {id} ไม่มีในระบบ</p>
+          <Link href="/marketplace" className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white hover:bg-blue-700">
+            <ChevronLeft className="h-4 w-4" /> กลับ Marketplace
+          </Link>
+        </div>
+      </main>
+    )
+  }
+
+  const reviews = REVIEWS_BY_ID[id] ?? []
+  const selectedMenuStock = listing.menuStock?.find((m) => m.name === selectedMenu)
   const effectivePrice = selectedMenuStock?.price ?? listing.price
 
   return (
@@ -164,7 +192,8 @@ export default function ListingDetailClient() {
               <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">{listing.description}</p>
             </motion.div>
 
-            {/* Food stock / menu selector */}
+            {/* Food stock / menu selector — only show if listing has menuStock */}
+            {listing.menuStock && listing.menuStock.length > 0 && (
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
               className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
@@ -194,10 +223,11 @@ export default function ListingDetailClient() {
               </div>
               {selectedMenu && (
                 <p className="text-sm text-blue-600 dark:text-blue-400 font-semibold mt-3">
-                  ✓ เลือก: {selectedMenu} — ราคา ฿{effectivePrice}/กล่อง
+                  ✓ เลือก: {selectedMenu} — ราคา ฿{effectivePrice}/{listing.unit}
                 </p>
               )}
             </motion.div>
+            )}
 
             {/* Provider info */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
@@ -244,7 +274,7 @@ export default function ListingDetailClient() {
                 </div>
               </div>
               <div className="space-y-5">
-                {MOCK_REVIEWS.map((review) => (
+                {reviews.map((review) => (
                   <div key={review.id} className="flex gap-4">
                     <div className="w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-2xl flex-shrink-0">
                       {review.avatar}

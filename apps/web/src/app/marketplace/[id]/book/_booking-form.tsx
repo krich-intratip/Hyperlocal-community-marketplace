@@ -9,31 +9,11 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { getListingById } from '@/lib/mock-listings'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   show: (i: number = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.45, delay: i * 0.07 } }),
-}
-
-const MOCK_LISTING = {
-  id: '1',
-  title: 'ทำอาหารกล่องส่งถึงที่',
-  provider: 'คุณแม่สมใจ',
-  providerId: '1',
-  category: 'อาหารและเครื่องดื่ม',
-  price: 80,
-  unit: 'กล่อง',
-  image: '🍱',
-  rating: 4.9,
-  reviews: 128,
-  community: 'หมู่บ้านศรีนคร',
-  verified: true,
-  availableDays: [0, 1, 2, 3, 4],
-  openTime: '07:00',
-  closeTime: '17:00',
-  minQty: 1,
-  maxQty: 20,
-  menuOptions: ['ข้าวราดแกง', 'ส้มตำ+ข้าวเหนียว', 'ลาบหมู+ข้าวเหนียว', 'ไก่ทอด+ข้าว'],
 }
 
 const TIME_SLOTS = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00']
@@ -53,8 +33,8 @@ function getNextDays(n: number) {
 
 type Step = 'details' | 'confirm' | 'done'
 
-export default function BookingFormClient() {
-  const listing = MOCK_LISTING
+export default function BookingFormClient({ id }: { id: string }) {
+  const listing = getListingById(id)
   const [step, setStep] = useState<Step>('details')
   const [qty, setQty] = useState(1)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -66,7 +46,7 @@ export default function BookingFormClient() {
   const [bookingId] = useState(`B${Date.now().toString().slice(-6)}`)
 
   const days = getNextDays(14)
-  const total = listing.price * qty
+  const total = (listing?.price ?? 0) * qty
   const platformFee = Math.round(total * 0.05)
   const grandTotal = total + platformFee
 
@@ -85,11 +65,28 @@ export default function BookingFormClient() {
     setTimeout(() => { setLoading(false); setStep('done') }, 1500)
   }
 
-  const dayOfWeek = selectedDate ? (selectedDate.getDay() + 6) % 7 : -1
   const isAvailableDay = (date: Date) => {
+    if (!listing) return false
     const dow = (date.getDay() + 6) % 7
     return listing.availableDays.includes(dow)
   }
+
+  if (!listing) {
+    return (
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <div className="max-w-2xl mx-auto px-4 pt-20 pb-20 text-center">
+          <p className="text-2xl font-extrabold text-slate-700 mb-2">ไม่พบ Listing นี้</p>
+          <Link href="/marketplace" className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white hover:bg-blue-700 mt-4">
+            <ChevronLeft className="h-4 w-4" /> กลับ Marketplace
+          </Link>
+        </div>
+      </main>
+    )
+  }
+
+  const menuOptions = listing.menuStock?.map(m => m.name) ?? []
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -122,7 +119,7 @@ export default function BookingFormClient() {
                 <h1 className="font-extrabold text-slate-900 text-base">{listing.title}</h1>
                 <div className="flex items-center gap-2 text-sm text-slate-500 mt-0.5">
                   <span>{listing.provider}</span>
-                  {listing.verified && <Shield className="h-3.5 w-3.5 text-blue-500" />}
+                  {listing.providerVerified && <Shield className="h-3.5 w-3.5 text-blue-500" />}
                   <span>·</span>
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                   <span className="font-bold text-slate-700">{listing.rating}</span>
@@ -145,16 +142,16 @@ export default function BookingFormClient() {
                 <h2 className="font-bold text-slate-800">จำนวน</h2>
               </div>
               <div className="flex items-center gap-4">
-                <button onClick={() => setQty(q => Math.max(listing.minQty, q - 1))}
+                <button onClick={() => setQty(q => Math.max(1, q - 1))}
                   className="w-10 h-10 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 flex items-center justify-center transition-all">
                   <Minus className="h-4 w-4 text-slate-600" />
                 </button>
                 <span className="text-2xl font-extrabold text-slate-900 w-10 text-center">{qty}</span>
-                <button onClick={() => setQty(q => Math.min(listing.maxQty, q + 1))}
+                <button onClick={() => setQty(q => Math.min(20, q + 1))}
                   className="w-10 h-10 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 flex items-center justify-center transition-all">
                   <Plus className="h-4 w-4 text-slate-600" />
                 </button>
-                <span className="text-sm text-slate-500">{listing.unit} (สูงสุด {listing.maxQty})</span>
+                <span className="text-sm text-slate-500">{listing.unit} (สูงสุด 20)</span>
               </div>
             </motion.div>
 
@@ -223,7 +220,7 @@ export default function BookingFormClient() {
               className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-4">
               <h2 className="font-bold text-slate-800 mb-3">เลือกเมนู <span className="text-slate-400 text-xs font-normal">(ไม่บังคับ)</span></h2>
               <div className="flex flex-wrap gap-2">
-                {listing.menuOptions.map(m => (
+                {menuOptions.map(m => (
                   <button key={m} onClick={() => toggleMenu(m)}
                     className={`px-3 py-1.5 rounded-xl text-sm font-medium border-2 transition-all ${
                       selectedMenus.includes(m)

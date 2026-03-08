@@ -1,0 +1,241 @@
+export interface MenuStock { name: string; stock: number; max: number; price: number }
+
+export interface MockListing {
+  id: string
+  title: string
+  description: string
+  provider: string
+  providerAvatar: string
+  providerSince: string
+  providerVerified: boolean
+  providerTrustScore: number
+  providerBio: string
+  status: 'available' | 'busy' | 'offline'
+  category: string
+  price: number
+  unit: string
+  rating: number
+  reviews: number
+  community: string
+  area: string
+  distance: string
+  image: string
+  tags: string[]
+  availableDays: number[]
+  openTime: string
+  closeTime: string
+  responseTime: string
+  completedBookings: number
+  menuStock?: MenuStock[]
+  lat: number
+  lng: number
+}
+
+export const MOCK_LISTINGS: MockListing[] = [
+  {
+    id: '1',
+    title: 'ทำอาหารกล่องส่งถึงที่',
+    description: 'รับทำอาหารกล่องหลากหลายเมนู ทั้งข้าวราดแกง อาหารตามสั่ง ส้มตำ ลาบ ทำจากวัตถุดิบสด ปรุงรสอร่อย สั่งล่วงหน้า 1 วัน จัดส่งถึงบ้านในรัศมี 3 กม. ราคาเหมาะสม รับทั้งแบบรายวันและรายเดือน',
+    provider: 'คุณแม่สมใจ', providerAvatar: '👩‍🍳', providerSince: 'ม.ค. 2567',
+    providerVerified: true, providerTrustScore: 98,
+    providerBio: 'แม่บ้านทำอาหารมา 15 ปี ลูกค้าประจำ 80+ ครัวเรือน รสมือแม่แท้ๆ',
+    status: 'available', category: 'FOOD', price: 80, unit: 'กล่อง',
+    rating: 4.9, reviews: 128, community: 'หมู่บ้านศรีนคร', area: 'บางแค, กรุงเทพฯ',
+    distance: '0.3 กม.', image: '🍱', tags: ['ข้าว', 'ส้มตำ', 'ลาบ', 'อาหารตามสั่ง', 'ส่งถึงบ้าน'],
+    availableDays: [0,1,2,3,4], openTime: '07:00', closeTime: '17:00',
+    responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 342,
+    lat: 13.726, lng: 100.482,
+    menuStock: [
+      { name: 'ข้าวราดแกง', stock: 8, max: 20, price: 80 },
+      { name: 'ส้มตำ', stock: 3, max: 15, price: 60 },
+      { name: 'ลาบหมู', stock: 0, max: 10, price: 70 },
+      { name: 'ต้มยำกุ้ง', stock: 5, max: 8, price: 120 },
+    ],
+  },
+  {
+    id: '2',
+    title: 'ซ่อมแอร์บ้าน ล้างแอร์',
+    description: 'บริการซ่อมและล้างแอร์บ้านทุกยี่ห้อ ช่างมีใบรับรอง ประสบการณ์กว่า 10 ปี ใช้อุปกรณ์มาตรฐาน สามารถออกใบรับประกันงาน 3 เดือน บริการถึงบ้านในเขตกรุงเทพและปริมณฑล',
+    provider: 'ช่างสมชาย', providerAvatar: '👨‍🔧', providerSince: 'มี.ค. 2566',
+    providerVerified: true, providerTrustScore: 92,
+    providerBio: 'ช่างแอร์มืออาชีพ ใบรับรองช่างไฟฟ้า ผลงาน 500+ งาน ไม่ผิดหวัง',
+    status: 'busy', category: 'REPAIR', price: 500, unit: 'ครั้ง',
+    rating: 4.8, reviews: 87, community: 'หมู่บ้านศรีนคร', area: 'บางแค, กรุงเทพฯ',
+    distance: '0.8 กม.', image: '🔧', tags: ['แอร์', 'ซ่อม', 'ล้าง', 'ใบรับประกัน'],
+    availableDays: [0,1,2,3,4,5], openTime: '08:00', closeTime: '18:00',
+    responseTime: 'ตอบกลับใน < 2 ชั่วโมง', completedBookings: 215,
+    lat: 13.721, lng: 100.487,
+  },
+  {
+    id: '3',
+    title: 'สอนภาษาอังกฤษเด็กประถม',
+    description: 'สอนภาษาอังกฤษสำหรับเด็กชั้น ป.1–ป.6 เน้นการสนทนา อ่าน เขียน ด้วยเทคนิคที่สนุกและเป็นธรรมชาติ มีประสบการณ์สอนมากกว่า 5 ปี สามารถสอนออนไลน์หรือที่บ้านนักเรียน',
+    provider: 'ครูน้องใหม่', providerAvatar: '👩‍🏫', providerSince: 'มิ.ย. 2567',
+    providerVerified: true, providerTrustScore: 95,
+    providerBio: 'ครูภาษาอังกฤษระดับประถม วุฒิ ป.บัณฑิต ผ่านการอบรม TEFL ลูกศิษย์ 50+ คน',
+    status: 'available', category: 'TUTORING', price: 300, unit: 'ชั่วโมง',
+    rating: 5.0, reviews: 42, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
+    distance: '1.2 กม.', image: '📚', tags: ['ภาษาอังกฤษ', 'ประถม', 'Online', 'สนทนา'],
+    availableDays: [1,2,3,4,5,6], openTime: '14:00', closeTime: '20:00',
+    responseTime: 'ตอบกลับใน < 30 นาที', completedBookings: 128,
+    lat: 13.729, lng: 100.479,
+  },
+  {
+    id: '4',
+    title: 'ทำความสะอาดบ้านรายวัน',
+    description: 'บริการทำความสะอาดบ้านและคอนโดครบวงจร ทีมงานมืออาชีพ ตรวจสอบประวัติแล้ว ใช้อุปกรณ์และน้ำยาทำความสะอาดมาตรฐาน ISO รับทั้งรายครั้ง รายสัปดาห์ และรายเดือน',
+    provider: 'บริษัท Clean Home', providerAvatar: '🧹', providerSince: 'ก.ค. 2565',
+    providerVerified: true, providerTrustScore: 96,
+    providerBio: 'บริษัทบริการทำความสะอาดมืออาชีพ ทีมงาน 20 คน งาน 5,000+ ครั้ง',
+    status: 'available', category: 'HOME_SERVICES', price: 800, unit: 'ครั้ง',
+    rating: 4.7, reviews: 203, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
+    distance: '0.5 กม.', image: '🏠', tags: ['บ้าน', 'คอนโด', 'รายวัน', 'ทีมงานมืออาชีพ'],
+    availableDays: [0,1,2,3,4,5], openTime: '08:00', closeTime: '17:00',
+    responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 1240,
+    lat: 13.724, lng: 100.490,
+  },
+  {
+    id: '5',
+    title: 'ดูแลผู้สูงอายุกลางวัน',
+    description: 'บริการดูแลผู้สูงอายุระหว่างวัน โดยผู้มีประสบการณ์ด้านการดูแลผู้สูงอายุและผู้ป่วย ช่วยทำกิจวัตรประจำวัน กายภาพบำบัดเบื้องต้น พาไปพบแพทย์ ดูแลด้วยความใส่ใจ',
+    provider: 'คุณสมศรี', providerAvatar: '👩‍⚕️', providerSince: 'ก.พ. 2568',
+    providerVerified: false, providerTrustScore: 75,
+    providerBio: 'พยาบาลเกษียณ ประสบการณ์ดูแลผู้สูงอายุ 15 ปี มีใบรับรองการดูแลผู้สูงอายุ',
+    status: 'offline', category: 'ELDERLY_CARE', price: 1200, unit: 'วัน',
+    rating: 4.9, reviews: 31, community: 'ชุมชนเมืองทอง', area: 'เมืองทอง, นนทบุรี',
+    distance: '2.1 กม.', image: '👴', tags: ['ผู้สูงอายุ', 'กลางวัน', 'บ้าน', 'พยาบาล'],
+    availableDays: [0,1,2,3,4], openTime: '08:00', closeTime: '17:00',
+    responseTime: 'ตอบกลับใน < 3 ชั่วโมง', completedBookings: 67,
+    lat: 13.718, lng: 100.483,
+  },
+  {
+    id: '6',
+    title: 'กระเป๋าผ้าทอมือ handmade',
+    description: 'กระเป๋าผ้าทอมือจากผ้าฝ้ายแท้ 100% งานฝีมือชาวบ้าน ลวดลายไทยเอกลักษณ์ ทนทาน สีสวยไม่ตก มีหลายรูปแบบและขนาด รับออเดอร์ล่วงหน้า 7 วัน สามารถสั่งทำลายพิเศษได้',
+    provider: 'ร้านป้าแดง', providerAvatar: '👩‍🎨', providerSince: 'ส.ค. 2566',
+    providerVerified: true, providerTrustScore: 88,
+    providerBio: 'ช่างฝีมือทอผ้า ประสบการณ์ 20 ปี ลวดลายไทยแท้ ส่งต่างประเทศได้',
+    status: 'available', category: 'HANDMADE', price: 350, unit: 'ใบ',
+    rating: 4.8, reviews: 56, community: 'เมืองเชียงใหม่ซิตี้', area: 'เมือง, เชียงใหม่',
+    distance: '3.4 กม.', image: '🎨', tags: ['กระเป๋า', 'ผ้าทอ', 'Handmade', 'ไทย'],
+    availableDays: [0,1,2,3,4,5,6], openTime: '09:00', closeTime: '18:00',
+    responseTime: 'ตอบกลับใน < 2 ชั่วโมง', completedBookings: 180,
+    lat: 13.732, lng: 100.476,
+    menuStock: [
+      { name: 'กระเป๋าสีแดง (M)', stock: 5, max: 10, price: 350 },
+      { name: 'กระเป๋าสีน้ำเงิน (M)', stock: 2, max: 8, price: 350 },
+      { name: 'กระเป๋าสีเขียว (L)', stock: 3, max: 6, price: 420 },
+      { name: 'กระเป๋าออเดอร์พิเศษ', stock: 10, max: 10, price: 550 },
+    ],
+  },
+  {
+    id: '7',
+    title: 'นวดแผนไทย ออกนอกสถานที่',
+    description: 'บริการนวดแผนไทยออกนอกสถานที่ ครูนวดรับรองจากกรมการแพทย์แผนไทย ประสบการณ์กว่า 8 ปี ใช้น้ำมันนวดอย่างดี นวดแก้ปวดเมื่อย คลายกล้ามเนื้อ มีอุปกรณ์ครบ',
+    provider: 'หมอนวดประเสริฐ', providerAvatar: '🧘', providerSince: 'พ.ย. 2566',
+    providerVerified: true, providerTrustScore: 97,
+    providerBio: 'ครูนวดแผนไทยใบรับรองจากกรมการแพทย์ ประสบการณ์ 8 ปี ลูกค้าประจำ 200+ คน',
+    status: 'available', category: 'HEALTH_WELLNESS', price: 400, unit: 'ชั่วโมง',
+    rating: 4.9, reviews: 74, community: 'หมู่บ้านกรีนวิลล์', area: 'บึงกุ่ม, กรุงเทพฯ',
+    distance: '1.8 กม.', image: '💆', tags: ['นวด', 'แผนไทย', 'ถึงบ้าน', 'ครูนวดรับรอง'],
+    availableDays: [1,2,3,4,5,6], openTime: '10:00', closeTime: '21:00',
+    responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 310,
+    lat: 13.715, lng: 100.493,
+  },
+  {
+    id: '8',
+    title: 'ผักออร์แกนิคส่งรายสัปดาห์',
+    description: 'ผักสวนครัวออร์แกนิค ปลูกเองโดยไม่ใช้สารเคมี ตัดสดทุกเช้า จัดเซ็ตรายสัปดาห์ 5–8 ชนิดหมุนเวียนตามฤดูกาล ส่งถึงบ้านทุกวัน จ อ และ ศ ก่อน 09:00 น. ลองสั่งครั้งแรกฟรีถุงผ้า',
+    provider: 'สวนคุณลุงทอง', providerAvatar: '👨‍🌾', providerSince: 'ม.ค. 2567',
+    providerVerified: false, providerTrustScore: 80,
+    providerBio: 'เกษตรกรออร์แกนิคสวนผัก 2 ไร่ ปลูกมา 6 ปี ผ่านการรับรองจาก Organic Thailand',
+    status: 'busy', category: 'AGRICULTURE', price: 250, unit: 'ชุด',
+    rating: 4.7, reviews: 38, community: 'ชุมชนริมน้ำ', area: 'ปทุมธานี',
+    distance: '4.2 กม.', image: '🌿', tags: ['ผัก', 'ออร์แกนิค', 'ส่งบ้าน', 'ไร้สารเคมี'],
+    availableDays: [0,3,6], openTime: '06:00', closeTime: '10:00',
+    responseTime: 'ตอบกลับใน < 4 ชั่วโมง', completedBookings: 145,
+    lat: 13.737, lng: 100.471,
+    menuStock: [
+      { name: 'เซ็ตผักใบ (5 ชนิด)', stock: 8, max: 20, price: 250 },
+      { name: 'เซ็ตผักผล (5 ชนิด)', stock: 4, max: 15, price: 280 },
+      { name: 'เซ็ต Premium (8 ชนิด)', stock: 2, max: 10, price: 420 },
+    ],
+  },
+  {
+    id: '9',
+    title: 'ออกแบบ Logo & Brand Identity',
+    description: 'บริการออกแบบ Logo โลโก้และ Brand Identity ครบวงจร เข้าใจ DNA แบรนด์คุณ ทำ concept หลายแบบให้เลือก แก้ไขไม่จำกัดครั้งจนพอใจ ส่ง source file ครบ ทุก format พร้อมใช้งาน',
+    provider: 'ดีไซเนอร์เอ', providerAvatar: '👨‍💻', providerSince: 'ก.ย. 2567',
+    providerVerified: true, providerTrustScore: 90,
+    providerBio: 'นักออกแบบ Graphic มืออาชีพ ประสบการณ์ 7 ปี ลูกค้าทั่วไทย portfolio 300+ งาน',
+    status: 'available', category: 'FREELANCE', price: 3500, unit: 'งาน',
+    rating: 4.8, reviews: 19, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
+    distance: '0.9 กม.', image: '💻', tags: ['Logo', 'Design', 'Brand', 'Graphic'],
+    availableDays: [0,1,2,3,4], openTime: '09:00', closeTime: '18:00',
+    responseTime: 'ตอบกลับใน < 2 ชั่วโมง', completedBookings: 58,
+    lat: 13.722, lng: 100.485,
+    menuStock: [
+      { name: 'Logo เดี่ยว', stock: 3, max: 5, price: 1500 },
+      { name: 'Logo + Stationery', stock: 2, max: 3, price: 3500 },
+      { name: 'Full Brand Identity', stock: 1, max: 2, price: 7500 },
+    ],
+  },
+  {
+    id: '10',
+    title: 'ยืม-คืนอุปกรณ์ทำครัว',
+    description: 'แบ่งปันอุปกรณ์ทำครัวในชุมชน เช่น หม้อทอดไร้น้ำมัน เครื่องปั่น ที่ปิ้งย่าง หม้อหุงข้าวขนาดใหญ่ เหมาะสำหรับจัดงาน ปาร์ตี้ ยืมรายวัน ราคาถูก ช่วยลดค่าใช้จ่ายในชุมชน',
+    provider: 'Community Pool', providerAvatar: '🤝', providerSince: 'เม.ย. 2568',
+    providerVerified: false, providerTrustScore: 72,
+    providerBio: 'โครงการ Community Sharing ชุมชนเมืองทอง บริหารโดยคณะกรรมการหมู่บ้าน',
+    status: 'available', category: 'COMMUNITY_SHARING', price: 50, unit: 'วัน',
+    rating: 4.6, reviews: 22, community: 'ชุมชนเมืองทอง', area: 'เมืองทอง, นนทบุรี',
+    distance: '0.7 กม.', image: '🤝', tags: ['ยืม', 'อุปกรณ์', 'แชร์', 'ชุมชน'],
+    availableDays: [0,1,2,3,4,5,6], openTime: '08:00', closeTime: '20:00',
+    responseTime: 'ตอบกลับใน < 3 ชั่วโมง', completedBookings: 89,
+    lat: 13.726, lng: 100.480,
+    menuStock: [
+      { name: 'หม้อทอดไร้น้ำมัน', stock: 2, max: 3, price: 80 },
+      { name: 'เครื่องปั่น', stock: 1, max: 2, price: 50 },
+      { name: 'ที่ปิ้งย่างไฟฟ้า', stock: 1, max: 1, price: 100 },
+      { name: 'หม้อหุงข้าว 10 ลิตร', stock: 2, max: 2, price: 60 },
+    ],
+  },
+  {
+    id: '11',
+    title: 'ซ่อมท่อน้ำ-ประปา',
+    description: 'บริการซ่อมท่อน้ำ ประปา ก๊อกน้ำรั่ว ท่อแตก ท่ออุดตัน สุขภัณฑ์ ด้วยอุปกรณ์ครบ งานสะอาดเรียบร้อย มีการรับประกันงาน 30 วัน เรียกได้ทุกวัน รวมถึงวันหยุด',
+    provider: 'ช่างวิชัย', providerAvatar: '🔧', providerSince: 'ก.พ. 2567',
+    providerVerified: true, providerTrustScore: 89,
+    providerBio: 'ช่างประปาใบรับรอง ประสบการณ์ 12 ปี ซ่อมได้ทุกปัญหา ราคาตรงไปตรงมา',
+    status: 'available', category: 'REPAIR', price: 400, unit: 'ครั้ง',
+    rating: 4.6, reviews: 52, community: 'หมู่บ้านศรีนคร', area: 'บางแค, กรุงเทพฯ',
+    distance: '0.6 กม.', image: '🔧', tags: ['ท่อน้ำ', 'ประปา', 'ด่วน', 'รับประกัน'],
+    availableDays: [0,1,2,3,4,5], openTime: '07:00', closeTime: '19:00',
+    responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 178,
+    lat: 13.723, lng: 100.488,
+  },
+  {
+    id: '12',
+    title: 'อาหารคลีนออเดอร์ล่วงหน้า',
+    description: 'อาหารคลีนเพื่อสุขภาพ คำนวณแคลอรี่ทุกเมนู วัตถุดิบสด ใช้น้ำมันน้อย ไม่มีผงชูรส รองรับอาหารพิเศษ เช่น คีโต ลดน้ำหนัก เบาหวาน สั่งล่วงหน้า 1 วัน ส่งทุกเช้า',
+    provider: 'ครัวคลีนคลีน', providerAvatar: '👩‍🍳', providerSince: 'ต.ค. 2567',
+    providerVerified: true, providerTrustScore: 94,
+    providerBio: 'นักโภชนาการและเชฟอาหารเพื่อสุขภาพ ผ่านการรับรอง Nutrition Certificate',
+    status: 'busy', category: 'FOOD', price: 120, unit: 'กล่อง',
+    rating: 4.9, reviews: 95, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
+    distance: '1.0 กม.', image: '🥗', tags: ['คลีน', 'ไดเอท', 'รายวัน', 'สุขภาพ'],
+    availableDays: [0,1,2,3,4], openTime: '08:00', closeTime: '14:00',
+    responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 267,
+    lat: 13.727, lng: 100.483,
+    menuStock: [
+      { name: 'ไก่อบสมุนไพร', stock: 12, max: 20, price: 120 },
+      { name: 'ปลานึ่งมะนาว', stock: 6, max: 15, price: 130 },
+      { name: 'สลัดโรลล์', stock: 1, max: 10, price: 100 },
+      { name: 'เซ็ตคีโต', stock: 5, max: 8, price: 180 },
+    ],
+  },
+]
+
+export function getListingById(id: string): MockListing | undefined {
+  return MOCK_LISTINGS.find(l => l.id === id)
+}
