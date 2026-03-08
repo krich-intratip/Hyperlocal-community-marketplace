@@ -9,6 +9,7 @@ import {
   Shield, CheckCircle, Bell, Megaphone, Crown, ArrowRight,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -63,6 +64,7 @@ const MOCK_ANNOUNCEMENTS = [
 ]
 
 export default function CommunityDetailClient() {
+  useAuthGuard()
   const community = MOCK_COMMUNITY
   const maxCount = Math.max(...PROVIDER_CATEGORIES.map(c => c.count))
 

@@ -6,10 +6,13 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
 import { useT } from '@/hooks/useT'
 import { getListingById } from '@/lib/mock-listings'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
+
+const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -87,6 +90,7 @@ const REVIEWS_BY_ID: Record<string, { id: string; user: string; rating: number; 
 }
 
 export default function ListingDetailClient({ id }: { id: string }) {
+  useAuthGuard()
   const t = useT()
   const [selectedDate, setSelectedDate] = useState('')
   const [qty, setQty] = useState(1)
@@ -369,6 +373,29 @@ export default function ListingDetailClient({ id }: { id: string }) {
           </div>
         </div>
       </section>
+      {/* ── Location map ── */}
+      {listing.lat && listing.lng && (
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}>
+            <h2 className="text-lg font-extrabold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-blue-500" /> ตำแหน่งผู้ให้บริการ
+            </h2>
+            <Suspense fallback={
+              <div className="w-full h-64 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+            }>
+              <MapView
+                listings={[{ id: listing.id, title: listing.title, provider: listing.provider,
+                  price: listing.price, unit: listing.unit, lat: listing.lat, lng: listing.lng,
+                  category: listing.category, status: listing.status, rating: listing.rating, image: listing.image }]}
+                centerLat={listing.lat}
+                centerLng={listing.lng}
+                zoom={15}
+              />
+            </Suspense>
+          </motion.div>
+        </section>
+      )}
+
       <AppFooter />
     </main>
   )
