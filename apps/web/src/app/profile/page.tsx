@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { useAuthStore } from '@/store/auth.store'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -17,19 +19,11 @@ const fadeUp = {
 }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
-const MOCK_USER = {
-  name: 'คุณวิภาวดี มีสุข',
-  email: 'wipa@example.com',
-  phone: '081-234-5678',
-  address: '123/4 ซ.ศรีนคร 5 ต.บางกอกน้อย กรุงเทพ 10700',
-  community: 'หมู่บ้านศรีนคร',
-  avatar: '👩',
-  role: 'customer',
-  joinedDate: 'มกราคม 2569',
-  totalBookings: 12,
-  completedBookings: 10,
-  totalSpent: 8640,
-  rating: 4.8,
+const ROLE_LABEL: Record<string, string> = {
+  customer: 'ลูกค้า',
+  provider: 'ผู้ให้บริการ',
+  admin: 'ผู้จัดการตลาด',
+  superadmin: 'Super Admin',
 }
 
 const MENU_ITEMS = [
@@ -42,15 +36,18 @@ const MENU_ITEMS = [
 import { Bell } from 'lucide-react'
 
 export default function ProfilePage() {
+  const { user } = useAuthGuard()
+  const { updateUser, logout } = useAuthStore()
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({
-    name: MOCK_USER.name,
-    phone: MOCK_USER.phone,
-    address: MOCK_USER.address,
+    name: user?.name ?? '',
+    phone: '',
+    address: '',
   })
   const [saved, setSaved] = useState(false)
 
   function handleSave() {
+    updateUser({ name: form.name })
     setEditing(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
@@ -76,22 +73,18 @@ export default function ProfilePage() {
           className="text-center mb-6">
           <div className="relative inline-block">
             <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-5xl mx-auto shadow-lg border-4 border-white">
-              {MOCK_USER.avatar}
+              {user?.avatar ?? '👤'}
             </div>
             <button className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center shadow-md hover:bg-blue-700 transition-colors">
               <Camera className="h-3.5 w-3.5 text-white" />
             </button>
           </div>
-          <h1 className="text-xl font-extrabold text-slate-900 mt-4 mb-1">{form.name}</h1>
+          <h1 className="text-xl font-extrabold text-slate-900 mt-4 mb-1">{form.name || user?.name}</h1>
           <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5" /> {MOCK_USER.community}
-            </span>
-            <span>·</span>
-            <span>สมาชิกตั้งแต่ {MOCK_USER.joinedDate}</span>
+            <span>สมาชิก Community Hyper</span>
           </div>
           <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-            🛍️ ลูกค้า · ยืนยันแล้ว
+            {user?.avatar} {ROLE_LABEL[user?.role ?? 'customer']} · {user?.verified ? 'ยืนยันแล้ว' : 'รอยืนยัน'}
           </div>
         </motion.div>
 
@@ -99,9 +92,9 @@ export default function ProfilePage() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-3 gap-3 mb-6">
           {[
-            { label: 'จองทั้งหมด', value: MOCK_USER.totalBookings, color: 'text-blue-600', bg: 'bg-blue-50' },
-            { label: 'เสร็จสิ้น', value: MOCK_USER.completedBookings, color: 'text-green-600', bg: 'bg-green-50' },
-            { label: 'ใช้จ่ายรวม', value: `฿${MOCK_USER.totalSpent.toLocaleString()}`, color: 'text-amber-600', bg: 'bg-amber-50' },
+            { label: 'จองทั้งหมด', value: 12, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'เสร็จสิ้น', value: 10, color: 'text-green-600', bg: 'bg-green-50' },
+            { label: 'ใช้จ่ายรวม', value: '฿8,640', color: 'text-amber-600', bg: 'bg-amber-50' },
           ].map((s, i) => (
             <motion.div key={s.label} variants={fadeUp} custom={i}
               className={`${s.bg} rounded-2xl p-4 text-center`}>
@@ -144,7 +137,7 @@ export default function ProfilePage() {
                 <Mail className="h-3.5 w-3.5" /> อีเมล
               </label>
               <div className="flex items-center gap-2">
-                <p className="text-sm font-medium text-slate-800 px-1">{MOCK_USER.email}</p>
+                <p className="text-sm font-medium text-slate-800 px-1">{user?.email ?? '-'}</p>
                 <span className="text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full flex items-center gap-0.5">
                   <CheckCircle className="h-3 w-3" /> ยืนยันแล้ว
                 </span>
@@ -218,7 +211,8 @@ export default function ProfilePage() {
           className="mt-6 p-4 border border-red-100 rounded-2xl bg-red-50/50">
           <p className="text-xs font-bold text-red-500 uppercase tracking-wide mb-2">Danger Zone</p>
           <div className="flex gap-3 flex-wrap">
-            <button className="text-xs font-bold text-red-500 hover:text-red-700 py-1 transition-colors">
+            <button onClick={logout}
+              className="text-xs font-bold text-red-500 hover:text-red-700 py-1 transition-colors">
               ออกจากระบบ
             </button>
             <span className="text-slate-300">|</span>

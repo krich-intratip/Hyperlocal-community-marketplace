@@ -4,8 +4,10 @@ import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { ArrowRight, Users, Star, Store, Eye, EyeOff, CheckCircle, ChevronLeft } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/store/auth.store'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -58,6 +60,8 @@ export default function SignUpPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' })
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Partial<typeof form>>({})
+  const { login } = useAuthStore()
+  const router = useRouter()
 
   const role = ROLES.find(r => r.id === selectedRole)!
 
@@ -74,8 +78,29 @@ export default function SignUpPage() {
     e.preventDefault()
     if (!validate()) return
     setLoading(true)
-    setTimeout(() => { setLoading(false); setStep('done') }, 1400)
+    setTimeout(() => {
+      login({
+        id: `u-${Date.now()}`,
+        name: form.name,
+        email: form.email,
+        avatar: selectedRole === 'customer' ? '🛍️' : selectedRole === 'provider' ? '⭐' : '🏘️',
+        role: selectedRole === 'admin' ? 'admin' : selectedRole,
+        verified: false,
+      })
+      setLoading(false)
+      setStep('done')
+    }, 1400)
   }
+
+  useEffect(() => {
+    if (step !== 'done') return
+    const t = setTimeout(() => {
+      if (selectedRole === 'provider') router.push('/dashboard/provider')
+      else if (selectedRole === 'admin') router.push('/franchise/apply')
+      else router.push('/marketplace')
+    }, 2500)
+    return () => clearTimeout(t)
+  }, [step, selectedRole, router])
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">

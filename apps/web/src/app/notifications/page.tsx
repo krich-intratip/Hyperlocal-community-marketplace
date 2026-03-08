@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useNotifications, useMarkAllRead } from '@/hooks/useNotifications'
 import { useDateFormat } from '@/hooks/useDateFormat'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -47,6 +48,7 @@ const FILTER_TABS = [
 ]
 
 export default function NotificationsPage() {
+  useAuthGuard()
   const { data: rawNotifs = [], isLoading } = useNotifications()
   const { fmtShort } = useDateFormat()
   const markAllReadMutation = useMarkAllRead()
