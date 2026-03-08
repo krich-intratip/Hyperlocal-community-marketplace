@@ -11,6 +11,7 @@ import {
 import { useState } from 'react'
 import { useCommunities } from '@/hooks/useCommunities'
 import Link from 'next/link'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -38,6 +39,7 @@ const STEPS = ['เลือกชุมชน', 'เลือกหมวดห
 type GeoState = 'idle' | 'loading' | 'granted' | 'denied'
 
 export default function ProviderApplyPage() {
+  useAuthGuard()
   const { data: communities = [] } = useCommunities()
   const [step, setStep]                           = useState(1)
   const [selectedCommunity, setSelectedCommunity] = useState('')

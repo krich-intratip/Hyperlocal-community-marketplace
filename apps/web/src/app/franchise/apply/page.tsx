@@ -11,6 +11,7 @@ import {
 import { useState } from 'react'
 import { formatDate } from '@/lib/date'
 import Link from 'next/link'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -40,6 +41,7 @@ const COMMUNITY_TYPES = [
 ]
 
 export default function FranchiseApplyPage() {
+  useAuthGuard()
   const [step, setStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({
