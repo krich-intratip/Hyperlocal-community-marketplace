@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
+import { AppFooter } from '@/components/app-footer'
 import Link from 'next/link'
 import {
   Crown, Building2, Users, TrendingUp, DollarSign, ShieldCheck,
@@ -248,6 +249,7 @@ export default function SuperAdminDashboardPage() {
         </motion.div>
 
       </section>
+      <AppFooter />
     </main>
   )
 }

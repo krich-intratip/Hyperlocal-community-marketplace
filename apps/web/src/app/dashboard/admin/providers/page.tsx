@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
+import { AppFooter } from '@/components/app-footer'
 import {
   ChevronLeft, Search, CheckCircle, XCircle, Clock, Shield,
   Star, MapPin, Eye, ChevronRight, Filter, Users,
@@ -308,6 +309,7 @@ export default function AdminProvidersPage() {
             )}
           </AnimatePresence>
         </section>
+      <AppFooter />
       </main>
     </>
   )

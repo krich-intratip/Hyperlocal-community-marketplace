@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
+import { AppFooter } from '@/components/app-footer'
 import {
   Plus, Pencil, Trash2, Eye, EyeOff, Star, ChevronLeft,
   X, CheckCircle, AlertCircle, Package,
@@ -316,6 +317,7 @@ export default function ProviderListingsPage() {
             </motion.div>
           )}
         </section>
+      <AppFooter />
       </main>
     </>
   )
