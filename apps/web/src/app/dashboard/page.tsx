@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useBookings } from '@/hooks/useBookings'
 import { useDateFormat } from '@/hooks/useDateFormat'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 type Role = 'customer' | 'provider' | 'admin' | 'superadmin'
 const ROLE_CONFIG: Record<Role, { label: string; emoji: string; color: string; bg: string; border: string }> = {
@@ -35,7 +36,8 @@ const STATUS_CONFIG = {
 }
 
 export default function CustomerDashboardPage() {
-  const [role, setRole] = useState<Role>('customer')
+  const { user } = useAuthGuard()
+  const [role, setRole] = useState<Role>((user?.role as Role) ?? 'customer')
   const { data: bookings = [] } = useBookings()
   const { fmt } = useDateFormat()
   const completed = bookings.filter((b) => b.status === 'completed').length

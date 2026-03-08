@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useBookings } from '@/hooks/useBookings'
 import { useDateFormat } from '@/hooks/useDateFormat'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -37,6 +38,7 @@ const FILTER_TABS: { key: BookingStatus | 'ALL'; label: string }[] = [
 ]
 
 export default function BookingsPage() {
+  useAuthGuard()
   const [activeFilter, setActiveFilter] = useState<BookingStatus | 'ALL'>('ALL')
   const [search, setSearch] = useState('')
   const { data: allBookings = [], isLoading } = useBookings()

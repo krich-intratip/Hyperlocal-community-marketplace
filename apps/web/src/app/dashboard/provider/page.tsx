@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -65,6 +66,7 @@ const MOCK_PROVIDER = {
 type ModalType = 'suspend' | 'reactivate' | 'deactivate' | 'leave' | null
 
 export default function ProviderDashboardPage() {
+  useAuthGuard(['provider', 'admin', 'superadmin'])
   const [providerStatus, setProviderStatus] = useState<ProviderStatus>('ACTIVE')
   const [modal, setModal]                   = useState<ModalType>(null)
   const [leaveReason, setLeaveReason]       = useState('')
