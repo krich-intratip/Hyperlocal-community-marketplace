@@ -5,7 +5,7 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { ArrowRight, Users, Star, Store } from 'lucide-react'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/store/auth.store'
 import type { AuthUser } from '@/store/auth.store'
 
@@ -48,14 +48,22 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false)
   const { login } = useAuthStore()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect')
 
   function handleMockLogin() {
     setLoading(true)
     setTimeout(() => {
       login(MOCK_USERS[selectedRole])
-      if (selectedRole === 'provider') router.push('/dashboard/provider')
-      else if (selectedRole === 'admin') router.push('/dashboard/admin')
-      else router.push('/dashboard')
+      if (redirectTo) {
+        router.push(redirectTo)
+      } else if (selectedRole === 'provider') {
+        router.push('/dashboard/provider')
+      } else if (selectedRole === 'admin') {
+        router.push('/dashboard/admin')
+      } else {
+        router.push('/dashboard')
+      }
     }, 800)
   }
 
