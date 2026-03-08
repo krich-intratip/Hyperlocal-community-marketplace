@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { AppFooter } from '@/components/app-footer'
 import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
-import { MapPin, Target, Heart, TrendingUp, Users, Zap, Globe, ArrowRight } from 'lucide-react'
+import { MapPin, Target, Heart, TrendingUp, Users, Zap, Globe, ArrowRight, Code2, GitBranch } from 'lucide-react'
+import { APP_VERSION, APP_UPDATED, APP_DEVELOPER } from '@/lib/version'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -205,6 +206,51 @@ export default function AboutPage() {
           </motion.div>
         </motion.div>
       </section>
+      {/* ── Version Info ── */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
+          className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
+                <Code2 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="font-extrabold text-slate-900 dark:text-white text-base">Build Info</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Community Hyper Marketplace</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 text-sm font-bold">
+                <GitBranch className="h-3.5 w-3.5" /> v{APP_VERSION}
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5 text-sm">
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-900/50 px-4 py-3">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Version</p>
+              <p className="font-bold text-slate-800 dark:text-slate-100">v{APP_VERSION}</p>
+            </div>
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-900/50 px-4 py-3">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Updated</p>
+              <p className="font-bold text-slate-800 dark:text-slate-100">{APP_UPDATED}</p>
+            </div>
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-900/50 px-4 py-3">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Developer</p>
+              <p className="font-bold text-slate-800 dark:text-slate-100">{APP_DEVELOPER}</p>
+            </div>
+          </div>
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Tech Stack</p>
+          <div className="flex flex-wrap gap-2">
+            {TECH.map(t => (
+              <span key={t} className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium">
+                {t}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
       <AppFooter />
     </main>
   )
