@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Sarabun } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const sarabun = Sarabun({
+  subsets: ['thai', 'latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -14,6 +18,13 @@ export const metadata: Metadata = {
   description:
     'แพลตฟอร์มตลาดบริการชุมชนแบบดิจิทัล — เชื่อมต่อผู้ให้บริการในพื้นที่กับผู้อยู่อาศัยในชุมชน',
   keywords: ['marketplace', 'community', 'hyperlocal', 'services', 'thailand'],
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({
@@ -23,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${sarabun.variable} font-sans antialiased`}>
         <Providers>{children}</Providers>
         <Toaster richColors position="top-right" />
       </body>

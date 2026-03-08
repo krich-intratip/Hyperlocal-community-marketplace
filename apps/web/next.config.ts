@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  typedRoutes: true,
+  // typedRoutes: true, // re-enable when all pages are scaffolded
 }
 
 export default nextConfig
