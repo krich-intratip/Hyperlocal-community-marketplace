@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle } from 'lucide-react'
+import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { useState, lazy, Suspense } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
@@ -97,6 +97,7 @@ export default function ListingDetailClient({ id }: { id: string }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [qty, setQty] = useState(1)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
+  const [wishlisted, setWishlisted] = useState(false)
   const listing = getListingById(id)
 
   if (!listing) {
@@ -151,6 +152,17 @@ export default function ListingDetailClient({ id }: { id: string }) {
                   <Shield className="h-3.5 w-3.5" /> ยืนยันแล้ว
                 </div>
               )}
+              <button
+                onClick={() => setWishlisted(w => !w)}
+                className={`absolute bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all shadow-md ${
+                  wishlisted
+                    ? 'bg-red-500 text-white'
+                    : 'bg-white/90 dark:bg-slate-700/90 text-slate-500 hover:text-red-500'
+                }`}
+              >
+                <Heart className={`h-4 w-4 ${wishlisted ? 'fill-current' : ''}`} />
+                {wishlisted ? 'บันทึกแล้ว' : 'บันทึก'}
+              </button>
             </motion.div>
 
             {/* Title & basic info */}
