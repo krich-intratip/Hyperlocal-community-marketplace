@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { AppFooter } from '@/components/app-footer'
 import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { MapPin, Target, Heart, TrendingUp, Users, Zap, Globe, ArrowRight } from 'lucide-react'
@@ -204,12 +205,7 @@ export default function AboutPage() {
           </motion.div>
         </motion.div>
       </section>
-
-      <footer className="border-t border-slate-100 bg-white/80 backdrop-blur-sm mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-slate-400">
-          © 2026 Community Hyper Marketplace — Local Economy Operating System
-        </div>
-      </footer>
+      <AppFooter />
     </main>
   )
 }

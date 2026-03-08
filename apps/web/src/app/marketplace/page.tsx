@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff } from 'lucide-react'
@@ -359,12 +360,7 @@ export default function MarketplacePage() {
           )}
         </section>
       )}
-
-      <footer className="border-t border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-8 text-center text-base text-slate-400 dark:text-slate-500">
-          © 2026 Community Hyper Marketplace — Local Economy Operating System
-        </div>
-      </footer>
+      <AppFooter />
     </main>
   )
 }

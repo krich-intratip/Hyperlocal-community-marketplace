@@ -1,4 +1,19 @@
-﻿import ListingDetailClient from './_listing-page'
+﻿import type { Metadata } from 'next'
+import ListingDetailClient from './_listing-page'
+import { getListingById } from '@/lib/mock-listings'
+import { buildMetadata } from '@/lib/seo'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const listing = getListingById(id)
+  if (!listing) return buildMetadata({ title: 'ไม่พบบริการ', noIndex: true })
+  return buildMetadata({
+    title: listing.title,
+    description: listing.description,
+    path: `/marketplace/${id}`,
+    keywords: [listing.category, listing.provider, listing.community, ...listing.tags],
+  })
+}
 
 export function generateStaticParams() {
   return ['1','2','3','4','5','6','7','8','9','10','11','12'].map((id) => ({ id }))

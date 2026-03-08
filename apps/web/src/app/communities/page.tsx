@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { MapPin, Users, Calendar, ChevronRight, Search, Star, Navigation, Loader2, AlertCircle, X, SlidersHorizontal } from 'lucide-react'
@@ -350,12 +351,7 @@ export default function CommunitiesPage() {
           </motion.div>
         </motion.div>
       </section>
-
-      <footer className="border-t border-slate-100 bg-white/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-slate-400">
-          © 2026 Community Hyper Marketplace — Local Economy Operating System
-        </div>
-      </footer>
+      <AppFooter />
     </main>
   )
 }
