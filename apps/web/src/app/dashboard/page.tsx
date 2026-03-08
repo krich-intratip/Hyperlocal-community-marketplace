@@ -3,8 +3,17 @@
 import { motion } from 'framer-motion'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
-import { CalendarCheck, Star, MessageCircle, MapPin, ChevronRight, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { CalendarCheck, Star, MessageCircle, MapPin, ChevronRight, Clock, CheckCircle, XCircle, Package, DollarSign, Users, Shield } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
+
+type Role = 'customer' | 'provider' | 'admin' | 'superadmin'
+const ROLE_CONFIG: Record<Role, { label: string; emoji: string; color: string; bg: string; border: string }> = {
+  customer:   { label: 'ลูกค้า',           emoji: '🛍️', color: 'text-blue-700',  bg: 'bg-blue-50',  border: 'border-blue-200'  },
+  provider:   { label: 'ผู้ให้บริการ',     emoji: '⭐', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
+  admin:      { label: 'Admin ชุมชน',       emoji: '🏘️', color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' },
+  superadmin: { label: 'Super Admin',       emoji: '👑', color: 'text-purple-700', bg: 'bg-purple-50', border: 'border-purple-200' },
+}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -30,8 +39,17 @@ const STATUS_CONFIG = {
 }
 
 export default function CustomerDashboardPage() {
+  const [role, setRole] = useState<Role>('customer')
   const completed = MOCK_BOOKINGS.filter((b) => b.status === 'completed').length
   const totalSpent = MOCK_BOOKINGS.filter((b) => b.status !== 'cancelled').reduce((s, b) => s + b.price, 0)
+  const roleCfg = ROLE_CONFIG[role]
+
+  const ROLE_DASHBOARD_LINKS: Record<Role, { href: string; label: string }> = {
+    customer:   { href: '/dashboard',            label: 'แดชบอร์ดลูกค้า' },
+    provider:   { href: '/dashboard/provider',   label: 'Provider Dashboard' },
+    admin:      { href: '/dashboard/admin',      label: 'Admin Dashboard' },
+    superadmin: { href: '/dashboard/superadmin', label: 'Super Admin' },
+  }
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -39,14 +57,43 @@ export default function CustomerDashboardPage() {
       <Navbar />
 
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
+        {/* Role switcher */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
+          className="mb-6 p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">ดูในฐานะ</p>
+          <div className="flex gap-2 flex-wrap">
+            {(Object.keys(ROLE_CONFIG) as Role[]).map(r => {
+              const cfg = ROLE_CONFIG[r]
+              return (
+                <button key={r} onClick={() => setRole(r)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${
+                    role === r ? `${cfg.border} ${cfg.bg} ${cfg.color}` : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}>
+                  {cfg.emoji} {cfg.label}
+                </button>
+              )
+            })}
+          </div>
+          {role !== 'customer' && (
+            <Link href={ROLE_DASHBOARD_LINKS[role].href as any}
+              className={`mt-3 inline-flex items-center gap-1.5 text-xs font-bold ${roleCfg.color} hover:underline`}>
+              ไปที่ {ROLE_DASHBOARD_LINKS[role].label} <ChevronRight className="h-3 w-3" />
+            </Link>
+          )}
+        </motion.div>
+
         {/* Header */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-8">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1} className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <p className="text-sm text-slate-500 mb-1">👋 ยินดีต้อนรับกลับ — วันนี้มีการจอง 2 รายการรอยืนยัน</p>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">แดชบอร์ดของฉัน</h1>
             </div>
             <div className="flex items-center gap-2">
+              <Link href="/bookings"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-blue-300 transition-colors">
+                <Package className="h-4 w-4 text-blue-500" /> การจองทั้งหมด
+              </Link>
               <Link href="/marketplace"
                 className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-blue-200 hover:bg-blue-700 transition-colors">
                 🛍️ ค้นหาบริการ
@@ -117,9 +164,9 @@ export default function CustomerDashboardPage() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
+            { href: '/bookings', icon: '�', label: 'การจองทั้งหมด', desc: 'ดูสถานะและรีวิว' },
             { href: '/marketplace', icon: '🛍️', label: 'หาบริการใหม่', desc: 'เลือกบริการในชุมชน' },
-            { href: '/communities', icon: '🏘️', label: 'ดูชุมชน', desc: 'เข้าร่วมชุมชนเพิ่ม' },
-            { href: '/providers/apply', icon: '⭐', label: 'เป็นผู้ให้บริการ', desc: 'สร้างรายได้จากทักษะ' },
+            { href: '/dashboard/provider', icon: '⭐', label: 'Dashboard Provider', desc: 'จัดการ listings และรายได้' },
           ].map((action, i) => (
             <motion.div key={action.href} variants={fadeUp} custom={i} whileHover={{ y: -3 }}>
               <Link href={action.href as any}
