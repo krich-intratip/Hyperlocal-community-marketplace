@@ -22,16 +22,16 @@ const fadeUp = {
 }
 
 const CATEGORIES = [
-  { slug: 'FOOD',              name: 'อาหาร',              icon: '🍱' },
-  { slug: 'REPAIR',            name: 'งานช่าง',             icon: '🔧' },
-  { slug: 'HOME_SERVICES',     name: 'งานบ้าน',             icon: '🏠' },
-  { slug: 'TUTORING',          name: 'สอนพิเศษ',            icon: '📚' },
-  { slug: 'ELDERLY_CARE',      name: 'ดูแลผู้สูงอายุ',      icon: '👴' },
-  { slug: 'HANDMADE',          name: 'สินค้าทำมือ',         icon: '🎨' },
-  { slug: 'HEALTH_WELLNESS',   name: 'สุขภาพ & ความงาม',   icon: '💆' },
-  { slug: 'AGRICULTURE',       name: 'เกษตรชุมชน',          icon: '🌿' },
-  { slug: 'FREELANCE',         name: 'ฟรีแลนซ์',            icon: '💻' },
-  { slug: 'COMMUNITY_SHARING', name: 'Community Sharing',   icon: '🤝' },
+  { slug: 'FOOD', name: 'อาหาร', icon: '🍱' },
+  { slug: 'REPAIR', name: 'งานช่าง', icon: '🔧' },
+  { slug: 'HOME_SERVICES', name: 'งานบ้าน', icon: '🏠' },
+  { slug: 'TUTORING', name: 'สอนพิเศษ', icon: '📚' },
+  { slug: 'ELDERLY_CARE', name: 'ดูแลผู้สูงอายุ', icon: '👴' },
+  { slug: 'HANDMADE', name: 'สินค้าทำมือ', icon: '🎨' },
+  { slug: 'HEALTH_WELLNESS', name: 'สุขภาพ & ความงาม', icon: '💆' },
+  { slug: 'AGRICULTURE', name: 'เกษตรชุมชน', icon: '🌿' },
+  { slug: 'FREELANCE', name: 'ฟรีแลนซ์', icon: '💻' },
+  { slug: 'COMMUNITY_SHARING', name: 'Community Sharing', icon: '🤝' },
 ]
 
 const STEPS = ['เลือกชุมชน', 'เลือกหมวดหมู่', 'ข้อมูลของคุณ', 'ที่อยู่ & ยืนยันตัวตน', 'ยืนยัน']
@@ -41,16 +41,16 @@ type GeoState = 'idle' | 'loading' | 'granted' | 'denied'
 export default function ProviderApplyPage() {
   useAuthGuard()
   const { data: communities = [] } = useCommunities()
-  const [step, setStep]                           = useState(1)
+  const [step, setStep] = useState(1)
   const [selectedCommunity, setSelectedCommunity] = useState('')
-  const [selectedCategory, setSelectedCategory]   = useState('')
-  const [form, setForm]                           = useState({
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [form, setForm] = useState({
     name: '', phone: '', bio: '', price: '',
     addressLine: '', subdistrict: '', district: '', province: '', postalCode: '',
   })
-  const [locationPin, setLocationPin]             = useState<{ lat: number; lng: number } | null>(null)
-  const [geoState, setGeoState]                   = useState<GeoState>('idle')
-  const [idCardName, setIdCardName]               = useState('')
+  const [locationPin, setLocationPin] = useState<{ lat: number; lng: number } | null>(null)
+  const [geoState, setGeoState] = useState<GeoState>('idle')
+  const [idCardName, setIdCardName] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -111,13 +111,35 @@ export default function ProviderApplyPage() {
           </div>
         </motion.div>
 
-        {/* Benefits */}
+        {/* Commission Disclosure */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
+          className="mb-7 rounded-2xl border border-blue-200 bg-blue-50 dark:bg-blue-900/20 p-5">
+          <div className="flex items-start gap-3">
+            <span className="text-xl flex-shrink-0">💰</span>
+            <div className="space-y-2">
+              <p className="text-sm font-extrabold text-blue-800 dark:text-blue-300">
+                ค่าคอมมิสชั่นแพลตฟอร์ม (โปร่งใส ไม่มีค่าใช้จ่ายซ่อนเร้น)
+              </p>
+              <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-1.5 leading-relaxed">
+                <li>• แพลตฟอร์มเก็บ <strong>5% จากยอดขายแต่ละรายการ</strong> โดยอัตโนมัติ</li>
+                <li>• <strong>ไม่คิดค่าคอมมิสชั่นจากค่าขนส่ง</strong> — ค่าจัดส่งข้ามชุมชนรวมในราคาขายแต่ไม่นับยอด commission</li>
+                <li>• ลูกค้า<strong>ไม่ต้องจ่ายค่าคอมมิสชั่นเพิ่ม</strong> — คิดจากฝั่งผู้ให้บริการเท่านั้น</li>
+                <li>• 40% ของค่าคอมมิสชั่นจะถูกแบ่งให้ผู้จัดการตลาดชุมชนที่คุณสังกัด</li>
+              </ul>
+              <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-blue-100 dark:bg-blue-800/40 px-3 py-1 text-xs font-bold text-blue-700 dark:text-blue-300">
+                ตัวอย่าง: ขายสินค้า ฿1,000 → commission ฿50 → คุณได้รับ ฿950
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Benefits */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
           className="grid grid-cols-3 gap-3 mb-7">
           {[
             { icon: TrendingUp, label: 'สร้างรายได้', desc: 'จากทักษะที่มี' },
-            { icon: Users,      label: 'ลูกค้าในชุมชน', desc: 'ใกล้บ้านคุณ' },
-            { icon: Star,       label: 'Trust Score',  desc: 'สะสมชื่อเสียง' },
+            { icon: Users, label: 'ลูกค้าในชุมชน', desc: 'ใกล้บ้านคุณ' },
+            { icon: Star, label: 'Trust Score', desc: 'สะสมชื่อเสียง' },
           ].map((b) => (
             <div key={b.label} className="text-center p-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm">
               <b.icon className="h-6 w-6 text-amber-500 mx-auto mb-2" />
@@ -135,9 +157,8 @@ export default function ProviderApplyPage() {
             return (
               <div key={s} className="flex items-center flex-1 last:flex-none">
                 <div className="flex flex-col items-center gap-1">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
-                    s < step ? 'bg-green-500 text-white' : s === step ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-400'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${s < step ? 'bg-green-500 text-white' : s === step ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-400'
+                    }`}>
                     {s < step ? '✓' : s}
                   </div>
                   <span className={`text-xs font-medium whitespace-nowrap ${s === step ? 'text-slate-700' : 'text-slate-400'}`}>
@@ -167,11 +188,10 @@ export default function ProviderApplyPage() {
                 {communities.map((comm) => (
                   <motion.button key={comm.id} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedCommunity(comm.id)}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
-                      selectedCommunity === comm.id
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${selectedCommunity === comm.id
                         ? 'border-amber-400 bg-amber-50'
                         : 'border-slate-200 hover:border-amber-300 hover:bg-amber-50/40'
-                    }`}>
+                      }`}>
                     <span className="text-2xl flex-shrink-0">{comm.image}</span>
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-sm text-slate-800">{comm.name}</div>
@@ -210,11 +230,10 @@ export default function ProviderApplyPage() {
                 {CATEGORIES.map((cat) => (
                   <motion.button key={cat.slug} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className={`flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all ${
-                      selectedCategory === cat.slug
+                    className={`flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all ${selectedCategory === cat.slug
                         ? 'border-amber-400 bg-amber-50'
                         : 'border-slate-200 hover:border-amber-300 hover:bg-amber-50/50'
-                    }`}>
+                      }`}>
                     <span className="text-2xl">{cat.icon}</span>
                     <span className="text-sm font-semibold text-slate-700">{cat.name}</span>
                     {selectedCategory === cat.slug && (
@@ -245,9 +264,9 @@ export default function ProviderApplyPage() {
               <p className="text-sm text-slate-500 mb-5">ข้อมูลนี้จะแสดงในโปรไฟล์ผู้ให้บริการในชุมชน <strong>{selectedComm?.name}</strong></p>
               <div className="space-y-4">
                 {[
-                  { name: 'name',  label: 'ชื่อ-นามสกุล *',           placeholder: 'กรอกชื่อจริง',   type: 'text'   },
-                  { name: 'phone', label: 'เบอร์โทรศัพท์ *',           placeholder: '0812345678',      type: 'tel'    },
-                  { name: 'price', label: 'ราคาเริ่มต้น (บาท) *',      placeholder: 'เช่น 300',        type: 'number' },
+                  { name: 'name', label: 'ชื่อ-นามสกุล *', placeholder: 'กรอกชื่อจริง', type: 'text' },
+                  { name: 'phone', label: 'เบอร์โทรศัพท์ *', placeholder: '0812345678', type: 'tel' },
+                  { name: 'price', label: 'ราคาเริ่มต้น (บาท) *', placeholder: 'เช่น 300', type: 'number' },
                 ].map((field) => (
                   <div key={field.name}>
                     <label className="text-sm font-semibold text-slate-700 block mb-1.5">{field.label}</label>

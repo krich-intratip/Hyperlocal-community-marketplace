@@ -222,6 +222,55 @@ export interface Coupon {
   isActive: boolean
 }
 
+// ─── Listing ──────────────────────────────────────────────────────────────────
+
+export type ListingStatus = 'available' | 'booked' | 'closed'
+
+export type ListingCategory =
+  | 'FOOD'
+  | 'REPAIR'
+  | 'EDUCATION'
+  | 'CARE'
+  | 'CLEANING'
+  | 'BEAUTY'
+  | 'FITNESS'
+  | 'OTHER'
+
+export interface Listing {
+  id: string
+  title: string
+  description: string
+  category: ListingCategory
+  price: number
+  priceUnit: string
+  status: ListingStatus
+  rating: number
+  reviewCount: number
+  provider: string
+  providerId: string
+  communityId: string
+  tags: string[]
+  imageUrl?: string
+  lat?: number
+  lng?: number
+  address?: string
+  createdAt: string
+}
+
+// ─── Notification ─────────────────────────────────────────────────────────────
+
+export type NotifType = 'booking' | 'review' | 'promo' | 'system'
+
+export interface Notification {
+  id: string
+  type: NotifType
+  title: string
+  body: string
+  read: boolean
+  createdAt: string
+  href?: string
+}
+
 // ─── KYC / Address ────────────────────────────────────────────────────────────
 
 export interface AddressDto {

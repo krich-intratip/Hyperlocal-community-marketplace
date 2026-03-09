@@ -1,6 +1,9 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { bookingsApi } from '@/lib/api'
+
+const USE_REAL_API = !!process.env.NEXT_PUBLIC_API_BASE_URL
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type BookingStatus = 'upcoming' | 'completed' | 'cancelled' | 'pending'
@@ -46,14 +49,23 @@ export const bookingKeys = {
   detail: (id: string) => [...bookingKeys.all, 'detail', id] as const,
 }
 
-// ── Mock fetchers ─────────────────────────────────────────────────────────────
+// ── Fetchers ──────────────────────────────────────────────────────────────────
 async function fetchBookings(status?: BookingStatus | 'all'): Promise<MockBooking[]> {
+  if (USE_REAL_API) {
+    const apiStatus = (!status || status === 'all') ? undefined : status.toUpperCase() as string
+    const res = await bookingsApi.list(apiStatus ? { status: apiStatus as never } : undefined)
+    return res.data.data as unknown as MockBooking[]
+  }
   await new Promise((r) => setTimeout(r, 150))
   if (!status || status === 'all') return MOCK_BOOKINGS
   return MOCK_BOOKINGS.filter((b) => b.status === status)
 }
 
 async function fetchBookingById(id: string): Promise<MockBooking | null> {
+  if (USE_REAL_API) {
+    const res = await bookingsApi.get(id)
+    return res.data.data as unknown as MockBooking
+  }
   await new Promise((r) => setTimeout(r, 100))
   return MOCK_BOOKINGS.find((b) => b.id === id) ?? null
 }

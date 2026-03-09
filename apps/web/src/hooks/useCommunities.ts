@@ -1,6 +1,9 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { communitiesApi } from '@/lib/api'
+
+const USE_REAL_API = !!process.env.NEXT_PUBLIC_API_BASE_URL
 
 export interface MockCommunity {
   id: string
@@ -32,11 +35,19 @@ export const communityKeys = {
 }
 
 async function fetchCommunities(): Promise<MockCommunity[]> {
+  if (USE_REAL_API) {
+    const res = await communitiesApi.list()
+    return res.data.data as unknown as MockCommunity[]
+  }
   await new Promise((r) => setTimeout(r, 150))
   return MOCK_COMMUNITIES
 }
 
 async function fetchCommunityById(id: string): Promise<MockCommunity | null> {
+  if (USE_REAL_API) {
+    const res = await communitiesApi.get(id)
+    return res.data.data as unknown as MockCommunity
+  }
   await new Promise((r) => setTimeout(r, 100))
   return MOCK_COMMUNITIES.find((c) => c.id === id) ?? null
 }

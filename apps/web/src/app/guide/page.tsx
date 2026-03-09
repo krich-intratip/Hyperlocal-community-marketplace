@@ -58,7 +58,7 @@ export default function GuidePage() {
           คู่มือการใช้งาน
         </motion.div>
         <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-4">
+          className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">
           เริ่มต้นใช้งาน
           <span className="text-blue-600"> ง่ายมาก</span>
         </motion.h1>
@@ -79,7 +79,7 @@ export default function GuidePage() {
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
               <Users className="h-5 w-5 text-blue-600" />
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-900">สำหรับลูกค้า</h2>
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">สำหรับลูกค้า</h2>
             <span className="text-sm bg-blue-50 text-blue-600 font-semibold px-3 py-1 rounded-full border border-blue-200">ผู้ใช้บริการ</span>
           </div>
 
@@ -109,7 +109,7 @@ export default function GuidePage() {
             <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
               <Briefcase className="h-5 w-5 text-amber-600" />
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-900">สำหรับผู้ให้บริการ</h2>
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">สำหรับผู้ให้บริการ</h2>
             <span className="text-sm bg-amber-50 text-amber-600 font-semibold px-3 py-1 rounded-full border border-amber-200">Service Provider</span>
           </div>
 
@@ -139,7 +139,7 @@ export default function GuidePage() {
             <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
               <Settings className="h-5 w-5 text-purple-600" />
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-900">สำหรับ Community Admin</h2>
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">สำหรับ Community Admin</h2>
             <span className="text-sm bg-purple-50 text-purple-600 font-semibold px-3 py-1 rounded-full border border-purple-200">ผู้ดูแลชุมชน</span>
           </div>
 
@@ -164,7 +164,7 @@ export default function GuidePage() {
 
         {/* FAQ */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-8 text-center">คำถามที่พบบ่อย</h2>
+          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-8 text-center">คำถามที่พบบ่อย</h2>
           <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}
             className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {FAQS.map((faq, i) => (

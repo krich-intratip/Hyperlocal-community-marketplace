@@ -9,7 +9,7 @@ import { UserRole } from '@chm/shared-types'
 @ApiTags('Communities')
 @Controller('communities')
 export class CommunitiesController {
-  constructor(private readonly communitiesService: CommunitiesService) {}
+  constructor(private readonly communitiesService: CommunitiesService) { }
 
   @Get()
   @ApiOperation({ summary: 'List all active communities' })
@@ -62,5 +62,76 @@ export class CommunitiesController {
       new Date(body.startDate),
       new Date(body.endDate),
     )
+  }
+
+  /* ─── Invite Link System ────────────────────────────────────────── */
+
+  /**
+   * GET /communities/join/:code
+   * Public endpoint — validates an invite code and returns community preview.
+   * Called by the /join/[code] Next.js page before displaying community info.
+   */
+  @Get('join/:code')
+  @ApiOperation({ summary: 'Validate invite code and return community info (public)' })
+  getInviteInfo(@Param('code') code: string) {
+    return this.communitiesService.getByInviteCode(code)
+  }
+
+  /**
+   * GET /communities/my/invite-code
+   * Returns the invite code + community name for the requesting CA.
+   */
+  @Get('my/invite-code')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.COMMUNITY_ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get my community invite code (CA)' })
+  getMyInviteCode(@Req() req: any) {
+    return this.communitiesService.getInviteCodeForAdmin(req.user.id)
+  }
+
+  /**
+   * GET /communities/my/pending-members
+   * Returns providers with PENDING approval status in the CA's community.
+   */
+  @Get('my/pending-members')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.COMMUNITY_ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List pending provider members (CA)' })
+  getPendingMembers(@Req() req: any) {
+    return this.communitiesService.getPendingMembers(req.user.id)
+  }
+
+  /**
+   * PATCH /communities/my/members/:memberId/approve
+   * CA approves a pending provider member.
+   */
+  @Patch('my/members/:memberId/approve')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.COMMUNITY_ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Approve a pending provider member (CA)' })
+  approveMember(
+    @Param('memberId') memberId: string,
+    @Req() req: any,
+  ) {
+    return this.communitiesService.approveMember(memberId, req.user.id)
+  }
+
+  /**
+   * PATCH /communities/my/members/:memberId/reject
+   * CA rejects a pending provider member.
+   */
+  @Patch('my/members/:memberId/reject')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.COMMUNITY_ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Reject a pending provider member (CA)' })
+  rejectMember(
+    @Param('memberId') memberId: string,
+    @Req() req: any,
+  ) {
+    return this.communitiesService.rejectMember(memberId, req.user.id)
   }
 }

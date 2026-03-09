@@ -2,7 +2,7 @@ import {
   Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn, Index,
 } from 'typeorm'
-import { BookingStatus, EscrowStatus, PricingType } from '@chm/shared-types'
+import { BookingStatus, EscrowStatus, PricingType, DeliveryStatus } from '@chm/shared-types'
 
 /**
  * Commission impact of promotions/discounts:
@@ -187,7 +187,7 @@ export class Booking {
 
   /** % ที่ Community Admin ได้รับจาก commission (ตามสัญญา franchise) */
   @Column({ name: 'revenue_share_rate', type: 'decimal', precision: 5, scale: 2, default: 0 })
-  revenueShareRate: number           // เช่น 30.00 = 30% ของ commission
+  revenueShareRate: number           // เช่น 40.00 = 40% ของ commission
 
   @Column({ name: 'platform_fee', type: 'decimal', precision: 10, scale: 2, default: 0 })
   platformFee: number                // finalAmount × commissionRate × (1 - revenueShareRate/100)
@@ -219,6 +219,43 @@ export class Booking {
   /** จำนวนเงินที่คืน (อาจน้อยกว่า quotedAmount ถ้า PARTIAL_REFUND) */
   @Column({ name: 'refund_amount', nullable: true, type: 'decimal', precision: 10, scale: 2 })
   refundAmount: number | null
+
+  /* ── Delivery / Shipping (future-ready) ── */
+  /**
+   * Shipping cost charged to the customer.
+   * EXCLUDED from commission calculation:
+   *   commissionableAmount = discountedTotal - shippingAmount
+   * null / 0 = no delivery (in-person service or local pickup)
+   */
+  @Column({ name: 'shipping_amount', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  shippingAmount: number
+
+  /** FK to ShippingProvider — which logistics carrier was used */
+  @Column({ name: 'shipping_provider_id', nullable: true })
+  shippingProviderId: string | null
+
+  @Column({ name: 'tracking_number', nullable: true })
+  trackingNumber: string | null
+
+  @Column({
+    name: 'delivery_status',
+    type: 'enum',
+    enum: DeliveryStatus,
+    default: DeliveryStatus.NOT_APPLICABLE,
+  })
+  deliveryStatus: DeliveryStatus
+
+  /** true when the customer and provider are in different communities */
+  @Column({ name: 'is_cross_community', default: false })
+  isCrossCommunity: boolean
+
+  /** Community of the provider (origin) — for cross-community logistics routing */
+  @Column({ name: 'origin_community_id', nullable: true })
+  originCommunityId: string | null
+
+  /** Community of the customer (destination) */
+  @Column({ name: 'destination_community_id', nullable: true })
+  destinationCommunityId: string | null
 
   /* ── Trust / Rating impact ── */
   /**

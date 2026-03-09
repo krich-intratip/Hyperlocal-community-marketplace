@@ -18,6 +18,8 @@ import type {
   CreateAnnouncementDto,
   Coupon,
   UserProfile,
+  Listing,
+  Notification,
 } from '@/types'
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -117,6 +119,29 @@ export const announcementsApi = {
 export const couponsApi = {
   validate: (code: string, communityId?: string) =>
     apiClient.post<ApiResponse<Coupon>>('/coupons/validate', { code, communityId }),
+}
+
+// ─── Listings ─────────────────────────────────────────────────────────────────
+
+export const listingsApi = {
+  list: (params?: { search?: string; category?: string; status?: string; page?: number }) =>
+    apiClient.get<PaginatedResponse<Listing>>('/listings', { params }),
+
+  get: (id: string) =>
+    apiClient.get<ApiResponse<Listing>>(`/listings/${id}`),
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+export const notificationsApi = {
+  list: () =>
+    apiClient.get<ApiResponse<Notification[]>>('/notifications'),
+
+  markAllRead: () =>
+    apiClient.patch('/notifications/read-all'),
+
+  markRead: (id: string) =>
+    apiClient.patch(`/notifications/${id}/read`),
 }
 
 // ─── User profile ─────────────────────────────────────────────────────────────

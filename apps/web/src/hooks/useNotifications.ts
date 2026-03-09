@@ -1,6 +1,9 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { notificationsApi } from '@/lib/api'
+
+const USE_REAL_API = !!process.env.NEXT_PUBLIC_API_BASE_URL
 
 export type NotifType = 'booking' | 'review' | 'promo' | 'system'
 
@@ -30,6 +33,10 @@ export const notifKeys = {
 }
 
 async function fetchNotifications(): Promise<MockNotification[]> {
+  if (USE_REAL_API) {
+    const res = await notificationsApi.list()
+    return res.data.data as unknown as MockNotification[]
+  }
   await new Promise((r) => setTimeout(r, 100))
   return MOCK_NOTIFS
 }
@@ -57,6 +64,10 @@ export function useMarkAllRead() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async () => {
+      if (USE_REAL_API) {
+        await notificationsApi.markAllRead()
+        return
+      }
       await new Promise((r) => setTimeout(r, 300))
     },
     onSuccess: () => {

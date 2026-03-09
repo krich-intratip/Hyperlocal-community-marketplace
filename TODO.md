@@ -1,6 +1,6 @@
 # TODO — Community Hyper Marketplace
 
-> **Version:** v0.3.2 | **Updated:** 2026-03-09  
+> **Version:** v0.3.4 | **Updated:** 2026-03-09  
 > Legend: `[ ]` pending · `[x]` done · `[~]` in progress
 
 ---
@@ -8,25 +8,23 @@
 ## 🔴 High Priority
 
 - [ ] **HI-1** Booking flow end-to-end test & polish (signin → redirect → book → QR payment → confirmation)
-- [ ] **HI-2** Backend: เชื่อม NestJS API แทน mock fetchers ใน useListings / useBookings / useNotifications / useCommunities
+- [ ] **HI-5** Real auth — Google OAuth ผ่าน NestJS Passport.js + JWT (แทน mock Zustand auth)
 
 ---
 
-## 🟡 Medium Priority
+## � Medium Priority
 
-- [ ] **ME-1** `providers/[id]` — เพิ่มปุ่ม wishlist/follow button ใน hero section
-- [ ] **ME-2** Dark mode — เพิ่ม `dark:` class ให้ครบใน `/franchise`, `/guide`, `/communities` hero text
-- [ ] **ME-3** `dashboard/superadmin/franchise` — approve/reject franchise request ให้ interactive (local state + toast)
-- [ ] **ME-4** Real auth — Google OAuth ผ่าน NestJS Passport.js + JWT
+- [ ] **ME-4** Marketplace — sync filter/search state กับ URL params (`?category=FOOD&status=available`)
+- [ ] **ME-5** `/auth/signup` — polish flow ให้สมบูรณ์เหมือน signin
+- [ ] **ME-6** Redis cache layer — notification count (TTL 30s), listing list (TTL 5m)
 
 ---
 
 ## 🟢 Low Priority
 
-- [ ] **LO-1** Marketplace — sync filter/search state กับ URL params (`?category=FOOD&status=available`)
-- [ ] **LO-2** `/auth/signup` — polish flow ให้สมบูรณ์เหมือน signin
-- [ ] **LO-3** Redis cache layer — notification count (TTL 30s), listing list (TTL 5m)
-- [ ] **LO-4** Supabase Storage — provider avatar / listing image / community banner upload
+- [ ] **LO-1** Supabase Storage — provider avatar / listing image / community banner upload
+- [ ] **LO-2** Analytics: wire `/dashboard/analytics` GET to real NestJS backend when API is ready
+- [ ] **LO-3** Provider follow/wishlist — persist to backend (POST /users/follow/:providerId)
 
 ---
 
@@ -64,3 +62,16 @@
 - [x] Listing detail: wishlist button
 - [x] Hero headline font size ลดทุกหน้า (ป้องกัน overflow)
 - [x] Deploy to Cloudflare Pages v0.3.2 ✅
+- [x] Backend: Commission Module (Ledger, Override) & Payout System (Franchise)
+- [x] Backend: Invite Link System (/join/:code) & Pending Member Approval 
+- [x] Frontend: Invite Landing Page (/join/[code]) & CA Invite Management Dashboard
+- [x] Database: สคีมา Delivery fields ใน Booking Entity เพื่อรองรับระบบขนส่ง
+- [x] Version Bump เป็น v0.3.3 ✅
+- [x] Backend: เปิดใช้งาน `@nestjs/schedule` + `@Cron('5 0 1 * *')` ใน PayoutService (HI-3)
+- [x] Backend: เพิ่ม `GET /dashboard/analytics` — monthly time-series, top providers, commission totals (HI-4)
+- [x] Frontend: เชื่อม React Query hooks (useListings / useBookings / useNotifications / useCommunities) กับ NestJS API + env-gate fallback (HI-2)
+- [x] Frontend: Analytics Dashboard `/dashboard/superadmin/analytics` — recharts LineChart/BarChart + CSV export
+- [x] Frontend: Provider `/providers/[id]` — wishlist/follow toggle button (ME-1)
+- [x] Frontend: Dark mode hero text fixes ใน `/guide`, `/communities` (ME-2)
+- [x] Frontend: Franchise approve/reject/suspend/resume ครบ interactive (ME-3) — confirmed already implemented
+- [x] Version Bump เป็น v0.3.4 ✅

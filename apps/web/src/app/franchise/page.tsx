@@ -17,7 +17,7 @@ const fadeUp = {
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } }
 
 const BENEFITS = [
-  { icon: DollarSign, title: 'Revenue Share 10%', desc: 'รับส่วนแบ่งรายได้จากทุก Booking ในชุมชนของคุณ ไม่มีเพดาน', color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/30' },
+  { icon: DollarSign, title: 'Revenue Share 40%', desc: 'รับ 40% จาก Commission ที่แพลตฟอร์มเก็บจากผู้ให้บริการในชุมชนของคุณ จ่ายทุกวันที่ 1 ของเดือน', color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/30' },
   { icon: Users, title: 'จัดการชุมชนเอง', desc: 'อนุมัติ Provider รายใหม่ ตั้งราคา Promoted Listings ดูแลคุณภาพบริการ', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/30' },
   { icon: Shield, title: 'ช่วงทดลองฟรี', desc: 'แพลตฟอร์มให้ช่วงทดลองตามที่ตกลง ไม่มีค่าใช้จ่ายในการเริ่มต้น', color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/30' },
   { icon: BarChart3, title: 'ข้อมูล Real-time', desc: 'Dashboard แสดงยอด Booking รายได้ และ Trust Score ของทุก Provider', color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30' },
@@ -34,9 +34,9 @@ const STEPS_PROCESS = [
 
 const REVENUE_MODEL = [
   { label: 'ยอด Booking รวม/เดือน', example: '฿100,000', note: 'ตัวอย่างชุมชนขนาดกลาง' },
-  { label: 'Commission แพลตฟอร์ม (10–12%)', example: '฿10,000–12,000', note: '' },
-  { label: 'Revenue Share ของคุณ (10% ของ Commission)', example: '฿1,000–1,200', note: 'ต่อเดือน', highlight: true },
-  { label: 'ที่ชุมชนขนาดใหญ่ (฿500,000/เดือน)', example: '฿5,000–6,000', note: 'ต่อเดือน', highlight: true },
+  { label: 'Commission แพลตฟอร์ม (5% ของยอดขาย)', example: '฿5,000', note: 'ไม่คิดค่าขนส่ง' },
+  { label: 'Revenue Share ของคุณ (40% ของ Commission)', example: '฿2,000', note: 'ต่อเดือน', highlight: true },
+  { label: 'ที่ชุมชนขนาดใหญ่ (฿500,000/เดือน)', example: '฿10,000', note: 'ต่อเดือน', highlight: true },
 ]
 
 const ACTIVE_COMMUNITIES = [
@@ -59,13 +59,13 @@ export default function FranchisePage() {
           </span>
         </motion.div>
         <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-4 leading-snug">
+          className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-4 leading-normal">
           เป็นเจ้าของ<span className="text-amber-500">ตลาดชุมชน</span><br />ในพื้นที่ของคุณ
         </motion.h1>
         <motion.p variants={fadeUp} initial="hidden" animate="show" custom={2}
-          className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
-          Community Franchise Model — บริหารตลาดบริการชุมชน รับ Revenue Share จาก Booking ทุกรายการ
-          ไม่ต้องลงทุนระบบ เราสร้างเทคโนโลยีให้คุณแล้ว
+          className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+          Community Franchise Model — บริหารตลาดบริการชุมชน รับ Revenue Share 40%
+          จาก Commission ที่แพลตฟอร์มเก็บจากผู้ให้บริการในพื้นที่ของคุณ ไม่ต้องลงทุนระบบ เราสร้างเทคโนโลยีให้คุณแล้ว
         </motion.p>
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
           className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -89,7 +89,7 @@ export default function FranchisePage() {
             { label: 'ชุมชนที่เปิดแล้ว', value: '12', suffix: 'ชุมชน' },
             { label: 'ผู้ให้บริการรวม', value: '340+', suffix: 'ราย' },
             { label: 'Booking/เดือน', value: '8,400+', suffix: 'ครั้ง' },
-            { label: 'Revenue Share จ่ายแล้ว', value: '฿84,000', suffix: '/เดือน' },
+            { label: 'Revenue Share 40% จ่ายแล้ว', value: '฿84,000', suffix: '/เดือน' },
           ].map((s, i) => (
             <motion.div key={s.label} variants={fadeUp} custom={i}
               className="bg-white/85 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 text-center">
@@ -129,8 +129,9 @@ export default function FranchisePage() {
           รายได้ที่คุณจะได้รับ
         </motion.h2>
         <motion.p variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
-          className="text-center text-slate-500 dark:text-slate-400 mb-8 text-base">
-          Revenue Share คำนวณจากยอด Commission ที่แพลตฟอร์มเก็บในพื้นที่ชุมชนของคุณ
+          className="text-center text-slate-500 dark:text-slate-400 mb-8 text-base leading-relaxed">
+          แพลตฟอร์มเก็บ Commission 5% จากยอดขายของผู้ให้บริการ (ไม่รวมค่าขนส่ง)
+          และแบ่ง 40% ให้ผู้จัดการตลาดชุมชน จ่ายทุกวันที่ 1 ของเดือน
         </motion.p>
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
           className="bg-white/90 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">

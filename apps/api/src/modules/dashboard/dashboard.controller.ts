@@ -34,4 +34,15 @@ export class DashboardController {
   superAdminDashboard() {
     return this.dashboardService.getSuperAdminDashboard()
   }
+
+  @Get('analytics')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.COMMUNITY_ADMIN, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Analytics: monthly time-series, commission totals, top providers' })
+  analytics(
+    @Query('communityId') communityId?: string,
+    @Query('months') months?: string,
+  ) {
+    return this.dashboardService.getAnalytics(communityId, months ? parseInt(months) : 6)
+  }
 }

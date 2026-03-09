@@ -21,10 +21,10 @@ export enum VerificationStatus {
  * LEFT        — ออกจากชุมชนนี้แล้ว (เช่น ย้ายที่อยู่) บัญชียังอยู่ แต่สมัครชุมชนใหม่ได้
  */
 export enum ProviderStatus {
-  ACTIVE    = 'ACTIVE',
+  ACTIVE = 'ACTIVE',
   SUSPENDED = 'SUSPENDED',
-  INACTIVE  = 'INACTIVE',
-  LEFT      = 'LEFT',
+  INACTIVE = 'INACTIVE',
+  LEFT = 'LEFT',
 }
 
 /**
@@ -38,9 +38,9 @@ export enum ProviderStatus {
  */
 export enum KycStatus {
   UNVERIFIED = 'UNVERIFIED',
-  PENDING    = 'PENDING',
-  VERIFIED   = 'VERIFIED',
-  REJECTED   = 'REJECTED',
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+  REJECTED = 'REJECTED',
 }
 
 /**
@@ -69,31 +69,31 @@ export enum KycStatus {
  */
 export enum BookingStatus {
   /* ── Booking request ── */
-  PENDING_PAYMENT           = 'PENDING_PAYMENT',           // รอลูกค้าชำระเงิน
-  PAYMENT_HELD              = 'PAYMENT_HELD',              // ชำระแล้ว เงินถูก hold ใน escrow
-  CONFIRMED                 = 'CONFIRMED',                 // Provider ยืนยันนัดแล้ว รอวันนัด
+  PENDING_PAYMENT = 'PENDING_PAYMENT',           // รอลูกค้าชำระเงิน
+  PAYMENT_HELD = 'PAYMENT_HELD',              // ชำระแล้ว เงินถูก hold ใน escrow
+  CONFIRMED = 'CONFIRMED',                 // Provider ยืนยันนัดแล้ว รอวันนัด
 
   /* ── Service in-progress ── */
-  IN_PROGRESS               = 'IN_PROGRESS',               // Provider กำลังให้บริการ
+  IN_PROGRESS = 'IN_PROGRESS',               // Provider กำลังให้บริการ
   PRICE_ADJUSTMENT_REQUESTED = 'PRICE_ADJUSTMENT_REQUESTED', // Provider ขอปรับราคา (variable pricing)
-  PRICE_ADJUSTMENT_APPROVED  = 'PRICE_ADJUSTMENT_APPROVED',  // CA อนุมัติราคาใหม่แล้ว
+  PRICE_ADJUSTMENT_APPROVED = 'PRICE_ADJUSTMENT_APPROVED',  // CA อนุมัติราคาใหม่แล้ว
 
   /* ── Awaiting confirmation ── */
-  PENDING_CONFIRMATION      = 'PENDING_CONFIRMATION',      // Provider กดเสร็จแล้ว รอลูกค้ายืนยัน
+  PENDING_CONFIRMATION = 'PENDING_CONFIRMATION',      // Provider กดเสร็จแล้ว รอลูกค้ายืนยัน
 
   /* ── Resolution ── */
-  COMPLETED                 = 'COMPLETED',                 // สำเร็จ — ระบบโอนเงินให้ Provider
-  DISPUTED                  = 'DISPUTED',                  // ลูกค้าปฏิเสธ/ร้องเรียน
-  DISPUTE_RESOLVED          = 'DISPUTE_RESOLVED',          // CA แก้ข้อพิพาทเรียบร้อย
+  COMPLETED = 'COMPLETED',                 // สำเร็จ — ระบบโอนเงินให้ Provider
+  DISPUTED = 'DISPUTED',                  // ลูกค้าปฏิเสธ/ร้องเรียน
+  DISPUTE_RESOLVED = 'DISPUTE_RESOLVED',          // CA แก้ข้อพิพาทเรียบร้อย
 
   /* ── Cancellations ── */
-  CANCELLED_BY_CUSTOMER     = 'CANCELLED_BY_CUSTOMER',     // ลูกค้ายกเลิก (ก่อนนัด)
-  CANCELLED_BY_PROVIDER     = 'CANCELLED_BY_PROVIDER',     // Provider ยกเลิก
-  NO_SHOW                   = 'NO_SHOW',                   // Provider ไม่มาตามนัด (ลูกค้าแจ้งหลัง 12h)
-  REFUNDED                  = 'REFUNDED',                  // คืนเงินลูกค้าแล้ว
+  CANCELLED_BY_CUSTOMER = 'CANCELLED_BY_CUSTOMER',     // ลูกค้ายกเลิก (ก่อนนัด)
+  CANCELLED_BY_PROVIDER = 'CANCELLED_BY_PROVIDER',     // Provider ยกเลิก
+  NO_SHOW = 'NO_SHOW',                   // Provider ไม่มาตามนัด (ลูกค้าแจ้งหลัง 12h)
+  REFUNDED = 'REFUNDED',                  // คืนเงินลูกค้าแล้ว
 
   /* ── Fraud/ban ── */
-  BANNED_AND_REFUNDED       = 'BANNED_AND_REFUNDED',       // ตรวจพบ collusion — แบนทั้งคู่ + คืนเงิน
+  BANNED_AND_REFUNDED = 'BANNED_AND_REFUNDED',       // ตรวจพบ collusion — แบนทั้งคู่ + คืนเงิน
 }
 
 /**
@@ -107,20 +107,20 @@ export enum BookingStatus {
  * FAILED      → การชำระล้มเหลว
  */
 export enum EscrowStatus {
-  PENDING        = 'PENDING',
-  HELD           = 'HELD',
-  RELEASED       = 'RELEASED',
-  REFUNDED       = 'REFUNDED',
+  PENDING = 'PENDING',
+  HELD = 'HELD',
+  RELEASED = 'RELEASED',
+  REFUNDED = 'REFUNDED',
   PARTIAL_REFUND = 'PARTIAL_REFUND',
-  FAILED         = 'FAILED',
+  FAILED = 'FAILED',
 }
 
 /** @deprecated use EscrowStatus. Kept for backward compatibility. */
 export enum PaymentStatus {
-  PENDING  = 'PENDING',
-  PAID     = 'PAID',
+  PENDING = 'PENDING',
+  PAID = 'PAID',
   REFUNDED = 'REFUNDED',
-  FAILED   = 'FAILED',
+  FAILED = 'FAILED',
 }
 
 export enum MarketplaceCategory {
@@ -159,13 +159,13 @@ export enum MembershipRole {
  * CLOSED       → ปิดเรื่องแล้ว
  */
 export enum DisputeStatus {
-  OPEN                     = 'OPEN',
-  UNDER_REVIEW             = 'UNDER_REVIEW',
-  RESOLVED_FOR_CUSTOMER    = 'RESOLVED_FOR_CUSTOMER',
-  RESOLVED_FOR_PROVIDER    = 'RESOLVED_FOR_PROVIDER',
-  RESOLVED_PARTIAL         = 'RESOLVED_PARTIAL',
-  ESCALATED                = 'ESCALATED',
-  CLOSED                   = 'CLOSED',
+  OPEN = 'OPEN',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  RESOLVED_FOR_CUSTOMER = 'RESOLVED_FOR_CUSTOMER',
+  RESOLVED_FOR_PROVIDER = 'RESOLVED_FOR_PROVIDER',
+  RESOLVED_PARTIAL = 'RESOLVED_PARTIAL',
+  ESCALATED = 'ESCALATED',
+  CLOSED = 'CLOSED',
 }
 
 /**
@@ -175,52 +175,52 @@ export enum DisputeStatus {
  * VARIABLE → ประเมินราคาขั้นต้นก่อน อัพเดตได้เมื่อถึงโลเคชั่น (ต้อง CA อนุมัติ)
  */
 export enum PricingType {
-  FIXED    = 'FIXED',
+  FIXED = 'FIXED',
   VARIABLE = 'VARIABLE',
 }
 
 export enum NotificationType {
   /* ── Booking lifecycle ── */
-  BOOKING_CREATED               = 'BOOKING_CREATED',
-  BOOKING_PAYMENT_REQUIRED      = 'BOOKING_PAYMENT_REQUIRED',
-  BOOKING_PAYMENT_HELD          = 'BOOKING_PAYMENT_HELD',
-  BOOKING_CONFIRMED             = 'BOOKING_CONFIRMED',
-  BOOKING_IN_PROGRESS           = 'BOOKING_IN_PROGRESS',
+  BOOKING_CREATED = 'BOOKING_CREATED',
+  BOOKING_PAYMENT_REQUIRED = 'BOOKING_PAYMENT_REQUIRED',
+  BOOKING_PAYMENT_HELD = 'BOOKING_PAYMENT_HELD',
+  BOOKING_CONFIRMED = 'BOOKING_CONFIRMED',
+  BOOKING_IN_PROGRESS = 'BOOKING_IN_PROGRESS',
   BOOKING_COMPLETED_BY_PROVIDER = 'BOOKING_COMPLETED_BY_PROVIDER',  // กรุณายืนยันภายใน 72h
   BOOKING_CONFIRMATION_REMINDER = 'BOOKING_CONFIRMATION_REMINDER',  // เตือนก่อน auto-release
-  BOOKING_AUTO_RELEASED         = 'BOOKING_AUTO_RELEASED',          // auto-release 72h
-  BOOKING_COMPLETED             = 'BOOKING_COMPLETED',
-  BOOKING_CANCELLED             = 'BOOKING_CANCELLED',
-  BOOKING_ACCEPTED              = 'BOOKING_ACCEPTED',
-  BOOKING_REJECTED              = 'BOOKING_REJECTED',
+  BOOKING_AUTO_RELEASED = 'BOOKING_AUTO_RELEASED',          // auto-release 72h
+  BOOKING_COMPLETED = 'BOOKING_COMPLETED',
+  BOOKING_CANCELLED = 'BOOKING_CANCELLED',
+  BOOKING_ACCEPTED = 'BOOKING_ACCEPTED',
+  BOOKING_REJECTED = 'BOOKING_REJECTED',
   /* ── No-show ── */
-  BOOKING_NO_SHOW_WARNING       = 'BOOKING_NO_SHOW_WARNING',        // เตือนลูกค้าหลัง 12h
-  BOOKING_NO_SHOW_CONFIRMED     = 'BOOKING_NO_SHOW_CONFIRMED',
-  BOOKING_TIME_EXTENDED         = 'BOOKING_TIME_EXTENDED',          // ลูกค้าขยายเวลา
+  BOOKING_NO_SHOW_WARNING = 'BOOKING_NO_SHOW_WARNING',        // เตือนลูกค้าหลัง 12h
+  BOOKING_NO_SHOW_CONFIRMED = 'BOOKING_NO_SHOW_CONFIRMED',
+  BOOKING_TIME_EXTENDED = 'BOOKING_TIME_EXTENDED',          // ลูกค้าขยายเวลา
   /* ── Variable pricing ── */
-  PRICE_ADJUSTMENT_REQUESTED    = 'PRICE_ADJUSTMENT_REQUESTED',     // Provider ขอปรับราคา
-  PRICE_ADJUSTMENT_APPROVED     = 'PRICE_ADJUSTMENT_APPROVED',
-  PRICE_ADJUSTMENT_REJECTED     = 'PRICE_ADJUSTMENT_REJECTED',
+  PRICE_ADJUSTMENT_REQUESTED = 'PRICE_ADJUSTMENT_REQUESTED',     // Provider ขอปรับราคา
+  PRICE_ADJUSTMENT_APPROVED = 'PRICE_ADJUSTMENT_APPROVED',
+  PRICE_ADJUSTMENT_REJECTED = 'PRICE_ADJUSTMENT_REJECTED',
   /* ── Dispute ── */
-  DISPUTE_OPENED                = 'DISPUTE_OPENED',
-  DISPUTE_UNDER_REVIEW          = 'DISPUTE_UNDER_REVIEW',
-  DISPUTE_RESOLVED              = 'DISPUTE_RESOLVED',
-  DISPUTE_ESCALATED             = 'DISPUTE_ESCALATED',
+  DISPUTE_OPENED = 'DISPUTE_OPENED',
+  DISPUTE_UNDER_REVIEW = 'DISPUTE_UNDER_REVIEW',
+  DISPUTE_RESOLVED = 'DISPUTE_RESOLVED',
+  DISPUTE_ESCALATED = 'DISPUTE_ESCALATED',
   /* ── Provider ── */
-  PROVIDER_APPROVED             = 'PROVIDER_APPROVED',
-  PROVIDER_REJECTED             = 'PROVIDER_REJECTED',
+  PROVIDER_APPROVED = 'PROVIDER_APPROVED',
+  PROVIDER_REJECTED = 'PROVIDER_REJECTED',
   /* ── Promotions / Coupons ── */
-  PROMOTION_PENDING_APPROVAL    = 'PROMOTION_PENDING_APPROVAL',    // Provider ส่งโปรให้ CA approve
-  PROMOTION_APPROVED            = 'PROMOTION_APPROVED',            // CA อนุมัติโปรแล้ว
-  PROMOTION_REJECTED            = 'PROMOTION_REJECTED',
-  PROMOTION_BROADCAST           = 'PROMOTION_BROADCAST',           // CA broadcast → แจ้งลูกค้าในชุมชน
-  PROMOTION_EXPIRING_SOON       = 'PROMOTION_EXPIRING_SOON',       // เตือน Provider ว่าโปรจะหมดอายุ
-  PROMOTION_EXPIRED             = 'PROMOTION_EXPIRED',
+  PROMOTION_PENDING_APPROVAL = 'PROMOTION_PENDING_APPROVAL',    // Provider ส่งโปรให้ CA approve
+  PROMOTION_APPROVED = 'PROMOTION_APPROVED',            // CA อนุมัติโปรแล้ว
+  PROMOTION_REJECTED = 'PROMOTION_REJECTED',
+  PROMOTION_BROADCAST = 'PROMOTION_BROADCAST',           // CA broadcast → แจ้งลูกค้าในชุมชน
+  PROMOTION_EXPIRING_SOON = 'PROMOTION_EXPIRING_SOON',       // เตือน Provider ว่าโปรจะหมดอายุ
+  PROMOTION_EXPIRED = 'PROMOTION_EXPIRED',
   /* ── Tax updates ── */
-  TAX_CONFIG_UPDATED            = 'TAX_CONFIG_UPDATED',            // SA อัพเดต tax rate → แจ้งทุก CA
+  TAX_CONFIG_UPDATED = 'TAX_CONFIG_UPDATED',            // SA อัพเดต tax rate → แจ้งทุก CA
   /* ── Other ── */
-  REVIEW_RECEIVED               = 'REVIEW_RECEIVED',
-  ACCOUNT_BANNED                = 'ACCOUNT_BANNED',
+  REVIEW_RECEIVED = 'REVIEW_RECEIVED',
+  ACCOUNT_BANNED = 'ACCOUNT_BANNED',
 }
 
 export enum TrialStatus {
@@ -239,10 +239,10 @@ export enum TrialStatus {
  * REVOKED   — ถูกเพิกถอนสิทธิ์ภายหลัง (Super Admin)
  */
 export enum CommunityAdminGrantStatus {
-  PENDING  = 'PENDING',
+  PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
-  REVOKED  = 'REVOKED',
+  REVOKED = 'REVOKED',
 }
 
 /**
@@ -254,10 +254,10 @@ export enum CommunityAdminGrantStatus {
  * BROADCAST   — Community Admin ประกาศโปรโมชั่นเป็น card ใน community landing page
  */
 export enum PromotionType {
-  PERCENTAGE   = 'PERCENTAGE',
+  PERCENTAGE = 'PERCENTAGE',
   FIXED_AMOUNT = 'FIXED_AMOUNT',
-  COUPON_CODE  = 'COUPON_CODE',
-  BROADCAST    = 'BROADCAST',
+  COUPON_CODE = 'COUPON_CODE',
+  BROADCAST = 'BROADCAST',
 }
 
 /**
@@ -272,12 +272,12 @@ export enum PromotionType {
  * CANCELLED — Provider หรือ CA ยกเลิกก่อนหมดอายุ
  */
 export enum PromotionStatus {
-  DRAFT     = 'DRAFT',
-  PENDING   = 'PENDING',
-  APPROVED  = 'APPROVED',
-  ACTIVE    = 'ACTIVE',
-  REJECTED  = 'REJECTED',
-  EXPIRED   = 'EXPIRED',
+  DRAFT = 'DRAFT',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  ACTIVE = 'ACTIVE',
+  REJECTED = 'REJECTED',
+  EXPIRED = 'EXPIRED',
   CANCELLED = 'CANCELLED',
 }
 
@@ -289,9 +289,9 @@ export enum PromotionStatus {
  * CUSTOM     — ภาษีหรือค่าธรรมเนียมอื่นๆ ที่ SA กำหนด
  */
 export enum TaxType {
-  VAT        = 'VAT',
+  VAT = 'VAT',
   WITHHOLDING = 'WITHHOLDING',
-  CUSTOM     = 'CUSTOM',
+  CUSTOM = 'CUSTOM',
 }
 
 /**
@@ -303,8 +303,61 @@ export enum TaxType {
  * PLATFORM_FEE    — คิดจาก commission ของ platform
  */
 export enum TaxApplyTo {
-  TOTAL_AMOUNT   = 'TOTAL_AMOUNT',
+  TOTAL_AMOUNT = 'TOTAL_AMOUNT',
   AFTER_DISCOUNT = 'AFTER_DISCOUNT',
   PROVIDER_PAYOUT = 'PROVIDER_PAYOUT',
-  PLATFORM_FEE   = 'PLATFORM_FEE',
+  PLATFORM_FEE = 'PLATFORM_FEE',
+}
+
+// ─── Feature: Invite Link System ────────────────────────────────────────────
+
+/**
+ * Approval status for a member joining a community via invite or direct signup.
+ * Customers: auto-approved (APPROVED) at signup.
+ * Providers/Traders: start as PENDING, require CA or Super Admin approval.
+ */
+export enum MemberApprovalStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+// ─── Feature: Commission & Revenue Share ────────────────────────────────────
+
+/**
+ * Lifecycle of a CommissionLedger entry (one per booking).
+ * PENDING   = booking paid; SETTLED = booking COMPLETED; CANCELLED = refunded.
+ */
+export enum CommissionLedgerStatus {
+  PENDING = 'PENDING',
+  SETTLED = 'SETTLED',
+  CANCELLED = 'CANCELLED',
+}
+
+/**
+ * Lifecycle of a monthly payout to a Community Admin (franchise revenue share).
+ * Flow: DRAFT → PENDING_APPROVAL → APPROVED → PROCESSING → PAID | FAILED
+ */
+export enum PayoutStatus {
+  DRAFT = 'DRAFT',
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
+  APPROVED = 'APPROVED',
+  PROCESSING = 'PROCESSING',
+  PAID = 'PAID',
+  FAILED = 'FAILED',
+}
+
+// ─── Feature: Delivery / Logistics (future-ready) ───────────────────────────
+
+/**
+ * Shipping/delivery status for cross-community or delivery-required orders.
+ * NOT_APPLICABLE = no delivery needed (in-person service / same-location).
+ */
+export enum DeliveryStatus {
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  PENDING = 'PENDING',
+  PICKED_UP = 'PICKED_UP',
+  IN_TRANSIT = 'IN_TRANSIT',
+  DELIVERED = 'DELIVERED',
+  FAILED = 'FAILED',
 }

@@ -16,6 +16,16 @@ export class Community {
   @Column({ unique: true })
   slug: string
 
+  /**
+   * Unique invite code for this community's franchise manager.
+   * Generated once on franchise approval (e.g. MKT-BKK-001).
+   * Used to build invite links: /join/{inviteCode}
+   * Non-expiring as long as the admin's franchise is active.
+   */
+  @Index({ unique: true })
+  @Column({ name: 'invite_code', unique: true, nullable: true })
+  inviteCode: string
+
   @Column({ nullable: true, type: 'text' })
   description: string
 
@@ -45,10 +55,10 @@ export class Community {
   @Column({ name: 'trial_status', type: 'enum', enum: TrialStatus, default: TrialStatus.NOT_STARTED })
   trialStatus: TrialStatus
 
-  @Column({ name: 'commission_rate', type: 'decimal', precision: 5, scale: 2, default: 12.00 })
+  @Column({ name: 'commission_rate', type: 'decimal', precision: 5, scale: 2, default: 5.00 })
   commissionRate: number
 
-  @Column({ name: 'revenue_share_rate', type: 'decimal', precision: 5, scale: 2, default: 30.00 })
+  @Column({ name: 'revenue_share_rate', type: 'decimal', precision: 5, scale: 2, default: 40.00 })
   revenueShareRate: number
 
   @CreateDateColumn({ name: 'created_at' })

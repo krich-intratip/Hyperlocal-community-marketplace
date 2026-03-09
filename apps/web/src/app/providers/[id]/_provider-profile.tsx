@@ -6,10 +6,10 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import {
   MapPin, Star, Shield, Clock, ChevronLeft, CheckCircle,
-  MessageCircle, ChevronRight, Calendar, Package, Award,
+  MessageCircle, ChevronRight, Calendar, Package, Award, Heart,
 } from 'lucide-react'
 import Link from 'next/link'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
@@ -61,6 +61,7 @@ const DAY_LABELS = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา']
 export default function ProviderProfileClient() {
   useAuthGuard()
   const provider = MOCK_PROVIDER
+  const [followed, setFollowed] = useState(false)
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -105,16 +106,32 @@ export default function ProviderProfileClient() {
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-0.5">
-                      <h1 className="text-xl font-extrabold text-slate-900">{provider.name}</h1>
+                      <h1 className="text-xl font-extrabold text-slate-900 dark:text-white">{provider.name}</h1>
                       {provider.verified && <Shield className="h-4 w-4 text-blue-500" />}
                     </div>
                     <p className="text-sm text-slate-500">{provider.tagline}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{provider.category}</p>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-                    <span className="text-xl font-extrabold text-slate-900">{provider.rating}</span>
-                    <span className="text-sm text-slate-400">({provider.reviews})</span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                      <span className="text-xl font-extrabold text-slate-900 dark:text-white">{provider.rating}</span>
+                      <span className="text-sm text-slate-400">({provider.reviews})</span>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setFollowed(f => !f)}
+                      aria-label={followed ? 'เลิกติดตาม' : 'ติดตาม Provider'}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-bold transition-all ${
+                        followed
+                          ? 'bg-rose-50 border-rose-300 text-rose-600 dark:bg-rose-900/30 dark:border-rose-600 dark:text-rose-400'
+                          : 'bg-white border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500 dark:bg-slate-800 dark:border-slate-600'
+                      }`}
+                    >
+                      <Heart className={`h-4 w-4 transition-colors ${followed ? 'fill-rose-500 text-rose-500' : ''}`} />
+                      {followed ? 'ติดตามแล้ว' : 'ติดตาม'}
+                    </motion.button>
                   </div>
                 </div>
 
