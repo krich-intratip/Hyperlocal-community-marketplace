@@ -47,6 +47,9 @@ async function bootstrap() {
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   })
 
+  // ── Cookie parsing: required for httpOnly JWT cookie auth ──
+  await app.register(import('@fastify/cookie'))
+
   // ── Security: CORS — whitelist only ──
   app.enableCors({
     origin: (origin, callback) => {

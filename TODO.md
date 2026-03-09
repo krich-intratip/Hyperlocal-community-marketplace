@@ -1,6 +1,6 @@
 # TODO — Community Hyper Marketplace
 
-> **Version:** v0.4.0 | **Updated:** 2026-03-09
+> **Version:** v0.4.1 | **Updated:** 2026-03-09
 > Legend: `[ ]` pending · `[x]` done · `[~]` in progress
 
 ---
@@ -14,9 +14,8 @@
 ## 🟡 Medium Priority
 
 - [ ] **ME-1** Analytics dashboard — wire `GET /dashboard/analytics` (replace mock data in `/dashboard/superadmin/analytics`)
-- [ ] **ME-2** Cookie auth fix — register `@fastify/cookie` in `main.ts` so httpOnly cookie JWT works in Fastify
-- [ ] **ME-3** Supabase Storage — provider avatar / listing image / community banner upload
-- [ ] **ME-4** Provider follow/wishlist — persist to backend (`POST /users/follow/:providerId`)
+- [ ] **ME-2** Supabase Storage — provider avatar / listing image / community banner upload
+- [ ] **ME-3** Provider follow/wishlist — persist to backend (`POST /users/follow/:providerId`)
 
 ---
 
@@ -80,3 +79,4 @@
 - [x] HI-5 Real Google OAuth — useAuthHydrate, /auth/callback, signin wired (v0.3.8)
 - [x] Build fixes — Suspense wrappers for useSearchParams, join/[code] server wrapper (v0.3.9)
 - [x] Security Audit & Hardening (OWASP A01/A03/A04) — auth guards on commission/payout, open redirect fix, pagination cap, server-side booking pricing (v0.4.0) ✅
+- [x] ME-1 Cookie Auth Fix — @fastify/cookie registered, useAuthHydrate env var fixed (v0.4.1) ✅

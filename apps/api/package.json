@@ -1,6 +1,6 @@
 {
   "name": "@chm/api",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "scripts": {
     "dev": "nest start --watch",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@chm/shared-types": "workspace:*",
+    "@fastify/cookie": "^9.4.0",
     "@fastify/helmet": "^11.1.1",
     "@nestjs/cache-manager": "^2.3.0",
     "@nestjs/common": "^10.4.15",

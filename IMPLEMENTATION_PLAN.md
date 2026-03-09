@@ -36,10 +36,12 @@
   - **Added** `@types/express` devDep (required by passport-jwt types).
 - **Build Fix** — Added missing `ListingRepo` to `BookingsModule.forFeature` for server-side price lookup.
 
-## Phase 5: Next Priorities
+## Phase 5: Completed (v0.4.1)
+- **ME-1 Cookie Auth Fix** — Installed `@fastify/cookie@^9.4.0`; registered plugin in `main.ts` so Fastify parses inbound `Cookie` headers before JWT strategy runs. `cookieOrBearerExtractor` now reads `req.cookies.access_token` correctly. Fixed `useAuthHydrate.ts` env var: `NEXT_PUBLIC_API_URL` → `NEXT_PUBLIC_API_BASE_URL`.
+
+## Phase 6: Next Priorities
 - **Backend Wiring for Analytics:** Wire `/dashboard/superadmin/analytics` to call real `GET /dashboard/analytics` endpoint instead of mock data.
 - **Real-time Notifications:** WebSocket or Supabase Realtime for live notification push.
 - **Trust Score Algorithm:** Build logic into provider profiles to adjust trust badges based on review frequency and cancellation history.
 - **Promoted Listings:** New module allowing admins to boost listings in the marketplace frontend.
 - **Delivery Integration:** Connect DB delivery fields with third-party logistics API (Flash Express, Kerry) for waybill generation.
-- **Cookie Auth Fix:** Register `@fastify/cookie` in `main.ts` so httpOnly cookie JWT extraction works in Fastify (currently falls back to Bearer token only).
