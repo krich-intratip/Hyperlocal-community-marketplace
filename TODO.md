@@ -1,6 +1,6 @@
 # TODO — Community Hyper Marketplace
 
-> **Version:** v0.4.1 | **Updated:** 2026-03-09
+> **Version:** v0.4.2 | **Updated:** 2026-03-09
 > Legend: `[ ]` pending · `[x]` done · `[~]` in progress
 
 ---
@@ -80,3 +80,4 @@
 - [x] Build fixes — Suspense wrappers for useSearchParams, join/[code] server wrapper (v0.3.9)
 - [x] Security Audit & Hardening (OWASP A01/A03/A04) — auth guards on commission/payout, open redirect fix, pagination cap, server-side booking pricing (v0.4.0) ✅
 - [x] ME-1 Cookie Auth Fix — @fastify/cookie registered, useAuthHydrate env var fixed (v0.4.1) ✅
+- [x] ME-1 Analytics Backend Wiring — dashboardApi + useAnalytics hook, analytics page wired to GET /dashboard/analytics (v0.4.2) ✅

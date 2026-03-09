@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.4.0 | **Updated:** 2026-03-09
+> **Version:** v0.4.2 | **Updated:** 2026-03-09
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -39,8 +39,10 @@
 ## Phase 5: Completed (v0.4.1)
 - **ME-1 Cookie Auth Fix** — Installed `@fastify/cookie@^9.4.0`; registered plugin in `main.ts` so Fastify parses inbound `Cookie` headers before JWT strategy runs. `cookieOrBearerExtractor` now reads `req.cookies.access_token` correctly. Fixed `useAuthHydrate.ts` env var: `NEXT_PUBLIC_API_URL` → `NEXT_PUBLIC_API_BASE_URL`.
 
-## Phase 6: Next Priorities
-- **Backend Wiring for Analytics:** Wire `/dashboard/superadmin/analytics` to call real `GET /dashboard/analytics` endpoint instead of mock data.
+## Phase 6: Completed (v0.4.2)
+- **Analytics Backend Wiring** — Added `AnalyticsResponse` types to `types/api.ts`. Added `dashboardApi.getAnalytics()` to `api.ts`. Created `useAnalytics` hook with env-gate fallback to mock data. Analytics page now calls real `GET /dashboard/analytics` with `months` param; Refresh button triggers manual refetch; staleTime 5m matches backend Redis TTL.
+
+## Phase 7: Next Priorities
 - **Real-time Notifications:** WebSocket or Supabase Realtime for live notification push.
 - **Trust Score Algorithm:** Build logic into provider profiles to adjust trust badges based on review frequency and cancellation history.
 - **Promoted Listings:** New module allowing admins to boost listings in the marketplace frontend.

@@ -14,35 +14,12 @@ import { Navbar } from '@/components/navbar'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { useAnalytics } from '@/hooks/useAnalytics'
+import type { AnalyticsMonthlySeries } from '@/types'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.4, delay: i * 0.07 } }),
-}
-
-// ── Mock analytics data (used when API not connected) ──────────────────────────
-
-const MOCK_SERIES = [
-  { month: '2025-10', orders: 312, sales: 248400, commission: 24840 },
-  { month: '2025-11', orders: 389, sales: 312000, commission: 31200 },
-  { month: '2025-12', orders: 501, sales: 422800, commission: 42280 },
-  { month: '2026-01', orders: 448, sales: 371600, commission: 37160 },
-  { month: '2026-02', orders: 534, sales: 445200, commission: 44520 },
-  { month: '2026-03', orders: 421, sales: 352100, commission: 35210 },
-]
-
-const MOCK_TOP_PROVIDERS = [
-  { providerName: 'แม่สมร อาหารอีสาน', orders: 142, revenue: 62800 },
-  { providerName: 'ช่างสมชาย ซ่อมบ้าน', orders: 98, revenue: 48500 },
-  { providerName: 'ทีมแม่บ้านสะอาด', orders: 87, revenue: 43200 },
-  { providerName: 'ครูน้องใหม่สอนพิเศษ', orders: 76, revenue: 38400 },
-  { providerName: 'เบเกอรี่ป้าแดง', orders: 64, revenue: 29800 },
-]
-
-const MOCK_SUMMARY = {
-  totalOrders: 2605,
-  totalSales: 2152100,
-  totalCommission: 215210,
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -57,10 +34,10 @@ function formatTHB(n: number) {
   return n.toLocaleString('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 })
 }
 
-function exportCSV(series: typeof MOCK_SERIES) {
+function exportCSV(series: (AnalyticsMonthlySeries & { label: string })[]) {
   const header = 'เดือน,จำนวนออเดอร์,ยอดขายรวม (บาท),ค่าคอมมิชชัน (บาท)\n'
   const rows = series
-    .map((r) => `${formatMonth(r.month)},${r.orders},${r.sales},${r.commission}`)
+    .map((r) => `${r.label},${r.orders},${r.sales},${r.commission}`)
     .join('\n')
   const blob = new Blob(['\uFEFF' + header + rows], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
@@ -79,12 +56,15 @@ export default function AnalyticsDashboardPage() {
   const [months, setMonths] = useState(6)
   const [activeChart, setActiveChart] = useState<'sales' | 'orders'>('sales')
 
-  const series = MOCK_SERIES.slice(-months).map((r) => ({
+  const { data, isFetching, refetch } = useAnalytics(months)
+
+  const series = (data?.monthlySeries ?? []).map((r) => ({
     ...r,
     label: formatMonth(r.month),
   }))
 
-  const summary = MOCK_SUMMARY
+  const summary = data?.summary ?? { totalOrders: 0, totalSales: 0, totalCommission: 0 }
+  const topProviders = data?.topProviders ?? []
 
   const handleExport = useCallback(() => {
     exportCSV(series)
@@ -157,6 +137,14 @@ export default function AnalyticsDashboardPage() {
                   </button>
                 ))}
               </div>
+              <button
+                onClick={() => refetch()}
+                disabled={isFetching}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? 'animate-spin' : ''}`} />
+                {isFetching ? 'กำลังโหลด...' : 'Refresh'}
+              </button>
               <button
                 onClick={handleExport}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
@@ -255,8 +243,8 @@ export default function AnalyticsDashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {MOCK_TOP_PROVIDERS.map((p, i) => (
-                  <tr key={p.providerName}
+                {topProviders.map((p, i) => (
+                  <tr key={p.providerId}
                     className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="px-4 py-3 font-bold text-slate-400 dark:text-slate-500">{i + 1}</td>
                     <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">{p.providerName}</td>
@@ -271,12 +259,13 @@ export default function AnalyticsDashboardPage() {
           </div>
         </motion.div>
 
-        {/* API note */}
+        {/* Status note */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
           className="mt-6 flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
           <RefreshCw className="h-3.5 w-3.5" />
           <span>
-            ข้อมูลจาก mock data — เชื่อมต่อ <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 rounded">GET /dashboard/analytics</code> เมื่อ backend พร้อม
+            ข้อมูลจาก <code className="font-mono bg-slate-100 dark:bg-slate-800 px-1 rounded">GET /dashboard/analytics</code>
+            {' '}— cache อัพเดตทุก 5 นาที
           </span>
         </motion.div>
 

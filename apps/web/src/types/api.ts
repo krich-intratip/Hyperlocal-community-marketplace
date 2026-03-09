@@ -282,3 +282,33 @@ export interface AddressDto {
   lat?: number
   lng?: number
 }
+
+// ─── Analytics / Dashboard ────────────────────────────────────────────────────
+
+export interface AnalyticsMonthlySeries {
+  month: string          // 'YYYY-MM'
+  orders: number
+  sales: number
+  commission: number
+}
+
+export interface AnalyticsTopProvider {
+  providerId: string
+  providerName: string
+  orders: number
+  revenue: number
+}
+
+export interface AnalyticsSummary {
+  totalOrders: number
+  totalSales: number
+  totalCommission: number
+}
+
+export interface AnalyticsResponse {
+  period: number
+  communityId?: string
+  summary: AnalyticsSummary
+  monthlySeries: AnalyticsMonthlySeries[]
+  topProviders: AnalyticsTopProvider[]
+}

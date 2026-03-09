@@ -20,6 +20,7 @@ import type {
   UserProfile,
   Listing,
   Notification,
+  AnalyticsResponse,
 } from '@/types'
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -152,4 +153,11 @@ export const usersApi = {
 
   updateProfile: (dto: Partial<Pick<UserProfile, 'name' | 'phone' | 'avatarUrl'>>) =>
     apiClient.patch<ApiResponse<UserProfile>>('/users/me', dto),
+}
+
+// ─── Dashboard / Analytics ────────────────────────────────────────────────────
+
+export const dashboardApi = {
+  getAnalytics: (params?: { months?: number; communityId?: string }) =>
+    apiClient.get<AnalyticsResponse>('/dashboard/analytics', { params }),
 }
