@@ -6,7 +6,8 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart } from 'lucide-react'
 import Link from 'next/link'
-import { useState, lazy, Suspense, useCallback } from 'react'
+import { useState, lazy, Suspense, useCallback, useTransition } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { ProviderStatusBadge } from '@/components/provider-status'
 import { useT } from '@/hooks/useT'
 import { formatDateShort } from '@/lib/date'
@@ -67,6 +68,28 @@ function StockBar({ stock, max }: { stock: number; max: number }) {
 
 
 export default function MarketplacePage() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [, startTransition] = useTransition()
+
+  const activeCategory = searchParams.get('category') ?? 'ALL'
+  const search         = searchParams.get('q') ?? ''
+  const sortBy         = (searchParams.get('sort') as 'rating' | 'price') ?? 'rating'
+  const statusFilter   = (searchParams.get('status') as ProviderStatus | 'ALL') ?? 'ALL'
+  const radiusKm       = parseFloat(searchParams.get('radius') ?? '5')
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
+
+  function updateParam(key: string, value: string) {
+    const params = new URLSearchParams(searchParams.toString())
+    if (value === '' || value === 'ALL' || (key === 'sort' && value === 'rating') || (key === 'radius' && value === '5')) {
+      params.delete(key)
+    } else {
+      params.set(key, value)
+    }
+    startTransition(() => { router.replace(`${pathname}?${params.toString()}`, { scroll: false }) })
+  }
+
   const [wishlist, setWishlist] = useState<Set<string>>(new Set())
   const toggleWishlist = useCallback((id: string, e: React.MouseEvent) => {
     e.preventDefault()
@@ -78,12 +101,6 @@ export default function MarketplacePage() {
     })
   }, [])
   const t = useT()
-  const [activeCategory, setActiveCategory] = useState('ALL')
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<'rating' | 'price'>('rating')
-  const [statusFilter, setStatusFilter] = useState<ProviderStatus | 'ALL'>('ALL')
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
-  const [radiusKm, setRadiusKm] = useState(5)
 
   const { data: allListings = [], isLoading } = useListings({ sortBy })
 
@@ -119,10 +136,10 @@ export default function MarketplacePage() {
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input type="text" placeholder={t.marketplace.searchPlaceholder}
-              value={search} onChange={e => setSearch(e.target.value)}
+              value={search} onChange={e => updateParam('q', e.target.value)}
               className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all" />
           </div>
-          <select value={sortBy} onChange={e => setSortBy(e.target.value as 'rating' | 'price')}
+          <select value={sortBy} onChange={e => updateParam('sort', e.target.value)}
             className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800 text-base text-slate-700 dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 cursor-pointer">
             <option value="rating">{t.marketplace.sortRating}</option>
             <option value="price">{t.marketplace.sortPrice}</option>
@@ -135,7 +152,7 @@ export default function MarketplacePage() {
           {/* Status filter */}
           <div className="flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 overflow-hidden">
             {(['ALL','available','busy','offline'] as const).map(val => (
-              <button key={val} onClick={() => setStatusFilter(val)}
+              <button key={val} onClick={() => updateParam('status', val)}
                 className={`px-3 py-1.5 text-sm font-semibold transition-colors ${
                   statusFilter === val ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-blue-600'
                 }`}>
@@ -149,7 +166,7 @@ export default function MarketplacePage() {
             <MapPin className="h-4 w-4 text-blue-500" />
             <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{t.marketplace.filterRadius}</span>
             <input type="range" min={1} max={10} step={0.5} value={radiusKm}
-              onChange={e => setRadiusKm(parseFloat(e.target.value))}
+              onChange={e => updateParam('radius', e.target.value)}
               className="w-20 accent-blue-600" />
             <span className="text-sm font-bold text-blue-600">{radiusKm} {t.common.km}</span>
           </div>
@@ -183,7 +200,7 @@ export default function MarketplacePage() {
                 : allListings.filter(l => l.category === cat.slug).length
               return (
                 <motion.button key={cat.slug} whileTap={{ scale: 0.95 }}
-                  onClick={() => setActiveCategory(cat.slug)}
+                  onClick={() => updateParam('category', cat.slug)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border flex-shrink-0 ${
                     activeCategory === cat.slug
                       ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200'
@@ -210,7 +227,7 @@ export default function MarketplacePage() {
               const isActive = activeCategory === cat.slug
               return (
                 <motion.button key={cat.slug} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                  onClick={() => setActiveCategory(cat.slug)}
+                  onClick={() => updateParam('category', cat.slug)}
                   className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
                     isActive
                       ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200 dark:shadow-blue-900/30'

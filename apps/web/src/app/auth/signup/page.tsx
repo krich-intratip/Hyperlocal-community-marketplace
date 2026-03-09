@@ -6,7 +6,7 @@ import { Navbar } from '@/components/navbar'
 import { ArrowRight, Users, Star, Store, Eye, EyeOff, CheckCircle, ChevronLeft } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/store/auth.store'
 
 const fadeUp = {
@@ -53,6 +53,13 @@ const BENEFITS: Record<Role, string[]> = {
   admin: ['Revenue Share 10% จากทุก Booking', 'จัดการ Provider เอง', 'Dashboard วิเคราะห์ตลาด', 'สิทธิ์ประกาศชุมชน'],
 }
 
+const STEPS: { key: Step; label: string }[] = [
+  { key: 'role', label: 'บทบาท' },
+  { key: 'form', label: 'ข้อมูล' },
+  { key: 'done', label: 'เสร็จ' },
+]
+const STEP_IDX: Record<Step, number> = { role: 0, form: 1, done: 2 }
+
 export default function SignUpPage() {
   const [step, setStep] = useState<Step>('role')
   const [selectedRole, setSelectedRole] = useState<Role>('customer')
@@ -62,6 +69,8 @@ export default function SignUpPage() {
   const [errors, setErrors] = useState<Partial<typeof form>>({})
   const { login } = useAuthStore()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect')
 
   const role = ROLES.find(r => r.id === selectedRole)!
 
@@ -92,15 +101,28 @@ export default function SignUpPage() {
     }, 1400)
   }
 
+  function handleMockGoogleSignup() {
+    setLoading(true)
+    setTimeout(() => {
+      login({
+        id: `u-${Date.now()}`,
+        name: 'Google User',
+        email: 'google@example.com',
+        avatar: selectedRole === 'customer' ? '🛍️' : selectedRole === 'provider' ? '⭐' : '🏘️',
+        role: selectedRole === 'admin' ? 'admin' : selectedRole,
+        verified: true,
+      })
+      setLoading(false)
+      setStep('done')
+    }, 1000)
+  }
+
   useEffect(() => {
     if (step !== 'done') return
-    const t = setTimeout(() => {
-      if (selectedRole === 'provider') router.push('/dashboard/provider')
-      else if (selectedRole === 'admin') router.push('/franchise/apply')
-      else router.push('/marketplace')
-    }, 2500)
+    const dest = redirectTo ?? (selectedRole === 'provider' ? '/dashboard/provider' : selectedRole === 'admin' ? '/franchise/apply' : '/marketplace')
+    const t = setTimeout(() => { router.push(dest) }, 2500)
     return () => clearTimeout(t)
-  }, [step, selectedRole, router])
+  }, [step, selectedRole, router, redirectTo])
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
@@ -108,6 +130,37 @@ export default function SignUpPage() {
       <Navbar />
 
       <section className="max-w-md mx-auto px-4 sm:px-6 pt-10 pb-20">
+
+        {/* Step indicator */}
+        {step !== 'done' && (
+          <div className="flex items-center justify-center gap-0 mb-8">
+            {STEPS.filter(s => s.key !== 'done').map((s, i, arr) => {
+              const active = STEP_IDX[step] === i
+              const done = STEP_IDX[step] > i
+              return (
+                <div key={s.key} className="flex items-center">
+                  <div className="flex flex-col items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold border-2 transition-all ${
+                      done ? 'bg-blue-600 border-blue-600 text-white'
+                      : active ? 'bg-white border-blue-600 text-blue-600 shadow-md'
+                      : 'bg-white border-slate-200 text-slate-300'
+                    }`}>
+                      {done ? <CheckCircle className="h-4 w-4" /> : i + 1}
+                    </div>
+                    <span className={`text-[10px] mt-1 font-bold ${
+                      active ? 'text-blue-600' : done ? 'text-blue-400' : 'text-slate-300'
+                    }`}>{s.label}</span>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <div className={`w-12 h-0.5 mx-1 mb-4 transition-all ${
+                      STEP_IDX[step] > i ? 'bg-blue-500' : 'bg-slate-200'
+                    }`} />
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
 
         {/* ── Step: role ── */}
         {step === 'role' && (
@@ -166,7 +219,9 @@ export default function SignUpPage() {
 
               {/* Google OAuth */}
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
+                onClick={handleMockGoogleSignup}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-blue-300 hover:shadow-md transition-all disabled:opacity-60">
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -187,11 +242,16 @@ export default function SignUpPage() {
         {/* ── Step: form ── */}
         {step === 'form' && (
           <>
-            <motion.button variants={fadeUp} initial="hidden" animate="show" custom={0}
-              onClick={() => setStep('role')}
-              className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 mb-6">
-              <ChevronLeft className="h-4 w-4" /> เปลี่ยนบทบาท
-            </motion.button>
+            <div className="flex items-center justify-between mb-6">
+              <motion.button variants={fadeUp} initial="hidden" animate="show" custom={0}
+                onClick={() => setStep('role')}
+                className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600">
+                <ChevronLeft className="h-4 w-4" /> เปลี่ยนบทบาท
+              </motion.button>
+              <Link href="/auth/signin" className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600">
+                มีบัญชีแล้ว? เข้าสู่ระบบ
+              </Link>
+            </div>
 
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
               className="text-center mb-6">
