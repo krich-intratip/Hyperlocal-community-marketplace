@@ -6,13 +6,14 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import {
   ChevronLeft, Calendar, Clock, MapPin, MessageCircle, Star,
-  CheckCircle, XCircle, AlertCircle, Shield, Phone, ChevronRight,
+  CheckCircle, XCircle, AlertCircle, Shield, ChevronRight,
   Package, ThumbsUp, X,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { useBooking, useCancelBooking, type MockBooking } from '@/hooks/useBookings'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -21,44 +22,58 @@ const fadeUp = {
 
 type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled'
 
-
-const MOCK_BOOKING_DATA = {
-  id: 'B240285',
-  listingId: '7',
-  title: 'นวดแผนไทย ออกนอกสถานที่',
-  provider: 'หมอนวดประเสริฐ',
-  providerId: '3',
-  providerAvatar: '👨‍⚕️',
-  providerPhone: '08X-XXX-XXXX',
-  providerRating: 4.9,
-  image: '💆',
-  date: '2026-03-05',
-  time: '18:00',
-  qty: 1,
-  unit: 'ชั่วโมง',
-  price: 400,
-  platformFee: 20,
-  total: 420,
-  address: '88 หมู่บ้านกรีนวิลล์ ซ.3',
-  community: 'หมู่บ้านกรีนวิลล์',
-  note: '',
-  menus: [] as string[],
-  status: 'completed' as BookingStatus,
-  canReview: true,
-  timeline: [
-    { label: 'สร้างการจอง', time: '2026-03-04T20:15', done: true },
-    { label: 'ผู้ให้บริการยืนยัน', time: '2026-03-04T21:02', done: true },
-    { label: 'ให้บริการแล้ว', time: '2026-03-05T19:05', done: true },
-    { label: 'รีวิวแล้ว', time: '', done: false },
-  ],
-}
-
 const STATUS_CONFIG: Record<BookingStatus, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
   pending:   { label: 'รอยืนยัน',   color: 'text-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200',  icon: AlertCircle },
   confirmed: { label: 'ยืนยันแล้ว', color: 'text-blue-700',   bg: 'bg-blue-50',   border: 'border-blue-200',   icon: Clock },
   completed: { label: 'เสร็จสิ้น',  color: 'text-green-700',  bg: 'bg-green-50',  border: 'border-green-200',  icon: CheckCircle },
   cancelled: { label: 'ยกเลิก',     color: 'text-slate-500',  bg: 'bg-slate-50',  border: 'border-slate-200',  icon: XCircle },
 }
+
+// ── Adapter: MockBooking → detail page shape ───────────────────────────────────
+
+function adaptBooking(b: MockBooking) {
+  const statusMap: Record<MockBooking['status'], BookingStatus> = {
+    upcoming: 'confirmed',
+    pending:  'pending',
+    completed: 'completed',
+    cancelled: 'cancelled',
+  }
+  const subtotal = b.price * b.qty
+  const platformFee = Math.round(subtotal * 0.05)
+  const timeline = [
+    { label: 'สร้างการจอง',        time: '', done: true },
+    { label: 'ผู้ให้บริการยืนยัน', time: '', done: b.status !== 'pending' },
+    { label: 'ให้บริการแล้ว',      time: '', done: b.status === 'completed' || b.status === 'cancelled' },
+    { label: 'รีวิวแล้ว',          time: '', done: b.reviewLeft === true },
+  ]
+  return {
+    id: b.id,
+    listingId: b.listingId,
+    title: b.listingTitle,
+    provider: b.provider,
+    providerId: b.listingId,
+    providerAvatar: b.providerAvatar,
+    providerPhone: '08X-XXX-XXXX',
+    providerRating: 4.8,
+    image: b.listingImage,
+    date: b.date,
+    time: b.time,
+    qty: b.qty,
+    unit: b.unit,
+    price: b.price,
+    platformFee,
+    total: subtotal + platformFee,
+    address: b.address,
+    community: b.community,
+    note: b.note ?? '',
+    menus: b.menuItems ?? [],
+    status: statusMap[b.status],
+    canReview: b.reviewLeft === false,
+    timeline,
+  }
+}
+
+// ── ReviewModal ────────────────────────────────────────────────────────────────
 
 function ReviewModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (r: number, c: string) => void }) {
   const [rating, setRating] = useState(5)
@@ -113,11 +128,12 @@ function ReviewModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (r:
   )
 }
 
-export default function BookingDetailClient() {
+// ── Component ──────────────────────────────────────────────────────────────────
+
+export default function BookingDetailClient({ id }: { id: string }) {
   useAuthGuard()
-  const booking = MOCK_BOOKING_DATA
-  const cfg = STATUS_CONFIG[booking.status]
-  const StatusIcon = cfg.icon
+  const { data: raw, isLoading, isError } = useBooking(id)
+  const cancelMutation = useCancelBooking()
   const { fmt, fmtDT } = useDateFormat()
 
   const [showReview, setShowReview] = useState(false)
@@ -125,10 +141,57 @@ export default function BookingDetailClient() {
   const [reviewData, setReviewData] = useState<{ rating: number; comment: string } | null>(null)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
+  // ── Loading skeleton ─────────────────────────────────────────────────────────
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-2xl bg-white/80 border border-slate-100 h-32 animate-pulse" />
+          ))}
+        </section>
+        <AppFooter />
+      </main>
+    )
+  }
+
+  // ── Not found ────────────────────────────────────────────────────────────────
+
+  if (!raw || isError) {
+    return (
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <div className="max-w-2xl mx-auto px-4 pt-20 pb-20 text-center">
+          <Package className="h-14 w-14 text-slate-200 mx-auto mb-3" />
+          <p className="text-xl font-extrabold text-slate-700 mb-2">ไม่พบการจองนี้</p>
+          <Link href="/bookings"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-base font-bold text-white hover:bg-blue-700 mt-4">
+            <ChevronLeft className="h-4 w-4" /> กลับรายการจอง
+          </Link>
+        </div>
+        <AppFooter />
+      </main>
+    )
+  }
+
+  const booking = adaptBooking(raw)
+  const cfg = STATUS_CONFIG[booking.status]
+  const StatusIcon = cfg.icon
+
   function handleReview(rating: number, comment: string) {
     setReviewData({ rating, comment })
     setReviewed(true)
     setShowReview(false)
+  }
+
+  function handleCancel() {
+    cancelMutation.mutate({ id: booking.id }, {
+      onSuccess: () => setShowCancelConfirm(false),
+    })
   }
 
   return (
@@ -350,11 +413,15 @@ export default function BookingDetailClient() {
                 <p className="text-xs text-red-600">การยกเลิกหลังยืนยันอาจมีค่าธรรมเนียม ขึ้นอยู่กับนโยบายของผู้ให้บริการ</p>
                 <div className="flex gap-3">
                   <button onClick={() => setShowCancelConfirm(false)}
-                    className="flex-1 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                    disabled={cancelMutation.isPending}
+                    className="flex-1 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-50">
                     ไม่ยกเลิก
                   </button>
-                  <button className="flex-1 py-2 rounded-xl bg-red-500 text-sm font-bold text-white hover:bg-red-600 transition-colors">
-                    ยืนยันยกเลิก
+                  <button
+                    disabled={cancelMutation.isPending}
+                    onClick={handleCancel}
+                    className="flex-1 py-2 rounded-xl bg-red-500 text-sm font-bold text-white hover:bg-red-600 transition-colors disabled:opacity-60">
+                    {cancelMutation.isPending ? 'กำลังยกเลิก...' : 'ยืนยันยกเลิก'}
                   </button>
                 </div>
               </motion.div>

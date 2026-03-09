@@ -12,6 +12,8 @@ import { useState } from 'react'
 import { getListingById } from '@/lib/mock-listings'
 import { useDateFormat } from '@/hooks/useDateFormat'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { useCreateBooking } from '@/hooks/useBookings'
+import type { CreateBookingDto } from '@/types'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -47,6 +49,7 @@ const STEP_IDX: Record<Step, number> = { details: 0, confirm: 1, payment: 2, don
 
 export default function BookingFormClient({ id }: { id: string }) {
   useAuthGuard()
+  const createBooking = useCreateBooking()
   const listing = getListingById(id)
   const { fmtLong, locale } = useDateFormat()
   const DAY_LABELS = locale === 'en' ? DAY_LABELS_EN : DAY_LABELS_TH
@@ -58,7 +61,7 @@ export default function BookingFormClient({ id }: { id: string }) {
   const [note, setNote] = useState('')
   const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
-  const [bookingId] = useState(`B${Date.now().toString().slice(-6)}`)
+  const [bookingId, setBookingId] = useState(`B${Date.now().toString().slice(-6)}`)
   const [payMethod, setPayMethod] = useState<PayMethod>('promptpay')
   const [payLoading, setPayLoading] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -80,7 +83,24 @@ export default function BookingFormClient({ id }: { id: string }) {
 
   function handleConfirm() {
     setLoading(true)
-    setTimeout(() => { setLoading(false); setStep('payment') }, 800)
+    const dto: CreateBookingDto = {
+      providerId: listing!.id,
+      serviceDescription: listing!.title + (selectedMenus.length ? ' — ' + selectedMenus.join(', ') : ''),
+      scheduledAt: `${selectedDate!.toISOString().slice(0, 10)}T${selectedTime}:00`,
+      amount: grandTotal,
+      note: note || undefined,
+    }
+    createBooking.mutate(dto, {
+      onSuccess: (data) => {
+        if (data?.id) setBookingId(data.id)
+        setLoading(false)
+        setStep('payment')
+      },
+      onError: () => {
+        setLoading(false)
+        setStep('payment')
+      },
+    })
   }
 
   function handlePayConfirm() {

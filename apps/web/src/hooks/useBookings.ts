@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { bookingsApi } from '@/lib/api'
+import type { CreateBookingDto } from '@/types'
 
 const USE_REAL_API = !!process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -92,8 +93,29 @@ export function useCancelBooking() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
+      if (USE_REAL_API) {
+        await bookingsApi.cancel(id, reason)
+        return { id, reason }
+      }
       await new Promise((r) => setTimeout(r, 600))
       return { id, reason }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: bookingKeys.all })
+    },
+  })
+}
+
+export function useCreateBooking() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (dto: CreateBookingDto) => {
+      if (USE_REAL_API) {
+        const res = await bookingsApi.create(dto)
+        return res.data.data as unknown as MockBooking
+      }
+      await new Promise((r) => setTimeout(r, 600))
+      return { id: `B${Date.now().toString().slice(-6)}` } as MockBooking
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: bookingKeys.all })

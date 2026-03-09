@@ -46,7 +46,7 @@ export default function BookingsPage() {
 
   const filtered = allBookings
     .filter(b => activeFilter === 'ALL' || b.status === activeFilter)
-    .filter(b => !search || b.listingTitle.includes(search) || b.provider.includes(search) || b.id.includes(search))
+    .filter(b => !search || b.listingTitle.toLowerCase().includes(search.toLowerCase()) || b.provider.toLowerCase().includes(search.toLowerCase()) || b.id.toLowerCase().includes(search.toLowerCase()))
 
   const counts = allBookings.reduce((acc, b) => {
     acc[b.status] = (acc[b.status] ?? 0) + 1
