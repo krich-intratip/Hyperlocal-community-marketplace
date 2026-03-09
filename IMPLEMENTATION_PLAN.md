@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.3.4 | **Updated:** 2026-03-09  
+> **Version:** v0.3.8 | **Updated:** 2026-03-09  
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -18,14 +18,16 @@
 - **Frontend: Provider Follow Button** — Added Heart toggle button in `/providers/[id]` hero section with animated active/inactive state.
 - **Frontend: Dark Mode** — Fixed missing `dark:text-white` on hero headings in `/guide` and `/communities` pages.
 
-## Phase 3: Next Priorities
-- **Real Auth:** Google OAuth via NestJS Passport.js + JWT, replacing mock Zustand auth store.
-- **Booking Flow Polish:** End-to-end test signin → redirect → book → QR payment → confirmation.
-- **URL Sync:** Marketplace filter/search state synced to URL params (`?category=FOOD&status=available`).
-- **Backend Wiring for Analytics:** When backend is ready, wire `/dashboard/superadmin/analytics` to call real `GET /dashboard/analytics` endpoint instead of mock data.
+## Phase 3: Completed (v0.3.5–v0.3.8)
+- **HI-1 Booking Flow Polish (v0.3.5)** — Step indicator (details→confirm→payment→done), dark mode on all booking/bookings-list/booking-detail cards, `useAuthGuard` integration, null-safe `fmtLong`, typo fix.
+- **ME-4 Marketplace URL Param Sync (v0.3.6)** — Replaced `useState` filters with `useSearchParams` + `useRouter.replace`. Category, status, sort, q, radius all synced to URL; default values auto-cleaned from params.
+- **ME-5 Signup Polish (v0.3.6)** — Added visual step indicator (บทบาท→ข้อมูล→เสร็จ), `redirect` param support, working Google mock button, "มีบัญชีแล้ว?" link in form step.
+- **ME-6 Redis Cache Layer (v0.3.7)** — Global `CacheModule.registerAsync` with Redis (`REDIS_URL` env, graceful no-op fallback). Listings `search()` caches with key `listings:search:*` TTL 5m, invalidated on create/update/remove. `NotificationsService.getUnreadCount()` caches per-user TTL 30s, invalidated on `send()`. Added `GET /notifications/unread-count` endpoint.
+- **HI-5 Real Google OAuth (v0.3.8)** — Backend already complete (GoogleStrategy, JwtStrategy, httpOnly cookie). Frontend: `useAuthHydrate` hook calls `GET /auth/me` on mount to restore session from cookie; mounted via `AuthHydrator` in `Providers`. `/auth/callback` page handles post-OAuth redirect with success/error/loading states. Signin Google button now navigates to real `${API_URL}/auth/google`; Demo button retained for development.
 
-## Phase 4: Future Proofing (Logistics & Advanced Interfaces)
-- **Delivery Integration:** Connect the newly added DB delivery fields (shippingCost, trackingNumber, status) with an external third-party logistics API (e.g., Flash Express, Kerry) to create standard waybills inside the app.
-- **Trust Score Algorithm:** Build logic into the provider profiles to adjust UI trust badges according to review frequencies and cancelation history.
-- **Promoted Listings:** Introduce a new module allowing admins to boost specific listings for the marketplace frontend.
+## Phase 4: Next Priorities
+- **Backend Wiring for Analytics:** Wire `/dashboard/superadmin/analytics` to call real `GET /dashboard/analytics` endpoint instead of mock data.
 - **Real-time Notifications:** WebSocket or Supabase Realtime for live notification push.
+- **Trust Score Algorithm:** Build logic into provider profiles to adjust trust badges based on review frequency and cancellation history.
+- **Promoted Listings:** New module allowing admins to boost listings in the marketplace frontend.
+- **Delivery Integration:** Connect DB delivery fields with third-party logistics API (Flash Express, Kerry) for waybill generation.
