@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { ArrowRight, Users, Star, Store, Eye, EyeOff, CheckCircle, ChevronLeft } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/store/auth.store'
@@ -60,7 +60,7 @@ const STEPS: { key: Step; label: string }[] = [
 ]
 const STEP_IDX: Record<Step, number> = { role: 0, form: 1, done: 2 }
 
-export default function SignUpPage() {
+function SignUpPageInner() {
   const [step, setStep] = useState<Step>('role')
   const [selectedRole, setSelectedRole] = useState<Role>('customer')
   const [showPass, setShowPass] = useState(false)
@@ -390,5 +390,13 @@ export default function SignUpPage() {
         )}
       </section>
     </main>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense>
+      <SignUpPageInner />
+    </Suspense>
   )
 }

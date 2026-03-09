@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
@@ -8,7 +8,7 @@ import { useAuthStore } from '@/store/auth.store'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1'
 
-export default function AuthCallbackPage() {
+function AuthCallbackInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { login } = useAuthStore()
@@ -80,5 +80,17 @@ export default function AuthCallbackPage() {
         )}
       </motion.div>
     </main>
+  )
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
+      </main>
+    }>
+      <AuthCallbackInner />
+    </Suspense>
   )
 }

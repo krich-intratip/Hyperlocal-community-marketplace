@@ -221,7 +221,7 @@ export default function AnalyticsDashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `฿${(v / 1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: number) => formatTHB(v)} />
+                <Tooltip formatter={(v) => formatTHB(Number(v))} />
                 <Legend />
                 <Line type="monotone" dataKey="sales" name="ยอดขาย (บาท)" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} />
                 <Line type="monotone" dataKey="commission" name="คอมมิชชัน (บาท)" stroke="#f59e0b" strokeWidth={2} dot={{ r: 4 }} />

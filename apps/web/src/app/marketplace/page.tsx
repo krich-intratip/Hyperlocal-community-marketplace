@@ -67,7 +67,7 @@ function StockBar({ stock, max }: { stock: number; max: number }) {
 }
 
 
-export default function MarketplacePage() {
+function MarketplacePageInner() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -382,5 +382,13 @@ export default function MarketplacePage() {
       )}
       <AppFooter />
     </main>
+  )
+}
+
+export default function MarketplacePage() {
+  return (
+    <Suspense>
+      <MarketplacePageInner />
+    </Suspense>
   )
 }

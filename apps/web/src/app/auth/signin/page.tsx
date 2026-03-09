@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import { ArrowRight, Users, Star, Store } from 'lucide-react'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/store/auth.store'
 import type { AuthUser } from '@/store/auth.store'
@@ -45,7 +45,7 @@ const MOCK_USERS: Record<Role, AuthUser> = {
   admin:    { id: 'u003', name: 'คุณสมศักดิ์', email: 'somsak@example.com', avatar: '🏘️', role: 'admin', verified: true },
 }
 
-export default function SignInPage() {
+function SignInPageInner() {
   const [selectedRole, setSelectedRole] = useState<Role>('customer')
   const [loading, setLoading] = useState(false)
   const { login } = useAuthStore()
@@ -206,5 +206,13 @@ export default function SignInPage() {
         </motion.div>
       </section>
     </main>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense>
+      <SignInPageInner />
+    </Suspense>
   )
 }
