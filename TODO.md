@@ -1,6 +1,6 @@
 # TODO — Community Hyper Marketplace
 
-> **Version:** v0.3.4 | **Updated:** 2026-03-09  
+> **Version:** v0.4.0 | **Updated:** 2026-03-09
 > Legend: `[ ]` pending · `[x]` done · `[~]` in progress
 
 ---
@@ -8,23 +8,21 @@
 ## 🔴 High Priority
 
 - [ ] **HI-1** Booking flow end-to-end test & polish (signin → redirect → book → QR payment → confirmation)
-- [ ] **HI-5** Real auth — Google OAuth ผ่าน NestJS Passport.js + JWT (แทน mock Zustand auth)
 
 ---
 
-## � Medium Priority
+## 🟡 Medium Priority
 
-- [ ] **ME-4** Marketplace — sync filter/search state กับ URL params (`?category=FOOD&status=available`)
-- [ ] **ME-5** `/auth/signup` — polish flow ให้สมบูรณ์เหมือน signin
-- [ ] **ME-6** Redis cache layer — notification count (TTL 30s), listing list (TTL 5m)
+- [ ] **ME-1** Analytics dashboard — wire `GET /dashboard/analytics` (replace mock data in `/dashboard/superadmin/analytics`)
+- [ ] **ME-2** Cookie auth fix — register `@fastify/cookie` in `main.ts` so httpOnly cookie JWT works in Fastify
+- [ ] **ME-3** Supabase Storage — provider avatar / listing image / community banner upload
+- [ ] **ME-4** Provider follow/wishlist — persist to backend (`POST /users/follow/:providerId`)
 
 ---
 
 ## 🟢 Low Priority
 
-- [ ] **LO-1** Supabase Storage — provider avatar / listing image / community banner upload
-- [ ] **LO-2** Analytics: wire `/dashboard/analytics` GET to real NestJS backend when API is ready
-- [ ] **LO-3** Provider follow/wishlist — persist to backend (POST /users/follow/:providerId)
+- [ ] **LO-1** CSP nonce — replace `unsafe-inline` in `public/_headers` for stronger XSS protection
 
 ---
 
@@ -63,7 +61,7 @@
 - [x] Hero headline font size ลดทุกหน้า (ป้องกัน overflow)
 - [x] Deploy to Cloudflare Pages v0.3.2 ✅
 - [x] Backend: Commission Module (Ledger, Override) & Payout System (Franchise)
-- [x] Backend: Invite Link System (/join/:code) & Pending Member Approval 
+- [x] Backend: Invite Link System (/join/:code) & Pending Member Approval
 - [x] Frontend: Invite Landing Page (/join/[code]) & CA Invite Management Dashboard
 - [x] Database: สคีมา Delivery fields ใน Booking Entity เพื่อรองรับระบบขนส่ง
 - [x] Version Bump เป็น v0.3.3 ✅
@@ -73,5 +71,12 @@
 - [x] Frontend: Analytics Dashboard `/dashboard/superadmin/analytics` — recharts LineChart/BarChart + CSV export
 - [x] Frontend: Provider `/providers/[id]` — wishlist/follow toggle button (ME-1)
 - [x] Frontend: Dark mode hero text fixes ใน `/guide`, `/communities` (ME-2)
-- [x] Frontend: Franchise approve/reject/suspend/resume ครบ interactive (ME-3) — confirmed already implemented
+- [x] Frontend: Franchise approve/reject/suspend/resume ครบ interactive (ME-3)
 - [x] Version Bump เป็น v0.3.4 ✅
+- [x] HI-1 Booking Flow Polish — step indicator, dark mode cards, useAuthGuard (v0.3.5)
+- [x] ME-4 Marketplace URL Param Sync — useSearchParams + useRouter.replace (v0.3.6)
+- [x] ME-5 Signup Polish — step indicator, redirect param, Google mock button (v0.3.6)
+- [x] ME-6 Redis Cache Layer — listings TTL 5m, notif count TTL 30s, global CacheModule (v0.3.7)
+- [x] HI-5 Real Google OAuth — useAuthHydrate, /auth/callback, signin wired (v0.3.8)
+- [x] Build fixes — Suspense wrappers for useSearchParams, join/[code] server wrapper (v0.3.9)
+- [x] Security Audit & Hardening (OWASP A01/A03/A04) — auth guards on commission/payout, open redirect fix, pagination cap, server-side booking pricing (v0.4.0) ✅

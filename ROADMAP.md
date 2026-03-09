@@ -1,6 +1,6 @@
 # Roadmap — Community Hyper Marketplace
 
-> **Current Version:** v0.3.2 | **Status:** Frontend-complete (mock data), ready for backend integration
+> **Current Version:** v0.4.0 | **Status:** Security-hardened, ready for production deployment
 
 ---
 
@@ -13,59 +13,30 @@
 3. → หลัง login redirect กลับ booking page
 4. → กรอก date/qty → ชำระ PromptPay QR → booking confirmation
 
-### HI-2 — Backend Integration (NestJS + Supabase)
-แทนที่ mock fetchers ใน React Query hooks ด้วย real API:
-- `useListings` → `GET /listings`
-- `useBookings` → `GET /bookings`
-- `useNotifications` → `GET /notifications`
-- `useCommunities` → `GET /communities`
-- `useMarkAllRead` → `PATCH /notifications/read-all`
+### HI-2 — Analytics Dashboard Backend Wiring
+แทนที่ mock data ใน `/dashboard/superadmin/analytics` ด้วย real `GET /dashboard/analytics` endpoint
 
 ---
 
 ## 🟡 Medium Priority
 
-### ME-1 — providers/[id] Wishlist/Follow Button
-เพิ่มปุ่ม "ติดตาม Provider" ใน `/providers/[id]` hero section (คล้ายกับที่ทำใน listing detail)
+### ME-1 — Cookie Auth Fix
+Register `@fastify/cookie` ใน `main.ts` เพื่อให้ httpOnly cookie JWT extraction ทำงานใน Fastify ได้ (ปัจจุบัน fallback เป็น Bearer token เท่านั้น)
 
-### ME-2 — Dark Mode Coverage
-เพิ่ม `dark:` class ให้ครบใน hero text ของ:
-- `/franchise` — `text-slate-900` → เพิ่ม `dark:text-white`
-- `/guide` — hero h1 ขาด dark variant
-- `/communities` — hero h1 ขาด dark variant
+### ME-2 — Supabase Storage
+- Provider avatar upload
+- Listing image upload
+- Community banner upload
 
-### ME-3 — Superadmin Franchise Approve/Reject Interactive
-ปัจจุบัน `/dashboard/superadmin/franchise` แสดง UI แต่ปุ่ม approve/reject ยังไม่ทำงาน
-→ เพิ่ม local state toggle + toast notification เหมือน admin/providers
-
-### ME-4 — Real Auth (Google OAuth)
-- NestJS: Passport.js + Google Strategy
-- Frontend: แทนที่ mock login ด้วย `signIn('google')` redirect flow
-- JWT refresh token handling
+### ME-3 — Provider follow/wishlist Backend
+Persist follow state ไป backend (`POST /users/follow/:providerId`)
 
 ---
 
 ## 🟢 Low Priority
 
-### LO-1 — Marketplace URL Params Sync
-Sync filter/search state กับ URL query params:
-- `?category=FOOD` → pre-select category
-- `?status=available` → pre-filter status
-- รองรับ share link และ browser back/forward
-
-### LO-2 — Signup Page Polish
-ปัจจุบัน `/auth/signup` มี flow แต่ยังไม่สมบูรณ์เหมือน signin
-→ polish role selection UI, เพิ่ม validation feedback
-
-### LO-3 — Redis Cache Layer
-- Cache notification count ด้วย Redis TTL 30s
-- Cache listing list ด้วย Redis TTL 5m
-- Invalidate เมื่อมี write operation
-
-### LO-4 — Supabase Storage
-- Provider avatar upload
-- Listing image upload
-- Community banner upload
+### LO-1 — CSP Nonce
+แทนที่ `unsafe-inline` ใน `public/_headers` ด้วย nonce-based CSP เพื่อป้องกัน XSS ได้แน่นขึ้น
 
 ---
 
@@ -75,7 +46,23 @@ Sync filter/search state กับ URL query params:
 |---------|-------|
 | Real-time notifications | WebSocket หรือ Supabase Realtime |
 | Provider Trust Score system | Algorithm คำนวณจาก rating + completed bookings |
-| Community analytics dashboard | Chart รายได้รวมของ community |
 | Promoted Listings | Admin สามารถ boost listing ขึ้นหน้าแรก |
+| Delivery Integration | Flash Express / Kerry waybill generation |
 | Mobile app | React Native / Expo (ใช้ API เดียวกัน) |
 | Multi-language | i18n ครบ (ปัจจุบัน TH เป็น default, EN พร้อม) |
+
+---
+
+## ✅ Completed
+
+| Version | Feature |
+|---------|---------|
+| v0.3.2 | Deploy Cloudflare Pages, 74 static pages, PWA, Leaflet, PromptPay QR |
+| v0.3.3 | Commission Module, Payout Engine, Invite System, Member Approval |
+| v0.3.4 | Schedule Module, Analytics API, React Query wiring, Analytics Dashboard |
+| v0.3.5 | Booking Flow Polish, step indicator, dark mode cards |
+| v0.3.6 | Marketplace URL param sync, Signup step polish |
+| v0.3.7 | Redis Cache Layer (listings TTL 5m, notif count TTL 30s) |
+| v0.3.8 | Real Google OAuth, useAuthHydrate, /auth/callback |
+| v0.3.9 | Build fixes: Suspense wrappers, join/[code] server wrapper |
+| v0.4.0 | Security Audit: OWASP A01/A03/A04 — auth guards, open redirect fix, server-side pricing |

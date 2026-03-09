@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.3.8 | **Updated:** 2026-03-09  
+> **Version:** v0.4.0 | **Updated:** 2026-03-09
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -25,9 +25,21 @@
 - **ME-6 Redis Cache Layer (v0.3.7)** — Global `CacheModule.registerAsync` with Redis (`REDIS_URL` env, graceful no-op fallback). Listings `search()` caches with key `listings:search:*` TTL 5m, invalidated on create/update/remove. `NotificationsService.getUnreadCount()` caches per-user TTL 30s, invalidated on `send()`. Added `GET /notifications/unread-count` endpoint.
 - **HI-5 Real Google OAuth (v0.3.8)** — Backend already complete (GoogleStrategy, JwtStrategy, httpOnly cookie). Frontend: `useAuthHydrate` hook calls `GET /auth/me` on mount to restore session from cookie; mounted via `AuthHydrator` in `Providers`. `/auth/callback` page handles post-OAuth redirect with success/error/loading states. Signin Google button now navigates to real `${API_URL}/auth/google`; Demo button retained for development.
 
-## Phase 4: Next Priorities
+## Phase 4: Completed (v0.4.0)
+- **Security Audit & Hardening** — Full OWASP Top 10 audit with critical/high/medium fixes:
+  - **CRITICAL (A01):** `commission.controller` — added `JwtAuthGuard + RolesGuard + SUPER_ADMIN` (all endpoints were fully unauthenticated).
+  - **CRITICAL (A01):** `payout.controller` — added per-endpoint auth guards; approve/mark-paid now SUPER_ADMIN only.
+  - **HIGH (A04):** `bookings.service` — server-side price calculation from listing DB; removed client-supplied `totalAmount/commissionRate/revenueShareRate`.
+  - **HIGH (A04):** `listings.service` — pagination capped at `min=1, max=100` (DoS prevention).
+  - **HIGH (A03):** `listings.controller` — typed `update` body (replaced `body: any`).
+  - **HIGH (A01):** `signin/callback` pages — `sanitizeRedirect()` prevents open redirect; fixed `NEXT_PUBLIC_API_URL` → `NEXT_PUBLIC_API_BASE_URL`.
+  - **Added** `@types/express` devDep (required by passport-jwt types).
+- **Build Fix** — Added missing `ListingRepo` to `BookingsModule.forFeature` for server-side price lookup.
+
+## Phase 5: Next Priorities
 - **Backend Wiring for Analytics:** Wire `/dashboard/superadmin/analytics` to call real `GET /dashboard/analytics` endpoint instead of mock data.
 - **Real-time Notifications:** WebSocket or Supabase Realtime for live notification push.
 - **Trust Score Algorithm:** Build logic into provider profiles to adjust trust badges based on review frequency and cancellation history.
 - **Promoted Listings:** New module allowing admins to boost listings in the marketplace frontend.
 - **Delivery Integration:** Connect DB delivery fields with third-party logistics API (Flash Express, Kerry) for waybill generation.
+- **Cookie Auth Fix:** Register `@fastify/cookie` in `main.ts` so httpOnly cookie JWT extraction works in Fastify (currently falls back to Bearer token only).

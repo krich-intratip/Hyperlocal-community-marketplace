@@ -1,8 +1,8 @@
 # Dev Journey — Community Hyper Marketplace
 
-> **Developer:** PK-Research (Dr.Krich)  
-> **Current Version:** v0.3.2  
-> **Last Updated:** 2026-03-09  
+> **Developer:** PK-Research (Dr.Krich)
+> **Current Version:** v0.4.0
+> **Last Updated:** 2026-03-09
 > **Live URL:** https://7afda826.community-hyper-marketplace.pages.dev  
 > **GitHub:** https://github.com/krich-intratip/Hyperlocal-community-marketplace
 
@@ -23,8 +23,8 @@
 | Monorepo | Turborepo + pnpm workspaces |
 | CI/CD | GitHub Actions → Cloudflare Pages |
 | Deploy | Cloudflare Pages (wrangler CLI) |
-| Backend (planned) | NestJS + Supabase + Redis + TypeORM |
-| Auth (planned) | Google OAuth + JWT |
+| Backend | NestJS v10 + Fastify + TypeORM + PostgreSQL + Redis |
+| Auth | Google OAuth + JWT (httpOnly cookie) |
 
 ---
 
@@ -95,6 +95,29 @@
 - `next.config.ts`: `output: 'export'`, `trailingSlash: true`, `images.unoptimized: true`
 - Deploy ด้วย `wrangler pages deploy ./out --project-name=community-hyper-marketplace`
 - 74 static pages prerendered ✅
+
+### Phase 23–27 — Backend Integration (v0.3.3–v0.3.7)
+- Commission Module, Payout Engine, Invite System, Member Approval Flow (v0.3.3)
+- Schedule Module (`@Cron`), Analytics API, React Query wiring to real NestJS endpoints (v0.3.4)
+- Booking flow polish, step indicator, dark mode (v0.3.5)
+- Marketplace URL param sync, signup step polish (v0.3.6)
+- Redis Cache Layer — listings TTL 5m, notification count TTL 30s (v0.3.7)
+
+### Phase 28–29 — Real Auth + Build Fixes (v0.3.8–v0.3.9)
+- **HI-5 Real Google OAuth (v0.3.8)**: `useAuthHydrate` hook, `AuthHydrator`, `/auth/callback` page,
+  signin button → real `${API_URL}/auth/google`
+- **Build fixes (v0.3.9)**: Suspense wrappers for `useSearchParams` pages, `join/[code]` server wrapper,
+  recharts formatter type fix for Cloudflare static export
+
+### Phase 30 — Security Audit & Hardening (v0.4.0)
+Full OWASP Top 10 audit — 2 critical + 5 high + 1 medium fixes:
+- **CRITICAL A01**: `commission.controller` — all endpoints unauthenticated → added `JwtAuthGuard + RolesGuard`
+- **CRITICAL A01**: `payout.controller` — no guards at all → per-endpoint role-based guards
+- **HIGH A04**: `bookings.service` — client-supplied financial amounts → server-side calculation from DB
+- **HIGH A04**: `listings.service` — unbounded pagination DoS → capped at min=1, max=100
+- **HIGH A03**: `listings.controller` — `body: any` → typed body
+- **HIGH A01**: `signin/callback` pages — open redirect → `sanitizeRedirect()` validates relative paths only
+- **HIGH A05**: Wrong env var `NEXT_PUBLIC_API_URL` → `NEXT_PUBLIC_API_BASE_URL`
 
 ---
 
