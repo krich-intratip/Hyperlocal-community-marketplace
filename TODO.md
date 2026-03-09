@@ -1,43 +1,59 @@
 # TODO — Community Hyper Marketplace
 
-> **Version:** v0.4.6 | **Updated:** 2026-03-09
+> **Version:** v0.4.7 | **Updated:** 2026-03-09
 > Legend: `[ ]` pending · `[x]` done · `[~]` in progress
 
 ---
 
 ## 🔴 High Priority
 
-- [x] **HI-1** Booking flow end-to-end polish (signin → redirect → book → QR payment → confirmation) (v0.4.6)
+- [ ] **CART-7** Cart backend API — `POST /orders` (multi-item order) ใน NestJS + wire frontend เมื่อ `NEXT_PUBLIC_API_BASE_URL` set
+- [ ] **RT-1** Real-time Notifications — WebSocket (NestJS Gateway) หรือ Supabase Realtime → notification bell live push
 
 ---
 
 ## 🟡 Medium Priority
 
-- [ ] **ME-1** Analytics dashboard — wire `GET /dashboard/analytics` (replace mock data in `/dashboard/superadmin/analytics`)
-- [ ] **ME-2** Supabase Storage — provider avatar / listing image / community banner upload
-- [ ] **ME-3** Provider follow/wishlist — persist to backend (`POST /users/follow/:providerId`)
+- [ ] **TS-1** Provider Trust Score — คำนวณจาก (review count, avg rating, cancel rate, response time) → badge ใน provider/listing
+- [ ] **PL-1** Promoted Listings — admin boost: `isPromoted` field + frontend badge + sort priority ใน marketplace
+- [ ] **ME-2** Supabase Storage — provider avatar / listing image / community banner upload (presign → R2/Supabase)
+- [ ] **ME-3** Provider follow/wishlist — persist to backend `POST /users/follow/:providerId` (hook มีแล้ว ยังใช้ localStorage)
 
 ---
 
 ## 🟢 Low Priority
 
-- [ ] **LO-1** CSP nonce — replace `unsafe-inline` in `public/_headers` for stronger XSS protection
+- [ ] **LO-1** CSP nonce — replace `unsafe-inline` ใน `public/_headers` สำหรับ XSS protection ที่แข็งแกร่งขึ้น
+- [ ] **DL-1** Delivery Integration — เชื่อม DB delivery fields กับ Line Man / Grab API (DB fields มีแล้ว)
+- [ ] **I18N-1** Multi-language i18n ครบทุก string (ปัจจุบัน EN/TH บางส่วนผ่าน `useT`)
 
 ---
 
-## 🔵 Future
+## 🔵 Future / Backlog
 
-- [ ] Real-time notifications (WebSocket หรือ Supabase Realtime)
-- [ ] Provider Trust Score algorithm
-- [ ] Community analytics dashboard (รายได้รวม)
-- [ ] Promoted Listings (admin boost)
-- [ ] Mobile app (React Native / Expo)
-- [ ] Multi-language i18n ครบทุก string
+- [ ] **MOBILE-1** Mobile app — React Native / Expo shell ใช้ shared API hooks เดิม
+- [ ] **CA-ANALYTICS** Community analytics dashboard — รายได้รวมของชุมชน, top sellers per community
+- [ ] **REVIEW-2** Review system backend — `POST /reviews` endpoint + aggregate to listing rating
+- [ ] **CHAT-1** In-app chat — customer ↔ provider messaging (Socket.io หรือ Supabase)
 
 ---
 
-## ✅ Completed
+## ✅ Completed (ล่าสุด → เก่าสุด)
 
+- [x] **CART-1–6** Cart System — Zustand cart store (persist), CartDrawer slide-in, Navbar badge, Add to Cart on listing detail, `/cart` checkout page 3-step (v0.4.7)
+- [x] **HI-1** Booking flow E2E Polish — useAuthGuard redirect param, done-step booking detail link (v0.4.6)
+- [x] **Phase 9** Mock Data Expansion — 20 listings, 20 providers, 15 communities, per-id routing fixed (v0.4.5)
+- [x] **ME-3** Follow Persist — `useFollowState` + `useToggleFollow` hooks, optimistic update (v0.4.4)
+- [x] **ME-2** Avatar Upload — `useAvatarUpload` hook, presign, Profile page camera button wired (v0.4.4)
+- [x] **HI-1** Booking Polish — `useCreateBooking` wired, `adaptBooking`, `useCancelBooking` (v0.4.3)
+- [x] **ME-1** Analytics Backend Wiring — `dashboardApi` + `useAnalytics` hook (v0.4.2)
+- [x] **Cookie Auth Fix** — `@fastify/cookie`, `cookieOrBearerExtractor` (v0.4.1)
+- [x] **Security Hardening** — OWASP A01/A03/A04, auth guards, server-side price calc (v0.4.0)
+- [x] **Build fixes** — Suspense wrappers `useSearchParams`, `join/[code]` server wrapper (v0.3.9)
+- [x] **HI-5** Real Google OAuth — `useAuthHydrate`, `/auth/callback`, signin wired (v0.3.8)
+- [x] **ME-6** Redis Cache Layer — listings TTL 5m, notif count TTL 30s (v0.3.7)
+- [x] **ME-4/ME-5** Marketplace URL param sync, Signup polish (v0.3.6)
+- [x] **HI-1** Booking Flow Polish — step indicator, dark mode cards (v0.3.5)
 - [x] Turborepo monorepo setup (apps/web + packages)
 - [x] 26+ pages: home, marketplace, communities, franchise, dashboard, profile, notifications, bookings
 - [x] Navbar: avatar dropdown + notification bell + dark mode toggle

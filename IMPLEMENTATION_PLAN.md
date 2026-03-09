@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.4.5 | **Updated:** 2026-03-09
+> **Version:** v0.4.7 | **Updated:** 2026-03-09
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -65,8 +65,45 @@
   - **`bookings/[id]/page.tsx`** — `generateStaticParams` expanded to 15 booking IDs.
   - **DL-1 Delivery Integration:** On hold — infrastructure already in DB. Will integrate with Line Man or Grab when ready for production rollout.
 
-## Phase 10: Next Priorities
-- **Real-time Notifications:** WebSocket or Supabase Realtime for live notification push.
-- **Trust Score Algorithm:** Build logic into provider profiles to adjust trust badges based on review frequency and cancellation history.
-- **Promoted Listings:** New module allowing admins to boost listings in the marketplace frontend.
-- **DL-1 Delivery Integration (future):** Connect DB delivery fields with third-party logistics API (Line Man / Grab) for waybill generation. DB fields already in place.
+## Phase 10: Completed (v0.4.6–v0.4.7)
+- **HI-1 Booking E2E Polish (v0.4.6):** `useAuthGuard` now passes `?redirect=<current-path>` to signin so users return to the page they were trying to access. Booking "done" step now has a direct link to `/bookings/:id` for immediate detail view.
+- **Cart System (v0.4.7):** Full multi-item cart with Zustand persistence (`chm-cart` localStorage):
+  - `cart.store.ts` — `addItem` (auto-merge by `listingId__menuName` key), `updateQty`, `removeItem`, `clearCart`, `clearProvider`, `itemsByProvider()`, `totalItems()`, `totalPrice()`.
+  - `CartDrawer` — slide-in panel from right, items grouped by provider, qty ±, delete, subtotal + 5% platform fee, "สรุปคำสั่งซื้อ" → `/cart`.
+  - **Navbar** — 🛒 icon with live badge (desktop + mobile) showing total item count.
+  - **Listing detail** — "เพิ่มในตะกร้า" button (amber, with ✅ feedback) alongside existing "Book Now". Respects selected menu + qty.
+  - **`/cart` page** — 3-step checkout: (1) review items grouped by provider + per-item note + per-provider delivery address, (2) PromptPay QR / cash payment selector, (3) done screen with order IDs + links to `/bookings`.
+
+## Phase 11: Roadmap (Next Sessions)
+
+### 🔴 High — CART-7: Cart Backend API
+- **Backend:** Create `POST /orders` endpoint in NestJS accepting `{ items: [{listingId, menuName, qty, note}][], deliveryAddress, paymentMethod }`. Auto-calculate total server-side. Create `Order` entity with `OrderItem[]` relation.
+- **Frontend:** Wire `handlePlaceOrder` in `/cart` page to real API when `NEXT_PUBLIC_API_BASE_URL` is set (env-gate pattern already used throughout).
+- **Dependency:** Needs `Order` → `Booking` relationship clarification (1 cart order = multiple bookings, or new Order entity?).
+
+### 🔴 High — RT-1: Real-time Notifications
+- **Backend:** NestJS `@WebSocketGateway` with Socket.io. Events: `notification.new`, `booking.status_changed`, `order.confirmed`. Emit on service mutations.
+- **Frontend:** `useNotifications` hook subscribes to socket. Notification bell badge updates live. Toast on new event.
+- **Alternative:** Supabase Realtime (simpler, no extra infra) — subscribe to `notifications` table INSERT.
+
+### 🟡 Medium — TS-1: Provider Trust Score
+- **Algorithm:** `score = (avgRating × 40) + (completionRate × 30) + (responseScore × 20) + (tenureBonus × 10)` (0–100).
+- **Backend:** `GET /providers/:id/trust-score` — computed from bookings/reviews data.
+- **Frontend:** Display as colored badge (🔵 Trusted / 🟡 Good / 🔴 New) in listing card, provider profile, booking form.
+
+### 🟡 Medium — PL-1: Promoted Listings
+- **Backend:** Add `isPromoted: boolean`, `promotedUntil: Date`, `promotedBy: string` to `Listing` entity. Admin endpoint `PATCH /listings/:id/promote`.
+- **Frontend:** `🔥 แนะนำ` badge on listing card. Promoted listings sorted first in marketplace. Super-admin dashboard promote button.
+
+### 🟢 Low — LO-1: CSP Nonce
+- Replace `unsafe-inline` in `public/_headers` with per-request nonce via Next.js middleware.
+- Add `Content-Security-Policy` header with `script-src 'nonce-{nonce}'`.
+
+### 🟢 Low — DL-1: Delivery Integration
+- DB fields (`deliveryProvider`, `trackingNumber`, `estimatedDelivery`) already in `Booking` entity.
+- Integrate Line Man Wongnai API or Grab Express API for waybill creation on booking confirmation.
+
+### 🔵 Future
+- **MOBILE-1:** React Native / Expo — shared `@chm/api` package, auth hooks, cart store.
+- **REVIEW-2:** `POST /reviews` backend endpoint + aggregate to `Listing.rating` field.
+- **CHAT-1:** In-app messaging (Socket.io rooms per booking, or Supabase Realtime channel).
