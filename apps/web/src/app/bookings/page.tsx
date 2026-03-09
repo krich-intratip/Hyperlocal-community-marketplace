@@ -64,7 +64,7 @@ export default function BookingsPage() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-6">
           <div className="flex items-center gap-3 mb-1">
             <Package className="h-6 w-6 text-blue-500" />
-            <h1 className="text-2xl font-extrabold text-slate-900">การจองของฉัน</h1>
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">การจองของฉัน</h1>
           </div>
           <p className="text-sm text-slate-500">ติดตามสถานะการจองบริการทั้งหมด</p>
         </motion.div>
@@ -78,7 +78,7 @@ export default function BookingsPage() {
               <motion.button key={s} variants={fadeUp} custom={i}
                 onClick={() => setActiveFilter(s)}
                 className={`rounded-2xl p-3 text-center border transition-all ${
-                  activeFilter === s ? `${cfg.bg} ${cfg.border}` : 'bg-white/80 border-slate-100 hover:border-slate-200'
+                  activeFilter === s ? `${cfg.bg} ${cfg.border}` : 'bg-white/80 dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-slate-200'
                 }`}>
                 <div className={`text-xl font-extrabold ${cfg.color}`}>{counts[s] ?? 0}</div>
                 <div className={`text-xs mt-0.5 font-medium ${activeFilter === s ? cfg.color : 'text-slate-500'}`}>{cfg.label}</div>
@@ -93,7 +93,7 @@ export default function BookingsPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="ค้นหาบริการ, ผู้ให้บริการ, หมายเลขจอง..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white/90 text-sm text-slate-800 placeholder-slate-400 focus:border-blue-400 outline-none" />
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/90 dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-blue-400 outline-none" />
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {FILTER_TABS.map(t => (
@@ -136,7 +136,7 @@ export default function BookingsPage() {
                 return (
                   <motion.div key={booking.id} variants={fadeUp} custom={i} whileHover={{ y: -2 }}>
                     <Link href={`/bookings/${booking.id}` as any}
-                      className="block bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 hover:border-blue-200 shadow-sm hover:shadow-md transition-all p-5 group">
+                      className="block bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-blue-200 shadow-sm hover:shadow-md transition-all p-5 group">
                       <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
                           {booking.listingImage}
@@ -144,7 +144,7 @@ export default function BookingsPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 flex-wrap">
                             <div>
-                              <h3 className="font-bold text-slate-900 text-sm">{booking.listingTitle}</h3>
+                              <h3 className="font-bold text-slate-900 dark:text-white text-sm">{booking.listingTitle}</h3>
                               <p className="text-xs text-slate-500 mt-0.5">{booking.provider} · {booking.community}</p>
                             </div>
                             <span className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border flex-shrink-0 ${cfg.color} ${cfg.bg} ${cfg.border}`}>

@@ -175,7 +175,7 @@ export default function BookingDetailClient() {
 
           {/* Main info card */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5">
+            className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-6 mb-5">
 
             {/* Service */}
             <div className="flex items-center gap-4 pb-5 border-b border-slate-100 mb-5">
@@ -183,7 +183,7 @@ export default function BookingDetailClient() {
                 {booking.image}
               </div>
               <div className="flex-1">
-                <h1 className="font-extrabold text-slate-900 text-base">{booking.title}</h1>
+                <h1 className="font-extrabold text-slate-900 dark:text-white text-base">{booking.title}</h1>
                 <p className="text-sm text-slate-500 mt-0.5">{booking.community}</p>
               </div>
               <span className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border ${cfg.color} ${cfg.bg} ${cfg.border}`}>
@@ -202,20 +202,20 @@ export default function BookingDetailClient() {
                 <div key={row.label} className="flex items-start gap-3 text-sm">
                   <row.icon className="h-4 w-4 text-slate-400 flex-shrink-0 mt-0.5" />
                   <span className="text-slate-400 w-14 flex-shrink-0">{row.label}</span>
-                  <span className="text-slate-800 font-medium">{row.value}</span>
+                  <span className="text-slate-800 dark:text-slate-100 font-medium">{row.value}</span>
                 </div>
               ))}
               {booking.menus.length > 0 && (
                 <div className="flex items-start gap-3 text-sm">
                   <span className="text-slate-400 w-14 flex-shrink-0 pl-7">เมนู</span>
-                  <span className="text-slate-800 font-medium">{booking.menus.join(', ')}</span>
+                  <span className="text-slate-800 dark:text-slate-100 font-medium">{booking.menus.join(', ')}</span>
                 </div>
               )}
               {booking.note && (
                 <div className="flex items-start gap-3 text-sm">
                   <MessageCircle className="h-4 w-4 text-slate-400 flex-shrink-0 mt-0.5" />
                   <span className="text-slate-400 w-14 flex-shrink-0">หมายเหตุ</span>
-                  <span className="text-slate-800">{booking.note}</span>
+                  <span className="text-slate-800 dark:text-slate-100">{booking.note}</span>
                 </div>
               )}
             </div>
@@ -230,7 +230,7 @@ export default function BookingDetailClient() {
                 <span>ค่าบริการแพลตฟอร์ม</span>
                 <span>฿{booking.platformFee.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between font-extrabold text-base text-slate-900 pt-1.5 border-t border-slate-100">
+              <div className="flex justify-between font-extrabold text-base text-slate-900 dark:text-white pt-1.5 border-t border-slate-100 dark:border-slate-700">
                 <span>รวมทั้งหมด</span>
                 <span className="text-blue-700">฿{booking.total.toLocaleString()}</span>
               </div>
@@ -239,7 +239,7 @@ export default function BookingDetailClient() {
 
           {/* Provider card */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-5">
+            className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-5">
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">ผู้ให้บริการ</p>
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
@@ -247,7 +247,7 @@ export default function BookingDetailClient() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-1.5">
-                  <p className="font-bold text-slate-900 text-sm">{booking.provider}</p>
+                  <p className="font-bold text-slate-900 dark:text-white text-sm">{booking.provider}</p>
                   <Shield className="h-3.5 w-3.5 text-blue-500" />
                 </div>
                 <div className="flex items-center gap-1 text-xs text-slate-500">
@@ -267,7 +267,7 @@ export default function BookingDetailClient() {
 
           {/* Timeline */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-5">
+            className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-5">
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-4">ขั้นตอนการจอง</p>
             <div className="space-y-0">
               {booking.timeline.map((step, idx) => {
@@ -284,7 +284,7 @@ export default function BookingDetailClient() {
                       {!isLast && <div className={`w-0.5 h-8 mt-1 ${isDone ? 'bg-green-300' : 'bg-slate-200'}`} />}
                     </div>
                     <div className="pb-6">
-                      <p className={`text-sm font-bold ${isDone ? 'text-slate-900' : 'text-slate-400'}`}>{step.label}</p>
+                      <p className={`text-sm font-bold ${isDone ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>{step.label}</p>
                       {(step.time || (step.label === 'รีวิวแล้ว' && reviewed)) && (
                         <p className="text-xs text-slate-400 mt-0.5">
                           {step.label === 'รีวิวแล้ว' && reviewed ? 'เพิ่งรีวิว' : fmtDT(step.time)}

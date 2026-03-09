@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { getListingById } from '@/lib/mock-listings'
 import { useDateFormat } from '@/hooks/useDateFormat'
+import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -36,7 +37,16 @@ function getNextDays(n: number) {
 type Step = 'details' | 'confirm' | 'payment' | 'done'
 type PayMethod = 'promptpay' | 'cash'
 
+const STEPS: { key: Step; label: string }[] = [
+  { key: 'details',  label: 'รายละเอียด' },
+  { key: 'confirm',  label: 'ยืนยัน' },
+  { key: 'payment',  label: 'ชำระเงิน' },
+  { key: 'done',     label: 'เสร็จสิ้น' },
+]
+const STEP_IDX: Record<Step, number> = { details: 0, confirm: 1, payment: 2, done: 3 }
+
 export default function BookingFormClient({ id }: { id: string }) {
+  useAuthGuard()
   const listing = getListingById(id)
   const { fmtLong, locale } = useDateFormat()
   const DAY_LABELS = locale === 'en' ? DAY_LABELS_EN : DAY_LABELS_TH
@@ -114,6 +124,38 @@ export default function BookingFormClient({ id }: { id: string }) {
 
       <section className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20">
 
+        {/* Step indicator */}
+        {step !== 'done' && (
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
+            className="flex items-center justify-center gap-0 mb-7">
+            {STEPS.filter(s => s.key !== 'done').map((s, i, arr) => {
+              const active = STEP_IDX[step] === i
+              const done = STEP_IDX[step] > i
+              return (
+                <div key={s.key} className="flex items-center">
+                  <div className={`flex flex-col items-center`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold border-2 transition-all ${
+                      done  ? 'bg-blue-600 border-blue-600 text-white'
+                      : active ? 'bg-white border-blue-600 text-blue-600 shadow-md'
+                      : 'bg-white border-slate-200 text-slate-300'
+                    }`}>
+                      {done ? <CheckCircle className="h-4 w-4" /> : i + 1}
+                    </div>
+                    <span className={`text-[10px] mt-1 font-bold ${
+                      active ? 'text-blue-600' : done ? 'text-blue-400' : 'text-slate-300'
+                    }`}>{s.label}</span>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <div className={`w-12 h-0.5 mx-1 mb-4 transition-all ${
+                      STEP_IDX[step] > i ? 'bg-blue-500' : 'bg-slate-200'
+                    }`} />
+                  )}
+                </div>
+              )
+            })}
+          </motion.div>
+        )}
+
         {/* Breadcrumb */}
         {step !== 'done' && (
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
@@ -132,10 +174,10 @@ export default function BookingFormClient({ id }: { id: string }) {
           <>
             {/* Listing summary */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-5 flex items-center gap-4">
+              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-5 flex items-center gap-4">
               <div className="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center text-3xl flex-shrink-0">{listing.image}</div>
               <div className="flex-1 min-w-0">
-                <h1 className="font-extrabold text-slate-900 text-base">{listing.title}</h1>
+                <h1 className="font-extrabold text-slate-900 dark:text-white text-base">{listing.title}</h1>
                 <div className="flex items-center gap-2 text-sm text-slate-500 mt-0.5">
                   <span>{listing.provider}</span>
                   {listing.providerVerified && <Shield className="h-3.5 w-3.5 text-blue-500" />}
@@ -155,17 +197,17 @@ export default function BookingFormClient({ id }: { id: string }) {
 
             {/* Quantity */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-4">
+              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-4">
               <div className="flex items-center gap-2 mb-3">
                 <Users className="h-4 w-4 text-blue-500" />
-                <h2 className="font-bold text-slate-800">จำนวน</h2>
+                <h2 className="font-bold text-slate-800 dark:text-slate-100">จำนวน</h2>
               </div>
               <div className="flex items-center gap-4">
                 <button onClick={() => setQty(q => Math.max(1, q - 1))}
                   className="w-10 h-10 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 flex items-center justify-center transition-all">
                   <Minus className="h-4 w-4 text-slate-600" />
                 </button>
-                <span className="text-2xl font-extrabold text-slate-900 w-10 text-center">{qty}</span>
+                <span className="text-2xl font-extrabold text-slate-900 dark:text-white w-10 text-center">{qty}</span>
                 <button onClick={() => setQty(q => Math.min(20, q + 1))}
                   className="w-10 h-10 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 flex items-center justify-center transition-all">
                   <Plus className="h-4 w-4 text-slate-600" />
@@ -176,10 +218,10 @@ export default function BookingFormClient({ id }: { id: string }) {
 
             {/* Date picker */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-4">
+              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-4">
               <div className="flex items-center gap-2 mb-3">
                 <Calendar className="h-4 w-4 text-blue-500" />
-                <h2 className="font-bold text-slate-800">วันที่ต้องการ <span className="text-red-500">*</span></h2>
+                <h2 className="font-bold text-slate-800 dark:text-slate-100">วันที่ต้องการ <span className="text-red-500">*</span></h2>
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
                 {days.map((d, i) => {
@@ -209,10 +251,10 @@ export default function BookingFormClient({ id }: { id: string }) {
             {/* Time picker */}
             {selectedDate && (
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-                className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-4">
+                className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock className="h-4 w-4 text-blue-500" />
-                  <h2 className="font-bold text-slate-800">เวลา <span className="text-red-500">*</span></h2>
+                  <h2 className="font-bold text-slate-800 dark:text-slate-100">เวลา <span className="text-red-500">*</span></h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {TIME_SLOTS.map(t => {
@@ -236,8 +278,8 @@ export default function BookingFormClient({ id }: { id: string }) {
 
             {/* Menu options */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-4">
-              <h2 className="font-bold text-slate-800 mb-3">เลือกเมนู <span className="text-slate-400 text-xs font-normal">(ไม่บังคับ)</span></h2>
+              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-4">
+              <h2 className="font-bold text-slate-800 dark:text-slate-100 mb-3">เลือกเมนู <span className="text-slate-400 text-xs font-normal">(ไม่บังคับ)</span></h2>
               <div className="flex flex-wrap gap-2">
                 {menuOptions.map(m => (
                   <button key={m} onClick={() => toggleMenu(m)}
@@ -252,31 +294,31 @@ export default function BookingFormClient({ id }: { id: string }) {
 
             {/* Address */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-4">
+              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-4">
               <div className="flex items-center gap-2 mb-3">
                 <MapPin className="h-4 w-4 text-blue-500" />
-                <h2 className="font-bold text-slate-800">ที่อยู่จัดส่ง <span className="text-red-500">*</span></h2>
+                <h2 className="font-bold text-slate-800 dark:text-slate-100">ที่อยู่จัดส่ง <span className="text-red-500">*</span></h2>
               </div>
               <textarea value={address} onChange={e => setAddress(e.target.value)} rows={3}
                 placeholder="บ้านเลขที่, ซอย, ถนน, แขวง/ตำบล..."
-                className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none resize-none transition-all" />
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-600 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 placeholder-slate-400 outline-none resize-none transition-all" />
             </motion.div>
 
             {/* Note */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5 mb-5">
+              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-5">
               <div className="flex items-center gap-2 mb-3">
                 <MessageSquare className="h-4 w-4 text-slate-400" />
-                <h2 className="font-bold text-slate-800">หมายเหตุ <span className="text-slate-400 text-xs font-normal">(ไม่บังคับ)</span></h2>
+                <h2 className="font-bold text-slate-800 dark:text-slate-100">หมายเหตุ <span className="text-slate-400 text-xs font-normal">(ไม่บังคับ)</span></h2>
               </div>
               <textarea value={note} onChange={e => setNote(e.target.value)} rows={2}
                 placeholder="เช่น ไม่ใส่ผัก, แพ้อาหารทะเล, โทรก่อนส่ง..."
-                className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none resize-none transition-all" />
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-600 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 placeholder-slate-400 outline-none resize-none transition-all" />
             </motion.div>
 
             {/* Price summary */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={8}
-              className="bg-blue-50 rounded-2xl p-5 mb-5 border border-blue-100">
+              className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-5 mb-5 border border-blue-100 dark:border-blue-800">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-slate-600">
                   <span>฿{listing.price} × {qty} {listing.unit}</span>
@@ -286,7 +328,7 @@ export default function BookingFormClient({ id }: { id: string }) {
                   <span>ค่าบริการแพลตฟอร์ม (5%)</span>
                   <span>฿{platformFee.toLocaleString()}</span>
                 </div>
-                <div className="border-t border-blue-200 pt-2 flex justify-between font-extrabold text-slate-900 text-base">
+                <div className="border-t border-blue-200 dark:border-blue-700 pt-2 flex justify-between font-extrabold text-slate-900 dark:text-white text-base">
                   <span>รวมทั้งหมด</span>
                   <span className="text-blue-700">฿{grandTotal.toLocaleString()}</span>
                 </div>
@@ -314,18 +356,18 @@ export default function BookingFormClient({ id }: { id: string }) {
           <>
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
               className="text-center mb-6">
-              <h1 className="text-2xl font-extrabold text-slate-900">ยืนยันการจอง</h1>
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">ยืนยันการจอง</h1>
               <p className="text-sm text-slate-500 mt-1">ตรวจสอบรายละเอียดก่อนชำระเงิน</p>
             </motion.div>
 
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5 space-y-4">
+              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-6 mb-5 space-y-4">
 
               {/* Service */}
               <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
                 <span className="text-3xl">{listing.image}</span>
                 <div>
-                  <p className="font-bold text-slate-900">{listing.title}</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{listing.title}</p>
                   <p className="text-sm text-slate-500">{listing.provider} · {listing.community}</p>
                 </div>
               </div>
@@ -341,7 +383,7 @@ export default function BookingFormClient({ id }: { id: string }) {
               ].map(row => (
                 <div key={row.label} className="flex gap-4 text-sm">
                   <span className="text-slate-400 w-20 flex-shrink-0">{row.label}</span>
-                  <span className="text-slate-800 font-medium">{row.value}</span>
+                  <span className="text-slate-800 dark:text-slate-100 font-medium">{row.value}</span>
                 </div>
               ))}
 
@@ -355,7 +397,7 @@ export default function BookingFormClient({ id }: { id: string }) {
                   <span>ค่าบริการแพลตฟอร์ม</span>
                   <span>฿{platformFee.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between font-extrabold text-lg text-slate-900">
+                <div className="flex justify-between font-extrabold text-lg text-slate-900 dark:text-white">
                   <span>รวม</span>
                   <span className="text-blue-700">฿{grandTotal.toLocaleString()}</span>
                 </div>
@@ -388,7 +430,7 @@ export default function BookingFormClient({ id }: { id: string }) {
           <>
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
               className="text-center mb-5">
-              <h1 className="text-2xl font-extrabold text-slate-900">ชำระเงิน</h1>
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">ชำระเงิน</h1>
               <p className="text-sm text-slate-500 mt-1">เลือกวิธีชำระ</p>
             </motion.div>
 
@@ -399,10 +441,10 @@ export default function BookingFormClient({ id }: { id: string }) {
                 <button key={id} onClick={() => setPayMethod(id)}
                   className={`p-4 rounded-2xl border-2 text-left transition-all ${
                     payMethod === id
-                      ? 'border-blue-400 bg-blue-50'
-                      : 'border-slate-200 bg-white hover:border-slate-300'
+                      ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30'
+                      : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-slate-300'
                   }`}>
-                  <p className="font-bold text-sm text-slate-900">{label}</p>
+                  <p className="font-bold text-sm text-slate-900 dark:text-white">{label}</p>
                   <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
                 </button>
               ))}
@@ -411,7 +453,7 @@ export default function BookingFormClient({ id }: { id: string }) {
             {/* PromptPay QR */}
             {payMethod === 'promptpay' && (
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-                className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5 text-center">
+                className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-6 mb-5 text-center">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-4">สแกน QR เพื่อชำระ</p>
                 {/* Mock QR — SVG-based */}
                 <div className="mx-auto w-48 h-48 bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
@@ -432,7 +474,7 @@ export default function BookingFormClient({ id }: { id: string }) {
                   </svg>
                 </div>
                 <p className="font-extrabold text-2xl text-blue-700 mb-1">฿{grandTotal.toLocaleString()}</p>
-                <p className="text-xs text-slate-500 mb-4">โอนให้ <span className="font-bold text-slate-700">{listing.provider}</span></p>
+                <p className="text-xs text-slate-500 mb-4">โอนให้ <span className="font-bold text-slate-700 dark:text-slate-200">{listing.provider}</span></p>
                 <div className="flex items-center justify-center gap-2 bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-200">
                   <Smartphone className="h-4 w-4 text-slate-400 flex-shrink-0" />
                   <span className="font-bold text-slate-700 text-sm tracking-wider">081-234-5678</span>
@@ -451,12 +493,12 @@ export default function BookingFormClient({ id }: { id: string }) {
             {/* Cash info */}
             {payMethod === 'cash' && (
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-                className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5">
+                className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-6 mb-5">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-green-50 border border-green-200 flex items-center justify-center flex-shrink-0 text-xl">💵</div>
                   <div>
                     <p className="font-bold text-slate-900 mb-1">ชำระเงินสดเมื่อผู้ให้บริการมาถึง</p>
-                    <p className="text-sm text-slate-500">เตรียมเงินสด <span className="font-bold text-slate-800">฿{grandTotal.toLocaleString()}</span> ไว้ให้พร้อม ผู้ให้บริการจะออกใบเสร็จให้หลังจีนหน้า</p>
+                    <p className="text-sm text-slate-500">เตรียมเงินสด <span className="font-bold text-slate-800 dark:text-slate-100">฿{grandTotal.toLocaleString()}</span> ไว้ให้พร้อม ผู้ให้บริการจะออกใบเสร็จให้หลังชำระ</p>
                   </div>
                 </div>
               </motion.div>
@@ -491,11 +533,11 @@ export default function BookingFormClient({ id }: { id: string }) {
               className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
               <CheckCircle className="h-12 w-12 text-green-600" />
             </motion.div>
-            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">จองสำเร็จ!</h2>
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">จองสำเร็จ!</h2>
             <p className="text-slate-500 text-sm mb-1">หมายเลขการจอง</p>
             <p className="text-2xl font-extrabold text-blue-600 mb-4">{bookingId}</p>
-            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 text-sm text-blue-700 text-left space-y-1">
-              <p>📅 {fmtLong(selectedDate)} เวลา {selectedTime} น.</p>
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl p-4 mb-6 text-sm text-blue-700 dark:text-blue-300 text-left space-y-1">
+              <p>📅 {selectedDate ? fmtLong(selectedDate) : ''} เวลา {selectedTime} น.</p>
               <p>👤 {listing.provider} จะโทรยืนยันภายใน 1 ชั่วโมง</p>
               <p>📍 {address}</p>
             </div>
