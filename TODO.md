@@ -1,13 +1,13 @@
 # TODO — Community Hyper Marketplace
 
-> **Version:** v0.4.2 | **Updated:** 2026-03-09
+> **Version:** v0.4.6 | **Updated:** 2026-03-09
 > Legend: `[ ]` pending · `[x]` done · `[~]` in progress
 
 ---
 
 ## 🔴 High Priority
 
-- [ ] **HI-1** Booking flow end-to-end test & polish (signin → redirect → book → QR payment → confirmation)
+- [x] **HI-1** Booking flow end-to-end polish (signin → redirect → book → QR payment → confirmation) (v0.4.6)
 
 ---
 
@@ -78,6 +78,7 @@
 - [x] ME-6 Redis Cache Layer — listings TTL 5m, notif count TTL 30s, global CacheModule (v0.3.7)
 - [x] HI-5 Real Google OAuth — useAuthHydrate, /auth/callback, signin wired (v0.3.8)
 - [x] Build fixes — Suspense wrappers for useSearchParams, join/[code] server wrapper (v0.3.9)
+- [x] HI-1 Booking Flow E2E Polish — useAuthGuard redirect param, done-step booking detail link (v0.4.6)
 - [x] Security Audit & Hardening (OWASP A01/A03/A04) — auth guards on commission/payout, open redirect fix, pagination cap, server-side booking pricing (v0.4.0) ✅
 - [x] ME-1 Cookie Auth Fix — @fastify/cookie registered, useAuthHydrate env var fixed (v0.4.1) ✅
 - [x] ME-1 Analytics Backend Wiring — dashboardApi + useAnalytics hook, analytics page wired to GET /dashboard/analytics (v0.4.2) ✅

@@ -562,12 +562,16 @@ export default function BookingFormClient({ id }: { id: string }) {
               <p>📍 {address}</p>
             </div>
             <div className="flex flex-col gap-3">
-              <Link href="/bookings"
+              <Link href={`/bookings/${bookingId}` as any}
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-base font-bold text-white hover:bg-blue-700 transition-colors">
-                ดูรายการจองทั้งหมด <ArrowRight className="h-4 w-4" />
+                ดูรายละเอียดการจอง <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href="/bookings"
+                className="w-full text-center text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 py-2 transition-colors">
+                ดูรายการจองทั้งหมด
               </Link>
               <Link href="/marketplace"
-                className="w-full text-center text-sm text-slate-500 hover:text-blue-600 py-2 transition-colors">
+                className="w-full text-center text-sm text-slate-400 hover:text-blue-600 py-2 transition-colors">
                 กลับไป Marketplace
               </Link>
             </div>
