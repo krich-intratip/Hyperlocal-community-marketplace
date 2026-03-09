@@ -9,9 +9,11 @@ import {
   Star, Package, Shield, ChevronRight, Pencil, X, Save, Bell,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useAuthStore } from '@/store/auth.store'
+import { useAvatarUpload } from '@/hooks/useAvatarUpload'
+import { usersApi } from '@/lib/api'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -43,10 +45,23 @@ export default function ProfilePage() {
     address: '',
   })
   const [saved, setSaved] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { upload, uploading, preview, uploadError } = useAvatarUpload()
 
   useEffect(() => {
     if (user) setForm(f => ({ ...f, name: user.name }))
   }, [user?.name])
+
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const url = await upload(file)
+    if (url) {
+      try { await usersApi.updateProfile({ avatarUrl: url }) } catch { /* silent */ }
+      updateUser({ avatarUrl: url })
+    }
+    e.target.value = ''
+  }
 
   function handleSave() {
     updateUser({ name: form.name })
@@ -74,13 +89,24 @@ export default function ProfilePage() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
           className="text-center mb-6">
           <div className="relative inline-block">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-5xl mx-auto shadow-lg border-4 border-white">
-              {user?.avatar ?? '👤'}
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-5xl mx-auto shadow-lg border-4 border-white overflow-hidden">
+              {(preview || user?.avatarUrl) ? (
+                <img src={preview ?? user!.avatarUrl!} alt="รูปโปรไฟล์" className="w-full h-full object-cover" />
+              ) : (
+                user?.avatar ?? '👤'
+              )}
             </div>
-            <button className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center shadow-md hover:bg-blue-700 transition-colors">
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center shadow-md hover:bg-blue-700 transition-colors disabled:opacity-60">
               <Camera className="h-3.5 w-3.5 text-white" />
             </button>
           </div>
+          {uploadError && (
+            <p className="text-xs text-red-500 mt-2">{uploadError}</p>
+          )}
           <h1 className="text-xl font-extrabold text-slate-900 mt-4 mb-1">{form.name || user?.name}</h1>
           <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
             <span>สมาชิก Community Hyper</span>

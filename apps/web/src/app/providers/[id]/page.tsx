@@ -19,6 +19,7 @@ export function generateStaticParams() {
   return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map((id) => ({ id }))
 }
 
-export default function ProviderProfilePage() {
-  return <ProviderProfileClient />
+export default async function ProviderProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  return <ProviderProfileClient id={id} />
 }

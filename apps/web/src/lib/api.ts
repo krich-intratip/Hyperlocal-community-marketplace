@@ -155,6 +155,30 @@ export const usersApi = {
     apiClient.patch<ApiResponse<UserProfile>>('/users/me', dto),
 }
 
+// ─── Follow / Unfollow provider ───────────────────────────────────────────────
+
+export const followApi = {
+  check: (providerId: string) =>
+    apiClient.get<ApiResponse<{ following: boolean }>>(`/users/follow/${providerId}`),
+
+  follow: (providerId: string) =>
+    apiClient.post<ApiResponse<void>>(`/users/follow/${providerId}`),
+
+  unfollow: (providerId: string) =>
+    apiClient.delete<ApiResponse<void>>(`/users/follow/${providerId}`),
+}
+
+// ─── File upload (presigned URL) ──────────────────────────────────────────────
+
+export const uploadApi = {
+  presignAvatar: (filename: string, contentType: string) =>
+    apiClient.post<ApiResponse<{ uploadUrl: string; publicUrl: string }>>('/upload/presign', {
+      filename,
+      contentType,
+      purpose: 'avatar',
+    }),
+}
+
 // ─── Dashboard / Analytics ────────────────────────────────────────────────────
 
 export const dashboardApi = {

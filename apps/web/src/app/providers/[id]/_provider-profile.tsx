@@ -9,8 +9,9 @@ import {
   MessageCircle, ChevronRight, Calendar, Package, Award, Heart,
 } from 'lucide-react'
 import Link from 'next/link'
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense } from 'react'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { useFollowState, useToggleFollow } from '@/hooks/useFollow'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -58,10 +59,11 @@ const MOCK_REVIEWS = [
 
 const DAY_LABELS = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา']
 
-export default function ProviderProfileClient() {
+export default function ProviderProfileClient({ id }: { id: string }) {
   useAuthGuard()
   const provider = MOCK_PROVIDER
-  const [followed, setFollowed] = useState(false)
+  const { data: followed = false } = useFollowState(id)
+  const toggleFollow = useToggleFollow()
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -121,7 +123,8 @@ export default function ProviderProfileClient() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => setFollowed(f => !f)}
+                      onClick={() => toggleFollow.mutate({ providerId: id, currentlyFollowing: followed ?? false })}
+                      disabled={toggleFollow.isPending}
                       aria-label={followed ? 'เลิกติดตาม' : 'ติดตาม Provider'}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-bold transition-all ${
                         followed
