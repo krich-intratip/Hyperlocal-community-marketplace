@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { lazy, Suspense } from 'react'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useFollowState, useToggleFollow } from '@/hooks/useFollow'
+import { getProviderById } from '@/lib/mock-providers'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -21,49 +22,52 @@ const fadeUp = {
 }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
-const MOCK_PROVIDER = {
-  id: '1',
-  name: 'คุณแม่สมใจ',
-  avatar: '👩‍🍳',
-  tagline: 'อาหารกล่องทำมือ ส่งตรงถึงบ้าน',
-  bio: 'รับทำอาหารกล่องหลากหลายเมนู ทั้งข้าวราดแกง อาหารตามสั่ง ส้มตำ ลาบ ทำจากวัตถุดิบสดใหม่ทุกวัน ประสบการณ์กว่า 5 ปี ในชุมชนหมู่บ้านศรีนคร ลูกค้าประจำกว่า 80 ครัวเรือน',
-  verified: true,
-  online: true,
-  trustScore: 98,
-  rating: 4.9,
-  reviews: 128,
-  completedBookings: 342,
-  memberSince: 'ม.ค. 2567',
-  community: 'หมู่บ้านศรีนคร',
-  communityId: '1',
-  area: 'บางแค, กรุงเทพฯ',
-  responseTime: '< 1 ชั่วโมง',
-  category: 'อาหารและเครื่องดื่ม',
-  badges: ['ยืนยันตัวตน', 'Top Provider', 'ส่งตรงเวลา 100%'],
-  availableDays: [0, 1, 2, 3, 4],
-  openTime: '07:00',
-  closeTime: '17:00',
-}
-
-const MOCK_LISTINGS = [
-  { id: '1', title: 'ทำอาหารกล่องส่งถึงที่', price: 80, unit: 'กล่อง', image: '🍱', rating: 4.9, reviews: 128, available: true },
-  { id: '2', title: 'ส้มตำถาด', price: 60, unit: 'ถาด', image: '🥗', rating: 4.8, reviews: 64, available: true },
-  { id: '3', title: 'ลาบหมูรสเด็ด', price: 70, unit: 'จาน', image: '🍖', rating: 4.7, reviews: 42, available: false },
-]
-
-const MOCK_REVIEWS = [
-  { id: '1', user: 'คุณวิภา', rating: 5, comment: 'อร่อยมาก ส้มตำรสจัดถูกใจ ส่งตรงเวลาทุกวัน', date: '5 มี.ค. 2569', avatar: '👩' },
-  { id: '2', user: 'คุณสมศักดิ์', rating: 5, comment: 'สั่งรายเดือนมา 3 เดือนแล้ว ไม่เคยผิดหวัง ราคาคุ้มมาก', date: '28 ก.พ. 2569', avatar: '👨' },
-  { id: '3', user: 'คุณนิตยา', rating: 4, comment: 'รสชาติดี วัตถุดิบสด ปริมาณพอดี แนะนำเมนูลาบ', date: '20 ก.พ. 2569', avatar: '👩‍💼' },
-]
-
 const DAY_LABELS = ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา']
+
+// Community-based coordinates for map centering
+const COMMUNITY_COORDS: Record<string, { lat: number; lng: number }> = {
+  '1':  { lat: 13.7240, lng: 100.4840 },
+  '2':  { lat: 13.7460, lng: 100.5340 },
+  '3':  { lat: 13.8696, lng: 100.5472 },
+  '4':  { lat: 13.7590, lng: 100.6060 },
+  '5':  { lat: 13.8000, lng: 100.4900 },
+  '6':  { lat: 18.7883, lng: 98.9853  },
+  '7':  { lat: 18.7960, lng: 98.9680  },
+  '8':  { lat: 7.8804,  lng: 98.2922  },
+  '9':  { lat: 16.4322, lng: 102.8236 },
+  '10': { lat: 7.0086,  lng: 100.4770 },
+  '11': { lat: 13.7400, lng: 100.5710 },
+  '12': { lat: 19.9105, lng: 99.8406  },
+  '13': { lat: 14.9700, lng: 102.1011 },
+  '14': { lat: 12.6840, lng: 101.2520 },
+  '15': { lat: 9.5400,  lng: 100.0640 },
+}
 
 export default function ProviderProfileClient({ id }: { id: string }) {
   useAuthGuard()
-  const provider = MOCK_PROVIDER
   const { data: followed = false } = useFollowState(id)
   const toggleFollow = useToggleFollow()
+
+  const provider = getProviderById(id)
+
+  // Fallback for unknown IDs
+  if (!provider) {
+    return (
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center">
+          <div className="text-6xl mb-4">👤</div>
+          <h1 className="text-2xl font-bold text-slate-700 mb-2">ไม่พบผู้ให้บริการนี้</h1>
+          <p className="text-slate-500 mb-6">ผู้ให้บริการ #{id} ยังไม่ได้ลงทะเบียน หรืออาจไม่มีในระบบ</p>
+          <Link href="/marketplace" className="text-blue-600 hover:underline font-medium">← กลับ Marketplace</Link>
+        </section>
+        <AppFooter />
+      </main>
+    )
+  }
+
+  const coords = COMMUNITY_COORDS[provider.communityId] ?? { lat: 13.7563, lng: 100.5018 }
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -201,9 +205,9 @@ export default function ProviderProfileClient({ id }: { id: string }) {
                 <h2 className="font-extrabold text-lg text-slate-900">บริการทั้งหมด</h2>
               </div>
               <div className="space-y-3">
-                {MOCK_LISTINGS.map((listing, i) => (
+                {provider.listings.map((listing, i) => (
                   <motion.div key={listing.id} variants={fadeUp} custom={i} whileHover={{ x: 4 }}>
-                    <Link href={`/marketplace/${listing.id}` as any}
+                    <Link href={`/marketplace/${listing.id}` as string}
                       className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/40 transition-all group">
                       <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
                         {listing.image}
@@ -241,7 +245,7 @@ export default function ProviderProfileClient({ id }: { id: string }) {
                 </div>
               </div>
               <div className="space-y-5">
-                {MOCK_REVIEWS.map((review) => (
+                {provider.providerReviews.map((review) => (
                   <div key={review.id} className="flex gap-4">
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl flex-shrink-0">
                       {review.avatar}
@@ -296,7 +300,7 @@ export default function ProviderProfileClient({ id }: { id: string }) {
               {/* Community link */}
               <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 p-5">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">ชุมชน</p>
-                <Link href={`/communities/${provider.communityId}` as any}
+                <Link href={`/communities/${provider.communityId}` as string}
                   className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                   <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">🏘️</div>
                   <div className="flex-1">
@@ -311,6 +315,7 @@ export default function ProviderProfileClient({ id }: { id: string }) {
           </div>
         </div>
       </section>
+
       {/* ── Location map ── */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}>
@@ -321,12 +326,15 @@ export default function ProviderProfileClient({ id }: { id: string }) {
             <MapView
               listings={[{
                 id: provider.id, title: provider.name, provider: provider.name,
-                price: 80, unit: 'กล่อง', lat: 13.724, lng: 100.484,
-                category: 'FOOD', status: provider.online ? 'available' : 'offline',
+                price: provider.listings[0]?.price ?? 0,
+                unit: provider.listings[0]?.unit ?? '-',
+                lat: coords.lat, lng: coords.lng,
+                category: provider.category,
+                status: provider.online ? 'available' : 'offline',
                 rating: provider.rating, image: provider.avatar,
               }]}
-              centerLat={13.724}
-              centerLng={100.484}
+              centerLat={coords.lat}
+              centerLng={coords.lng}
               zoom={15}
             />
           </Suspense>

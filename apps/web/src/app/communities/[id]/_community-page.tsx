@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { getCommunityDetail } from '@/lib/mock-communities-data'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -17,56 +18,34 @@ const fadeUp = {
 }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
-const MOCK_COMMUNITY = {
-  id: '1', name: 'หมู่บ้านศรีนคร', area: 'บางแค, กรุงเทพฯ', emoji: '🏘️',
-  description: 'ชุมชนอยู่อาศัยขนาดกลางในเขตบางแค กรุงเทพฯ มีผู้ให้บริการหลากหลายทั้งอาหาร ช่าง และบริการในบ้าน รองรับสมาชิกกว่า 248 ครัวเรือน',
-  members: 248, providers: 34, rating: 4.8, totalBookings: 1204,
-  trial: true, trialEnd: '30 เม.ย. 2569',
-  admin: 'คุณประเสริฐ วงศ์สมบัติ', founded: 'ม.ค. 2567',
-  tags: ['อาหาร', 'งานช่าง', 'งานบ้าน', 'สุขภาพ'],
-}
-
-const MOCK_PROVIDERS = [
-  { id: '1', name: 'คุณแม่สมใจ', service: 'อาหารกล่อง', rating: 4.9, reviews: 128, emoji: '👩‍🍳', verified: true, category: 'FOOD' },
-  { id: '2', name: 'ช่างสมชาย', service: 'ซ่อมแอร์ / ประปา', rating: 4.8, reviews: 87, emoji: '👨‍🔧', verified: true, category: 'REPAIR' },
-  { id: '3', name: 'แม่บ้านสาวิตรี', service: 'ทำความสะอาดบ้าน', rating: 4.7, reviews: 64, emoji: '🧹', verified: true, category: 'HOME_SERVICES' },
-  { id: '4', name: 'หมอนวดประเสริฐ', service: 'นวดแผนไทย', rating: 4.9, reviews: 45, emoji: '💆', verified: false, category: 'HEALTH_WELLNESS' },
-  { id: '5', name: 'ครูมาลี', service: 'สอนคณิตศาสตร์ ม.ต้น', rating: 4.8, reviews: 38, emoji: '📚', verified: true, category: 'TUTORING' },
-  { id: '6', name: 'น้องเบล', service: 'ดูแลผู้สูงอายุ', rating: 5.0, reviews: 22, emoji: '👵', verified: true, category: 'ELDERLY_CARE' },
-]
-
-const MOCK_RECENT = [
-  { emoji: '🍱', title: 'ข้าวหน้าหมูทอด', provider: 'คุณแม่สมใจ', price: 80 },
-  { emoji: '🔧', title: 'ล้างแอร์', provider: 'ช่างสมชาย', price: 500 },
-  { emoji: '🧹', title: 'ทำความสะอาดรายสัปดาห์', provider: 'แม่บ้านสาวิตรี', price: 800 },
-]
-
-const PROVIDER_CATEGORIES = [
-  { slug: 'FOOD', name: 'อาหาร', icon: '🍱', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 10 },
-  { slug: 'REPAIR', name: 'งานช่าง', icon: '🔧', color: 'bg-blue-50 border-blue-100', bar: 'bg-blue-400', count: 7 },
-  { slug: 'HOME_SERVICES', name: 'งานบ้าน', icon: '🏠', color: 'bg-green-50 border-green-100', bar: 'bg-green-400', count: 6 },
-  { slug: 'HEALTH_WELLNESS', name: 'สุขภาพ', icon: '💆', color: 'bg-pink-50 border-pink-100', bar: 'bg-pink-400', count: 5 },
-  { slug: 'TUTORING', name: 'สอนพิเศษ', icon: '📚', color: 'bg-purple-50 border-purple-100', bar: 'bg-purple-400', count: 4 },
-  { slug: 'ELDERLY_CARE', name: 'ดูแลผู้สูงอายุ', icon: '👵', color: 'bg-teal-50 border-teal-100', bar: 'bg-teal-400', count: 2 },
-]
-
-const MOCK_ANNOUNCEMENTS = [
-  {
-    id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
-    title: 'ช่วงทดลองใช้งาน 90 วัน', createdAt: '10 มี.ค. 2569',
-    body: 'ทุกชุมชนได้รับช่วงทดลองใช้งานระบบฟรี 90 วัน ไม่มีค่าธรรมเนียมและค่า Commission ในช่วงนี้ ใช้โอกาสนี้ Onboard ผู้ให้บริการและสร้างฐานสมาชิกได้เลย',
-  },
-  {
-    id: 2, fromSA: false, authorName: 'คุณประเสริฐ วงศ์สมบัติ', authorBadge: 'Community Admin',
-    title: 'ประกาศรับสมัครผู้ให้บริการอาหาร', createdAt: '15 มี.ค. 2569',
-    body: 'ขณะนี้ชุมชนหมู่บ้านศรีนครต้องการผู้ให้บริการอาหาร เช่น ข้าวกล่อง ขนม อาหารเช้า เพิ่มเติม สนใจสมัครได้เลยที่เมนู "สมัครเป็นผู้ให้บริการ"',
-  },
-]
-
-export default function CommunityDetailClient() {
+export default function CommunityDetailClient({ id }: { id: string }) {
   useAuthGuard()
-  const community = MOCK_COMMUNITY
-  const maxCount = Math.max(...PROVIDER_CATEGORIES.map(c => c.count))
+
+  const communityData = getCommunityDetail(id)
+
+  // Fallback for unknown IDs
+  if (!communityData) {
+    return (
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center">
+          <div className="text-6xl mb-4">🏘️</div>
+          <h1 className="text-2xl font-bold text-slate-700 mb-2">ไม่พบชุมชนนี้</h1>
+          <p className="text-slate-500 mb-6">ชุมชน #{id} ยังไม่ได้เปิดใช้งาน หรืออาจไม่มีในระบบ</p>
+          <Link href="/communities" className="text-blue-600 hover:underline font-medium">← กลับดูชุมชนทั้งหมด</Link>
+        </section>
+        <AppFooter />
+      </main>
+    )
+  }
+
+  const community = communityData.community
+  const providers = communityData.providers
+  const recent = communityData.recent
+  const categories = communityData.categories
+  const announcements = communityData.announcements
+  const maxCount = Math.max(...categories.map((c) => c.count), 1)
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -125,7 +104,7 @@ export default function CommunityDetailClient() {
           <div className="lg:col-span-2 space-y-5">
 
             {/* Announcements */}
-            {MOCK_ANNOUNCEMENTS.length > 0 && (
+            {announcements.length > 0 && (
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
                 className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
@@ -133,7 +112,7 @@ export default function CommunityDetailClient() {
                   <h2 className="font-bold text-slate-900">ประกาศจากชุมชน</h2>
                 </div>
                 <div className="space-y-4">
-                  {MOCK_ANNOUNCEMENTS.map((ann, i) => (
+                  {announcements.map((ann, i) => (
                     <motion.div key={ann.id} variants={fadeUp} custom={i}
                       className={`rounded-xl p-4 border ${ann.fromSA ? 'bg-blue-50 border-blue-100' : 'bg-amber-50 border-amber-100'}`}>
                       <div className="flex items-start gap-3">
@@ -182,11 +161,11 @@ export default function CommunityDetailClient() {
                   ดูทั้งหมด <ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
-              <p className="text-xs text-slate-500 mb-5">รวม {community.providers} ราย ใน {PROVIDER_CATEGORIES.length} หมวด</p>
+              <p className="text-xs text-slate-500 mb-5">รวม {community.providers} ราย ใน {categories.length} หมวด</p>
 
               {/* Bar infographic */}
               <div className="space-y-3 mb-6">
-                {PROVIDER_CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                   <div key={cat.slug} className="flex items-center gap-3">
                     <span className="text-lg w-7 flex-shrink-0 text-center">{cat.icon}</span>
                     <span className="text-xs text-slate-600 w-20 flex-shrink-0">{cat.name}</span>
@@ -206,7 +185,7 @@ export default function CommunityDetailClient() {
 
               {/* Provider cards */}
               <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-2">
-                {MOCK_PROVIDERS.slice(0, 4).map((provider, i) => (
+                {providers.slice(0, 4).map((provider, i) => (
                   <motion.div key={provider.id} variants={fadeUp} custom={i}
                     whileHover={{ x: 4 }}>
                   <Link href={`/marketplace?community=${community.id}&provider=${provider.id}`}
@@ -237,7 +216,7 @@ export default function CommunityDetailClient() {
               className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 p-6 shadow-sm">
               <h2 className="font-bold text-slate-900 mb-5">บริการล่าสุด</h2>
               <div className="space-y-3">
-                {MOCK_RECENT.map((item, i) => (
+                {recent.map((item, i) => (
                   <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors">
                     <span className="text-2xl">{item.emoji}</span>
                     <div className="flex-1">
@@ -298,7 +277,7 @@ export default function CommunityDetailClient() {
               <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 p-4 shadow-sm">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">หมวดที่มีในชุมชน</p>
                 <div className="grid grid-cols-2 gap-2">
-                  {PROVIDER_CATEGORIES.map(cat => (
+                  {categories.map((cat) => (
                     <div key={cat.slug} className={`flex items-center gap-2 px-3 py-2 rounded-xl border ${cat.color}`}>
                       <span className="text-base">{cat.icon}</span>
                       <div>

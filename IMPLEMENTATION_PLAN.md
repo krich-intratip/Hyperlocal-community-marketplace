@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.4.4 | **Updated:** 2026-03-09
+> **Version:** v0.4.5 | **Updated:** 2026-03-09
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -49,8 +49,24 @@
 - **ME-2 Avatar Upload** — `useAvatarUpload` hook: validates file type/size, presign `POST /upload/presign` → `PUT` directly to R2/Supabase, returns `publicUrl`; mock: blob URL + 800ms delay. `uploadApi.presignAvatar` added to `api.ts`. Profile page camera button wired: hidden `<input type="file">` → `handleAvatarChange` → `usersApi.updateProfile({ avatarUrl })` → `updateUser`. Avatar shown as `<img>` when `preview`/`avatarUrl` present; emoji fallback. `AuthUser.avatarUrl?: string` added to store.
 - **ME-3 Follow Persist** — `followApi` (check/follow/unfollow) added to `api.ts`. `useFollowState` (React Query + `localStorage` mock at `chm:follow:{id}`) and `useToggleFollow` (mutation with optimistic invalidation) in `hooks/useFollow.ts`. `providers/[id]/page.tsx` fixed for async params and passes `id` prop. `_provider-profile.tsx` accepts `{ id }` prop, uses real follow hooks; button disabled while `isPending`.
 
-## Phase 9: Next Priorities
+## Phase 9: Completed (v0.4.5)
+- **Mock Data Expansion & Page Routing Bug Fix** — Resolved critical UX issue where all community and provider pages showed identical hardcoded data.
+  - **Root cause fixed:** `_community-page.tsx` had hardcoded `MOCK_COMMUNITY = { id: '1', ... }` and `page.tsx` didn't pass `id` prop. `_provider-profile.tsx` used hardcoded `MOCK_PROVIDER` despite receiving `{ id }` prop.
+  - **`lib/mock-listings.ts`** — Expanded from 12 → 20 listings covering Chiang Mai (13–15,19), Phuket (16–17), Khon Kaen (18), Nonthaburi (20).
+  - **`lib/mock-providers.ts`** (new) — 20 provider detail records with `MOCK_PROVIDER_MAP` + `getProviderById()`. Full profiles: bio, listings[], reviews[], badges, availability schedule.
+  - **`lib/mock-communities-data.ts`** (new) — 15 community detail records with `COMMUNITY_DETAIL_MAP` + `getCommunityDetail()`. Covers all regions: Bangkok (1,2,4,11), Nonthaburi (3), Pathum Thani (5), Chiang Mai (6,7), Chiang Rai (12), Phuket (8), Songkhla (10), Koh Samui (15), Khon Kaen (9), Nakhon Ratchasima (13), Rayong (14).
+  - **`hooks/useCommunities.ts`** — Expanded `MOCK_COMMUNITIES` from 6 → 15 entries with full geographic coverage.
+  - **`hooks/useBookings.ts`** — Expanded from 8 → 15 bookings covering new listing IDs 13–20 (Chiang Mai, Phuket, Khon Kaen, Nonthaburi).
+  - **`communities/[id]/page.tsx`** — Made async, passes `id` to client, `generateStaticParams` expanded to IDs 1–15.
+  - **`communities/[id]/_community-page.tsx`** — Accepts `{ id }` prop, uses `getCommunityDetail(id)` for all dynamic data. Not-found fallback added.
+  - **`providers/[id]/_provider-profile.tsx`** — Uses `getProviderById(id)` for all data. `COMMUNITY_COORDS` map for per-region MapView centering. Not-found fallback added.
+  - **`providers/[id]/page.tsx`** — `generateStaticParams` expanded to IDs 1–20.
+  - **`marketplace/[id]/page.tsx`** + **`book/page.tsx`** — `generateStaticParams` expanded to IDs 1–20.
+  - **`bookings/[id]/page.tsx`** — `generateStaticParams` expanded to 15 booking IDs.
+  - **DL-1 Delivery Integration:** On hold — infrastructure already in DB. Will integrate with Line Man or Grab when ready for production rollout.
+
+## Phase 10: Next Priorities
 - **Real-time Notifications:** WebSocket or Supabase Realtime for live notification push.
 - **Trust Score Algorithm:** Build logic into provider profiles to adjust trust badges based on review frequency and cancellation history.
 - **Promoted Listings:** New module allowing admins to boost listings in the marketplace frontend.
-- **Delivery Integration:** Connect DB delivery fields with third-party logistics API (Flash Express, Kerry) for waybill generation.
+- **DL-1 Delivery Integration (future):** Connect DB delivery fields with third-party logistics API (Line Man / Grab) for waybill generation. DB fields already in place.
