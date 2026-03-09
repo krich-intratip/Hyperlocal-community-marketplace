@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart } from 'lucide-react'
+import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { useState, lazy, Suspense } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
@@ -12,6 +12,7 @@ import { useT } from '@/hooks/useT'
 import { getListingById } from '@/lib/mock-listings'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useAuthStore } from '@/store/auth.store'
+import { useCartStore } from '@/store/cart.store'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -94,10 +95,12 @@ export default function ListingDetailClient({ id }: { id: string }) {
   useAuthGuard()
   const t = useT()
   const { user } = useAuthStore()
+  const addItem = useCartStore((s) => s.addItem)
   const [selectedDate, setSelectedDate] = useState('')
   const [qty, setQty] = useState(1)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
   const [wishlisted, setWishlisted] = useState(false)
+  const [addedToCart, setAddedToCart] = useState(false)
   const listing = getListingById(id)
 
   if (!listing) {
@@ -374,6 +377,40 @@ export default function ListingDetailClient({ id }: { id: string }) {
                   {t.marketplace.bookNow} <ChevronRight className="h-4 w-4" />
                 </Link>
               </motion.div>
+
+              {/* Add to Cart */}
+              <motion.button
+                whileHover={{ scale: addedToCart ? 1 : 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  if (!listing) return
+                  addItem({
+                    listingId: listing.id,
+                    listingTitle: listing.title,
+                    listingImage: listing.image,
+                    provider: listing.provider,
+                    providerId: listing.id,
+                    providerAvatar: listing.providerAvatar,
+                    community: listing.community,
+                    menuName: selectedMenu ?? undefined,
+                    price: effectivePrice,
+                    unit: listing.unit,
+                    qty,
+                  })
+                  setAddedToCart(true)
+                  setTimeout(() => setAddedToCart(false), 2000)
+                }}
+                className={`w-full mt-3 flex items-center justify-center gap-2 rounded-xl border-2 px-6 py-3 text-base font-bold transition-all ${
+                  addedToCart
+                    ? 'border-green-400 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : 'border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-600 dark:hover:bg-amber-900/40'
+                }`}>
+                {addedToCart ? (
+                  <><CheckCircle className="h-4 w-4" /> เพิ่มในตะกร้าแล้ว!</>
+                ) : (
+                  <><ShoppingCart className="h-4 w-4" /> เพิ่มในตะกร้า</>
+                )}
+              </motion.button>
 
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 className="w-full mt-3 flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 dark:border-slate-600 px-6 py-3 text-base font-semibold text-slate-700 dark:text-slate-200 hover:border-blue-300 transition-colors">

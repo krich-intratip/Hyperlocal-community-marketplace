@@ -3,11 +3,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react'
+import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { ThemeLanguageToggle } from '@/components/theme-language-toggle'
 import { useT } from '@/hooks/useT'
 import { useAuthStore } from '@/store/auth.store'
+import { useCartStore } from '@/store/cart.store'
+import { CartDrawer } from '@/components/cart-drawer'
 
 const ROLE_LABEL: Record<string, string> = {
   customer: 'ลูกค้า',
@@ -57,7 +59,9 @@ export function Navbar() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
   const { user, isLoggedIn, logout } = useAuthStore()
+  const totalItems = useCartStore((s) => s.totalItems())
   const t = useT()
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -119,6 +123,14 @@ export function Navbar() {
 
           {isLoggedIn ? (
             <>
+              {/* Cart button */}
+              <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <ShoppingCart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                {totalItems > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
+                )}
+              </button>
+
               {/* Notification bell */}
               <Link href="/notifications" className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                 <Bell className="h-5 w-5 text-slate-600 dark:text-slate-300" />
@@ -162,10 +174,18 @@ export function Navbar() {
         <div className="md:hidden flex items-center gap-2">
           <ThemeLanguageToggle />
           {isLoggedIn && (
-            <Link href="/notifications" className="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              <Bell className="h-5 w-5 text-slate-600 dark:text-slate-300" />
-              <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-red-500 text-white text-[9px] font-extrabold flex items-center justify-center">3</span>
-            </Link>
+            <>
+              <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <ShoppingCart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                {totalItems > 0 && (
+                  <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
+                )}
+              </button>
+              <Link href="/notifications" className="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <Bell className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-red-500 text-white text-[9px] font-extrabold flex items-center justify-center">3</span>
+              </Link>
+            </>
           )}
           <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X className="h-5 w-5 text-slate-700 dark:text-slate-200" /> : <Menu className="h-5 w-5 text-slate-700 dark:text-slate-200" />}
@@ -206,6 +226,7 @@ export function Navbar() {
           </div>
         </motion.div>
       )}
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </motion.nav>
   )
 }
