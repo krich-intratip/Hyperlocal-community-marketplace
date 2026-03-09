@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.4.2 | **Updated:** 2026-03-09
+> **Version:** v0.4.4 | **Updated:** 2026-03-09
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -42,7 +42,14 @@
 ## Phase 6: Completed (v0.4.2)
 - **Analytics Backend Wiring** — Added `AnalyticsResponse` types to `types/api.ts`. Added `dashboardApi.getAnalytics()` to `api.ts`. Created `useAnalytics` hook with env-gate fallback to mock data. Analytics page now calls real `GET /dashboard/analytics` with `months` param; Refresh button triggers manual refetch; staleTime 5m matches backend Redis TTL.
 
-## Phase 7: Next Priorities
+## Phase 7: Completed (v0.4.3)
+- **HI-1 Booking Flow Polish (v0.4.3)** — Real booking creation via `useCreateBooking` mutation wired to `POST /bookings`. Booking detail page async-params fixed (Next.js 15). `adaptBooking()` normalises `MockBooking` fields to detail-page shape (status map, platformFee=5%, timeline). `useCancelBooking` calls real `PATCH /bookings/:id/cancel` when `USE_REAL_API`. Case-insensitive search in `/bookings` list.
+
+## Phase 8: Completed (v0.4.4)
+- **ME-2 Avatar Upload** — `useAvatarUpload` hook: validates file type/size, presign `POST /upload/presign` → `PUT` directly to R2/Supabase, returns `publicUrl`; mock: blob URL + 800ms delay. `uploadApi.presignAvatar` added to `api.ts`. Profile page camera button wired: hidden `<input type="file">` → `handleAvatarChange` → `usersApi.updateProfile({ avatarUrl })` → `updateUser`. Avatar shown as `<img>` when `preview`/`avatarUrl` present; emoji fallback. `AuthUser.avatarUrl?: string` added to store.
+- **ME-3 Follow Persist** — `followApi` (check/follow/unfollow) added to `api.ts`. `useFollowState` (React Query + `localStorage` mock at `chm:follow:{id}`) and `useToggleFollow` (mutation with optimistic invalidation) in `hooks/useFollow.ts`. `providers/[id]/page.tsx` fixed for async params and passes `id` prop. `_provider-profile.tsx` accepts `{ id }` prop, uses real follow hooks; button disabled while `isPending`.
+
+## Phase 9: Next Priorities
 - **Real-time Notifications:** WebSocket or Supabase Realtime for live notification push.
 - **Trust Score Algorithm:** Build logic into provider profiles to adjust trust badges based on review frequency and cancellation history.
 - **Promoted Listings:** New module allowing admins to boost listings in the marketplace frontend.
