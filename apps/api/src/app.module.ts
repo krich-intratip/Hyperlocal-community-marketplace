@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { ScheduleModule } from '@nestjs/schedule'
+import { CacheModule } from '@nestjs/cache-manager'
+import { redisStore } from 'cache-manager-redis-yet'
 import { AuthModule } from './modules/auth/auth.module'
 import { UsersModule } from './modules/users/users.module'
 import { CommunitiesModule } from './modules/communities/communities.module'
@@ -56,6 +58,22 @@ import { HealthModule } from './modules/health/health.module'
     }),
 
     ScheduleModule.forRoot(),
+
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (cfg: ConfigService) => {
+        const redisUrl = cfg.get<string>('REDIS_URL')
+        if (!redisUrl) {
+          return { ttl: 0 }
+        }
+        return {
+          store: await redisStore({ url: redisUrl, ttl: 0 }),
+          keyPrefix: 'chm:',
+        }
+      },
+    }),
 
     HealthModule,
     AuthModule,
