@@ -12,7 +12,7 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a booking' })
+  @ApiOperation({ summary: 'Create a booking (price calculated server-side from listing)' })
   create(
     @Req() req: any,
     @Body() body: {
@@ -20,9 +20,6 @@ export class BookingsController {
       providerId: string
       communityId: string
       scheduledAt: string
-      totalAmount: number
-      commissionRate: number
-      revenueShareRate: number
       note?: string
     },
   ) {

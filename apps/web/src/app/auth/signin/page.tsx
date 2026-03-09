@@ -9,7 +9,15 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/store/auth.store'
 import type { AuthUser } from '@/store/auth.store'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1'
+
+/** Allow only relative paths as redirect targets to prevent open-redirect attacks */
+function sanitizeRedirect(url: string | null): string {
+  if (!url) return '/dashboard'
+  // Must start with / but not // (protocol-relative URLs)
+  if (/^\/[^/]/.test(url)) return url
+  return '/dashboard'
+}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -54,9 +62,8 @@ function SignInPageInner() {
   const redirectTo = searchParams.get('redirect')
 
   function handleGoogleLogin() {
-    const callbackUrl = redirectTo
-      ? `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectTo)}`
-      : `${window.location.origin}/auth/callback`
+    const safeRedirect = sanitizeRedirect(redirectTo)
+    const callbackUrl = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(safeRedirect)}`
     window.location.href = `${API_URL}/auth/google?state=${encodeURIComponent(callbackUrl)}`
   }
 
@@ -64,8 +71,9 @@ function SignInPageInner() {
     setLoading(true)
     setTimeout(() => {
       login(MOCK_USERS[selectedRole])
-      if (redirectTo) {
-        router.push(redirectTo)
+      const safeRedirect = sanitizeRedirect(redirectTo)
+      if (safeRedirect !== '/dashboard') {
+        router.push(safeRedirect)
       } else if (selectedRole === 'provider') {
         router.push('/dashboard/provider')
       } else if (selectedRole === 'admin') {

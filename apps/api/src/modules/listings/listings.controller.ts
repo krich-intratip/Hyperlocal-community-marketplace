@@ -45,7 +45,17 @@ export class ListingsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a listing' })
-  update(@Param('id') id: string, @Req() req: any, @Body() body: any) {
+  update(
+    @Param('id') id: string,
+    @Req() req: any,
+    @Body() body: {
+      title?: string
+      description?: string
+      category?: MarketplaceCategory
+      price?: number
+      priceUnit?: string
+    },
+  ) {
     return this.listingsService.update(id, req.user.id, body)
   }
 

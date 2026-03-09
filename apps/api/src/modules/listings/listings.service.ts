@@ -23,7 +23,11 @@ export class ListingsService {
     page?: number
     limit?: number
   }) {
-    const { communityId, category, keyword, page = 1, limit = 20 } = query
+    const safePage = Math.max(1, Number(query.page) || 1)
+    const safeLimit = Math.min(100, Math.max(1, Number(query.limit) || 20))
+    const { communityId, category, keyword } = query
+    const page = safePage
+    const limit = safeLimit
     const cacheKey = `listings:search:${communityId ?? ''}:${category ?? ''}:${keyword ?? ''}:${page}:${limit}`
     const cached = await this.cache.get<[Listing[], number]>(cacheKey)
     if (cached) return cached

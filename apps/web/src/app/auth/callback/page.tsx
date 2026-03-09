@@ -6,7 +6,14 @@ import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { useAuthStore } from '@/store/auth.store'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1'
+
+/** Allow only relative paths to prevent open-redirect attacks */
+function sanitizeRedirect(url: string | null): string {
+  if (!url) return '/dashboard'
+  if (/^\/[^/]/.test(url)) return url
+  return '/dashboard'
+}
 
 function AuthCallbackInner() {
   const router = useRouter()
@@ -15,7 +22,7 @@ function AuthCallbackInner() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 
   useEffect(() => {
-    const redirectTo = searchParams.get('redirect') ?? '/dashboard'
+    const redirectTo = sanitizeRedirect(searchParams.get('redirect'))
 
     fetch(`${API_URL}/auth/me`, { credentials: 'include' })
       .then(r => (r.ok ? r.json() : Promise.reject(r.status)))

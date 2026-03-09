@@ -1,14 +1,21 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common'
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Booking } from './entities/booking.entity'
-import { BookingStatus } from '@chm/shared-types'
+import { Listing } from '../listings/entities/listing.entity'
+import { BookingStatus, ListingStatus } from '@chm/shared-types'
+
+/** Default platform rates — override via commission module in future */
+const DEFAULT_COMMISSION_RATE = 10   // 10%
+const DEFAULT_REVENUE_SHARE_RATE = 40 // 40% of commission to community admin
 
 @Injectable()
 export class BookingsService {
   constructor(
     @InjectRepository(Booking)
     private readonly bookingRepo: Repository<Booking>,
+    @InjectRepository(Listing)
+    private readonly listingRepo: Repository<Listing>,
   ) {}
 
   async create(customerId: string, data: {
@@ -16,13 +23,24 @@ export class BookingsService {
     providerId: string
     communityId: string
     scheduledAt: string
-    totalAmount: number
-    commissionRate: number
-    revenueShareRate: number
     note?: string
   }) {
-    const commissionAmount = (data.totalAmount * data.commissionRate) / 100
-    const revenueShareAmount = (commissionAmount * data.revenueShareRate) / 100
+    // Fetch listing from DB — never trust client-supplied price
+    const listing = await this.listingRepo.findOne({
+      where: { id: data.listingId, status: ListingStatus.ACTIVE },
+    })
+    if (!listing) throw new NotFoundException('Listing not found or inactive')
+    if (listing.providerId !== data.providerId) {
+      throw new BadRequestException('Provider does not own this listing')
+    }
+
+    const quotedAmount = Number(listing.price)
+    const commissionRate = DEFAULT_COMMISSION_RATE
+    const revenueShareRate = DEFAULT_REVENUE_SHARE_RATE
+    const totalCommission = (quotedAmount * commissionRate) / 100
+    const communityAdminShare = (totalCommission * revenueShareRate) / 100
+    const platformFee = totalCommission - communityAdminShare
+    const providerPayout = quotedAmount - totalCommission
 
     const booking = this.bookingRepo.create({
       customerId,
@@ -30,10 +48,15 @@ export class BookingsService {
       providerId: data.providerId,
       communityId: data.communityId,
       scheduledAt: new Date(data.scheduledAt),
-      note: data.note,
-      totalAmount: data.totalAmount,
-      commissionAmount,
-      revenueShareAmount,
+      note: data.note ?? null,
+      quotedAmount,
+      finalAmount: quotedAmount,
+      discountedTotal: quotedAmount,
+      commissionRate,
+      revenueShareRate,
+      platformFee,
+      communityAdminShare,
+      providerPayout,
     })
     return this.bookingRepo.save(booking)
   }
@@ -57,17 +80,23 @@ export class BookingsService {
     const isCustomer = booking.customerId === actorId
     const isProvider = booking.providerId === actorId
 
-    const allowedTransitions: Record<string, BookingStatus[]> = {
-      [BookingStatus.PENDING]: [BookingStatus.ACCEPTED, BookingStatus.REJECTED, BookingStatus.CANCELLED],
-      [BookingStatus.ACCEPTED]: [BookingStatus.COMPLETED, BookingStatus.CANCELLED],
+    const allowedTransitions: Partial<Record<BookingStatus, BookingStatus[]>> = {
+      [BookingStatus.PENDING_PAYMENT]: [BookingStatus.PAYMENT_HELD, BookingStatus.CANCELLED_BY_CUSTOMER],
+      [BookingStatus.PAYMENT_HELD]: [BookingStatus.CONFIRMED, BookingStatus.CANCELLED_BY_PROVIDER],
+      [BookingStatus.CONFIRMED]: [BookingStatus.IN_PROGRESS, BookingStatus.CANCELLED_BY_PROVIDER, BookingStatus.CANCELLED_BY_CUSTOMER],
+      [BookingStatus.IN_PROGRESS]: [BookingStatus.PENDING_CONFIRMATION, BookingStatus.PRICE_ADJUSTMENT_REQUESTED],
+      [BookingStatus.PENDING_CONFIRMATION]: [BookingStatus.COMPLETED, BookingStatus.DISPUTED],
     }
 
-    const allowed = allowedTransitions[booking.status] ?? []
+    const allowed = allowedTransitions[booking.status as BookingStatus] ?? []
     if (!allowed.includes(status)) {
       throw new ForbiddenException(`Cannot transition from ${booking.status} to ${status}`)
     }
-    if (status === BookingStatus.CANCELLED && !isCustomer && !isProvider) {
-      throw new ForbiddenException('Only customer or provider can cancel')
+    if (
+      (status === BookingStatus.CANCELLED_BY_CUSTOMER && !isCustomer) ||
+      (status === BookingStatus.CANCELLED_BY_PROVIDER && !isProvider)
+    ) {
+      throw new ForbiddenException('Not authorised to perform this cancellation')
     }
 
     await this.bookingRepo.update(id, { status })
