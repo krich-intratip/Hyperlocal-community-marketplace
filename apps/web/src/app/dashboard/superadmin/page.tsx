@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
@@ -8,10 +9,11 @@ import Link from 'next/link'
 import {
   Crown, Building2, Users, TrendingUp, DollarSign, ShieldCheck,
   Clock, CheckCircle, Pause, ArrowRightLeft, BarChart3,
-  Megaphone, Settings, ChevronRight, AlertTriangle, Globe,
+  Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star,
 } from 'lucide-react'
 import { useT } from '@/hooks/useT'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { MOCK_LISTINGS } from '@/lib/mock-listings'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -66,6 +68,16 @@ const QUICK_LINKS = [
 export default function SuperAdminDashboardPage() {
   useAuthGuard(['superadmin'])
   const t = useT()
+
+  // Promoted Listings local state (mirrors mock data — real impl would PATCH /listings/:id/promote)
+  const [promotedIds, setPromotedIds] = useState<Set<string>>(
+    () => new Set(MOCK_LISTINGS.filter((l) => l.isPromoted).map((l) => l.id)),
+  )
+  const togglePromote = (id: string) => setPromotedIds((prev) => {
+    const next = new Set(prev)
+    next.has(id) ? next.delete(id) : next.add(id)
+    return next
+  })
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-950">
@@ -230,12 +242,61 @@ export default function SuperAdminDashboardPage() {
           </motion.div>
         </div>
 
+        {/* Promoted Listings Management */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5} className="mb-8">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+              <div className="flex items-center gap-2">
+                <Flame className="h-4 w-4 text-orange-500" />
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Promoted Listings</h3>
+                <span className="bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{promotedIds.size}</span>
+              </div>
+              <Link href="/marketplace"
+                className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700">
+                ดู Marketplace <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            <div className="divide-y divide-slate-100 dark:divide-slate-700">
+              {MOCK_LISTINGS.slice(0, 12).map((listing) => {
+                const isActive = promotedIds.has(listing.id)
+                return (
+                  <div key={listing.id} className="flex items-center gap-4 px-5 py-3">
+                    <div className="text-2xl w-9 text-center flex-shrink-0">{listing.image}</div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">{listing.title}</p>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                        <span>{listing.provider}</span>
+                        <span>·</span>
+                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                        <span>{listing.rating}</span>
+                        <span>·</span>
+                        <span>฿{listing.price.toLocaleString()}/{listing.unit}</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => togglePromote(listing.id)}
+                      className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ${
+                        isActive
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-400 text-white border-orange-400 shadow-sm shadow-orange-200 dark:shadow-orange-900/30'
+                          : 'bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:border-orange-300 hover:text-orange-600'
+                      }`}
+                    >
+                      <Flame className="h-3.5 w-3.5" />
+                      {isActive ? 'โปรโมทอยู่' : 'โปรโมท'}
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </motion.div>
+
         {/* Quick Links */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5} className="mb-4">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6} className="mb-4">
           <h2 className="text-base font-bold text-slate-700 dark:text-slate-300">เมนูหลัก</h2>
         </motion.div>
         <motion.div variants={stagger} initial="hidden" animate="show"
-          className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {QUICK_LINKS.map((link, i) => (
             <motion.div key={link.href + link.label} variants={fadeUp} custom={i} whileHover={{ y: -4 }}>
               <Link href={link.href as any}

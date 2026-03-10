@@ -8,6 +8,7 @@ import {
   MapPin, Star, Shield, Clock, ChevronLeft, CheckCircle,
   MessageCircle, ChevronRight, Calendar, Package, Award, Heart,
 } from 'lucide-react'
+import { TrustBadge } from '@/components/trust-badge'
 import Link from 'next/link'
 import { lazy, Suspense } from 'react'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
@@ -123,9 +124,10 @@ export default function ProviderProfileClient({ id }: { id: string }) {
 
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
-                    <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <h1 className="text-xl font-extrabold text-slate-900 dark:text-white">{provider.name}</h1>
                       {provider.verified && <Shield className="h-4 w-4 text-blue-500" />}
+                      <TrustBadge score={provider.trustScore} size="md" showScore />
                     </div>
                     <p className="text-sm text-slate-500">{provider.tagline}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{provider.category}</p>

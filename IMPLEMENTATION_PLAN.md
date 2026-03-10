@@ -125,6 +125,15 @@
   - **`providers/[id]/_provider-profile.tsx`** — Added `COMMUNITY_COORDS` for IDs 16–25; updated `provider.communityId` → `provider.communityIds[0]` for backward compatibility.
   - **All `generateStaticParams`** — Updated `marketplace/[id]`, `providers/[id]`, `marketplace/[id]/book`, `bookings/[id]` to cover IDs 1–25 and new booking IDs.
 
+## Phase 15: Completed (v0.5.2)
+- **TS-1 Provider Trust Score + PL-1 Promoted Listings** — Trust tier badges across all surfaces + promoted listing system.
+  - **`components/trust-badge.tsx`** (new) — `TrustBadge` component with 3 tiers: น่าเชื่อถือ (score ≥ 90, blue) / ดี (≥ 75, green) / ใหม่ (< 75, amber). Props: `score`, `size`, `showScore`. `getTrustTier()` utility exported.
+  - **`lib/mock-listings.ts`** (updated) — Added `isPromoted?: boolean` field to `MockListing` interface. Marked listings 1, 3, 7, 14 as promoted.
+  - **`hooks/useListings.ts`** (updated) — Promoted listings surface first (stable sort: promoted bucket → non-promoted bucket, each preserving inner rating/price order).
+  - **`app/marketplace/page.tsx`** (updated) — 🔥 Promoted badge (orange gradient + Flame icon) stacked below status badge. `TrustBadge` displayed next to provider name on each card.
+  - **`app/providers/[id]/_provider-profile.tsx`** (updated) — `TrustBadge` with `showScore` added to provider hero card alongside name + verified shield.
+  - **`dashboard/superadmin/page.tsx`** (updated) — "Promoted Listings" management panel: lists first 12 listings with promote/demote toggle buttons (local state, ready for `PATCH /listings/:id/promote` API wiring). Promoted count badge in header.
+
 ## Phase 14: Completed (v0.5.1)
 - **Provider Command Center** — Full self-serve analytics and insight platform for providers across all 10 business categories.
   - **`lib/mock-provider-analytics.ts`** (new) — Revenue trend (12mo), bookings by day-of-week, rating trend (6mo), booking status pie, mock reviews with sentiment labeling.

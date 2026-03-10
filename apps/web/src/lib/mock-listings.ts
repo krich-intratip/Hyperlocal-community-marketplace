@@ -29,6 +29,7 @@ export interface MockListing {
   menuStock?: MenuStock[]
   lat: number
   lng: number
+  isPromoted?: boolean
 }
 
 export const MOCK_LISTINGS: MockListing[] = [
@@ -39,7 +40,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     provider: 'คุณแม่สมใจ', providerAvatar: '👩‍🍳', providerSince: 'ม.ค. 2567',
     providerVerified: true, providerTrustScore: 98,
     providerBio: 'แม่บ้านทำอาหารมา 15 ปี ลูกค้าประจำ 80+ ครัวเรือน รสมือแม่แท้ๆ',
-    status: 'available', category: 'FOOD', price: 80, unit: 'กล่อง',
+    status: 'available', category: 'FOOD', price: 80, unit: 'กล่อง', isPromoted: true,
     rating: 4.9, reviews: 128, community: 'หมู่บ้านศรีนคร', area: 'บางแค, กรุงเทพฯ',
     distance: '0.3 กม.', image: '🍱', tags: ['ข้าว', 'ส้มตำ', 'ลาบ', 'อาหารตามสั่ง', 'ส่งถึงบ้าน'],
     availableDays: [0,1,2,3,4], openTime: '07:00', closeTime: '17:00',
@@ -73,7 +74,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     provider: 'ครูน้องใหม่', providerAvatar: '👩‍🏫', providerSince: 'มิ.ย. 2567',
     providerVerified: true, providerTrustScore: 95,
     providerBio: 'ครูภาษาอังกฤษระดับประถม วุฒิ ป.บัณฑิต ผ่านการอบรม TEFL ลูกศิษย์ 50+ คน',
-    status: 'available', category: 'TUTORING', price: 300, unit: 'ชั่วโมง',
+    status: 'available', category: 'TUTORING', price: 300, unit: 'ชั่วโมง', isPromoted: true,
     rating: 5.0, reviews: 42, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
     distance: '1.2 กม.', image: '📚', tags: ['ภาษาอังกฤษ', 'ประถม', 'Online', 'สนทนา'],
     availableDays: [1,2,3,4,5,6], openTime: '14:00', closeTime: '20:00',
@@ -135,7 +136,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     provider: 'หมอนวดประเสริฐ', providerAvatar: '🧘', providerSince: 'พ.ย. 2566',
     providerVerified: true, providerTrustScore: 97,
     providerBio: 'ครูนวดแผนไทยใบรับรองจากกรมการแพทย์ ประสบการณ์ 8 ปี ลูกค้าประจำ 200+ คน',
-    status: 'available', category: 'HEALTH_WELLNESS', price: 400, unit: 'ชั่วโมง',
+    status: 'available', category: 'HEALTH_WELLNESS', price: 400, unit: 'ชั่วโมง', isPromoted: true,
     rating: 4.9, reviews: 74, community: 'หมู่บ้านกรีนวิลล์', area: 'บึงกุ่ม, กรุงเทพฯ',
     distance: '1.8 กม.', image: '💆', tags: ['นวด', 'แผนไทย', 'ถึงบ้าน', 'ครูนวดรับรอง'],
     availableDays: [1,2,3,4,5,6], openTime: '10:00', closeTime: '21:00',
@@ -261,7 +262,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     provider: 'สปาล้านนา', providerAvatar: '🌸', providerSince: 'ก.พ. 2566',
     providerVerified: true, providerTrustScore: 93,
     providerBio: 'สปาระดับพรีเมียม ทีมบำบัดผ่านการรับรองระดับนานาชาติ ใช้สมุนไพรท้องถิ่น',
-    status: 'available', category: 'HEALTH_WELLNESS', price: 1200, unit: 'ชั่วโมง',
+    status: 'available', category: 'HEALTH_WELLNESS', price: 1200, unit: 'ชั่วโมง', isPromoted: true,
     rating: 4.9, reviews: 112, community: 'นิมมานเฮมิน วิลเลจ', area: 'นิมมานเฮมิน, เชียงใหม่',
     distance: '0.5 กม.', image: '🌺', tags: ['สปา', 'นวด', 'อโรมา', 'นิมมาน', 'เชียงใหม่'],
     availableDays: [0,1,2,3,4,5,6], openTime: '10:00', closeTime: '21:00',

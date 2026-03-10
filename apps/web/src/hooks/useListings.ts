@@ -56,6 +56,11 @@ async function fetchListings(filters: ListingFilters = {}): Promise<MockListing[
   } else {
     results = results.sort((a, b) => b.rating - a.rating)
   }
+  // Promoted listings always surface first (stable — preserves inner sort order)
+  results = [
+    ...results.filter((l) => l.isPromoted),
+    ...results.filter((l) => !l.isPromoted),
+  ]
   return results
 }
 

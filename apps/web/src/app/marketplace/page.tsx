@@ -4,11 +4,12 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart } from 'lucide-react'
+import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart, Flame } from 'lucide-react'
 import Link from 'next/link'
 import { useState, lazy, Suspense, useCallback, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { ProviderStatusBadge } from '@/components/provider-status'
+import { TrustBadge } from '@/components/trust-badge'
 import { useT } from '@/hooks/useT'
 import { formatDateShort } from '@/lib/date'
 import type { MapListing } from '@/components/map-view'
@@ -289,9 +290,16 @@ function MarketplacePageInner() {
                     {/* Image + status overlay */}
                     <div className="relative h-40 bg-gradient-to-br from-blue-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-6xl">
                       {listing.image}
-                      <div className="absolute top-3 left-3">
+                      {/* Top-left: status + promoted badge */}
+                      <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
                         <ProviderStatusBadge status={listing.status} size="sm" />
+                        {listing.isPromoted && (
+                          <span className="flex items-center gap-1 text-[11px] font-extrabold bg-gradient-to-r from-orange-500 to-amber-400 text-white px-2 py-0.5 rounded-full shadow-sm">
+                            <Flame className="h-3 w-3" /> โปรโมท
+                          </span>
+                        )}
                       </div>
+                      {/* Top-right: wishlist */}
                       <button
                         onClick={(e) => toggleWishlist(listing.id, e)}
                         className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center transition-all shadow-sm ${
@@ -309,7 +317,10 @@ function MarketplacePageInner() {
                       <h3 className="font-bold text-base text-slate-800 dark:text-slate-100 leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1 line-clamp-2">
                         {listing.title}
                       </h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{listing.provider}</p>
+                      <div className="flex items-center gap-2 flex-wrap mb-2">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{listing.provider}</p>
+                        <TrustBadge score={listing.providerTrustScore} size="sm" />
+                      </div>
 
                       {/* Rating + distance */}
                       <div className="flex items-center gap-3 mb-2 text-sm text-slate-400 dark:text-slate-500">
