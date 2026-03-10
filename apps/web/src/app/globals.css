@@ -4,69 +4,238 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   COMMUNITY HYPER MARKETPLACE — Glassmorphism Design System v1.0
+
+   Palette: Periwinkle-Indigo × Pastel (glass-optimised, saturated but soft)
+   Color rules:
+     • Backgrounds: rich gradient (lavender → violet → fuchsia tones)
+     • Cards / panels: glass effect (backdrop-blur + semi-transparent)
+     • Category colors: vibrant-enough to show through glass, not washed out
+   ══════════════════════════════════════════════════════════════════════════════ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-    --font-sans: 'Inter', system-ui, sans-serif;
+    /* ── Semantic colour tokens ─────────────────────────────────────────────── */
+    --background:          0 0% 100%;
+    --foreground:          230 28% 12%;
+    --card:                0 0% 100%;
+    --card-foreground:     230 28% 12%;
+    --popover:             0 0% 100%;
+    --popover-foreground:  230 28% 12%;
+
+    /* Primary: periwinkle-indigo */
+    --primary:             234 80% 60%;
+    --primary-foreground:  0 0% 100%;
+
+    /* Secondary: soft lavender */
+    --secondary:           240 35% 96%;
+    --secondary-foreground: 234 40% 25%;
+
+    /* Muted */
+    --muted:               240 20% 96%;
+    --muted-foreground:    230 15% 50%;
+
+    /* Accent: blush-rose */
+    --accent:              340 60% 94%;
+    --accent-foreground:   340 55% 28%;
+
+    /* Destructive */
+    --destructive:         0 78% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders */
+    --border:              230 25% 88%;
+    --input:               230 25% 88%;
+    --ring:                234 80% 60%;
+    --radius:              0.875rem;
+
+    /* ── Glass System Tokens ─────────────────────────────────────────────────── */
+    --glass-bg:            rgba(255, 255, 255, 0.65);
+    --glass-bg-heavy:      rgba(255, 255, 255, 0.85);
+    --glass-bg-subtle:     rgba(255, 255, 255, 0.38);
+    --glass-border:        rgba(255, 255, 255, 0.55);
+    --glass-border-dim:    rgba(180, 190, 255, 0.35);
+    --glass-shadow:        0 8px 32px rgba(100, 120, 255, 0.10);
+    --glass-shadow-lg:     0 20px 60px rgba(100, 120, 255, 0.16);
+    --glass-blur:          16px;
+    --glass-blur-sm:       8px;
+    --glass-blur-lg:       28px;
+
+    /* ── Category palette (vibrant pastels, glass-friendly) ─────────────────── */
+    --cat-food:            220, 80%, 65%;          /* coral-orange in hsl → use direct rgba below */
+    --cat-repair:          219, 80%, 65%;
+    --cat-home:            156, 50%, 52%;
+    --cat-tutoring:        270, 80%, 65%;
+    --cat-health:          162, 65%, 55%;
+    --cat-agri:            100, 45%, 48%;
+    --cat-freelance:       235, 85%, 70%;
+    --cat-elderly:         330, 65%, 65%;
+    --cat-handmade:        197, 90%, 58%;
+    --cat-community:       186, 80%, 52%;
+
+    --font-sans:           'Sarabun', 'Inter', 'Noto Sans Thai', system-ui, sans-serif;
   }
 
+  /* ── Dark mode ─────────────────────────────────────────────────────────────── */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background:          228 35% 6%;
+    --foreground:          230 15% 94%;
+    --card:                228 30% 10%;
+    --card-foreground:     230 15% 94%;
+    --popover:             228 30% 10%;
+    --popover-foreground:  230 15% 94%;
+
+    --primary:             234 75% 68%;
+    --primary-foreground:  0 0% 100%;
+
+    --secondary:           230 28% 16%;
+    --secondary-foreground: 230 15% 80%;
+
+    --muted:               230 22% 16%;
+    --muted-foreground:    230 12% 55%;
+
+    --accent:              280 35% 22%;
+    --accent-foreground:   280 25% 85%;
+
+    --destructive:         0 62% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border:              230 20% 20%;
+    --input:               230 20% 20%;
+    --ring:                234 75% 65%;
+
+    /* Dark glass */
+    --glass-bg:            rgba(14, 18, 46, 0.72);
+    --glass-bg-heavy:      rgba(14, 18, 46, 0.90);
+    --glass-bg-subtle:     rgba(255, 255, 255, 0.05);
+    --glass-border:        rgba(255, 255, 255, 0.11);
+    --glass-border-dim:    rgba(120, 140, 220, 0.16);
+    --glass-shadow:        0 8px 32px rgba(0, 0, 24, 0.40);
+    --glass-shadow-lg:     0 20px 60px rgba(0, 0, 24, 0.55);
   }
 }
+
+/* ══ Base resets ══════════════════════════════════════════════════════════════ */
 
 @layer base {
   * {
     @apply border-border;
   }
   html {
-    font-size: 17px;
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
   }
   body {
     @apply bg-background text-foreground;
-  }
-  .dark body {
-    background-color: #0f172a;
-    color: #f1f5f9;
+    font-family: var(--font-sans);
   }
 }
+
+/* ══ Glassmorphism Component Classes ══════════════════════════════════════════
+
+   Usage pattern (all dark-mode-aware via CSS vars):
+     .glass          — standard frosted card / panel
+     .glass-sm       — subtle glass (chips, hover backgrounds)
+     .glass-heavy    — modal / drawer (more opaque)
+     .glass-nav      — navbar bar (horizontal strip)
+     .glass-card     — card with hover lift animation
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+
+  /* Standard glass panel */
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* Light glass (chips, small overlays) */
+  .glass-sm {
+    background: var(--glass-bg-subtle);
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+    backdrop-filter: blur(var(--glass-blur-sm));
+    border: 1px solid var(--glass-border-dim);
+  }
+
+  /* Heavy glass (modals, sidebars) */
+  .glass-heavy {
+    background: var(--glass-bg-heavy);
+    -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+    backdrop-filter: blur(var(--glass-blur-lg));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow-lg);
+  }
+
+  /* Navbar strip */
+  .glass-nav {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur-lg));
+    backdrop-filter: blur(var(--glass-blur-lg));
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 2px 24px rgba(100, 120, 255, 0.07);
+  }
+
+  /* Card with hover lift */
+  .glass-card {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.22s ease;
+  }
+  .glass-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--glass-shadow-lg);
+  }
+
+  /* ── Category glass chips ─────────────────────────────────────────────────── */
+  .cat-food      { background:rgba(255,130,80,0.13);  color:#e05c20; border:1px solid rgba(255,130,80,0.28); }
+  .cat-repair    { background:rgba(70,120,230,0.12);  color:#2656c2; border:1px solid rgba(70,120,230,0.28); }
+  .cat-home      { background:rgba(60,170,120,0.12);  color:#1a7a55; border:1px solid rgba(60,170,120,0.28); }
+  .cat-tutoring  { background:rgba(140,90,240,0.12);  color:#6930c8; border:1px solid rgba(140,90,240,0.28); }
+  .cat-health    { background:rgba(40,195,140,0.12);  color:#159c6e; border:1px solid rgba(40,195,140,0.28); }
+  .cat-agri      { background:rgba(90,160,60,0.12);   color:#3d7a18; border:1px solid rgba(90,160,60,0.28); }
+  .cat-freelance { background:rgba(100,115,240,0.12); color:#3848c8; border:1px solid rgba(100,115,240,0.28); }
+  .cat-elderly   { background:rgba(220,100,150,0.12); color:#b03070; border:1px solid rgba(220,100,150,0.28); }
+  .cat-handmade  { background:rgba(20,175,230,0.12);  color:#0070a8; border:1px solid rgba(20,175,230,0.28); }
+  .cat-community { background:rgba(20,210,220,0.12);  color:#0090a0; border:1px solid rgba(20,210,220,0.28); }
+
+  /* ── Gradient text ──────────────────────────────────────────────────────── */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, #6B7FF0 0%, #9B72F5 50%, #E87BA9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-warm {
+    background: linear-gradient(135deg, #FF8C61 0%, #E87BA9 55%, #9B72F5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Glowing pill badge ─────────────────────────────────────────────────── */
+  .glass-pill {
+    background: var(--glass-bg-subtle);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border-dim);
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
+
+/* ══ Scrollbar ════════════════════════════════════════════════════════════════ */
 
 @layer utilities {
   .scrollbar-hide {
@@ -76,4 +245,21 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .scrollbar-glass {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 140, 255, 0.25) transparent;
+  }
+  .scrollbar-glass::-webkit-scrollbar       { width: 4px; }
+  .scrollbar-glass::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-glass::-webkit-scrollbar-thumb {
+    background: rgba(120, 140, 255, 0.30);
+    border-radius: 2px;
+  }
 }
+
+/* ══ Leaflet z-index overrides ═══════════════════════════════════════════════ */
+.leaflet-pane     { z-index: 20 !important; }
+.leaflet-control  { z-index: 30 !important; }
+.leaflet-top,
+.leaflet-bottom   { z-index: 30 !important; }

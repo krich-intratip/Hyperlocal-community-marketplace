@@ -27,9 +27,9 @@ function UserMenu({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: -8 }}
       transition={{ duration: 0.15 }}
-      className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-xl overflow-hidden z-50"
+      className="absolute right-0 top-full mt-2 w-52 glass-heavy rounded-2xl overflow-hidden z-50"
     >
-      <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
+      <div className="px-4 py-3 border-b border-white/30 dark:border-white/10">
         <p className="font-bold text-sm text-slate-900 dark:text-white">{user?.name}</p>
         <p className="text-xs text-slate-500 dark:text-slate-400">{ROLE_LABEL[user?.role ?? 'customer']} · {user?.verified ? 'ยืนยันแล้ว' : 'รอยืนยัน'}</p>
       </div>
@@ -41,7 +41,7 @@ function UserMenu({ onClose }: { onClose: () => void }) {
           { href: '/notifications', icon: Bell,            label: 'การแจ้งเตือน' },
         ].map(item => (
           <Link key={item.href} href={item.href as any} onClick={onClose}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-white/30 dark:hover:bg-white/10 transition-colors">
             <item.icon className="h-4 w-4 text-slate-400" />
             {item.label}
           </Link>
@@ -89,15 +89,15 @@ export function Navbar() {
       initial={{ y: -64, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="border-b border-blue-100/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 shadow-sm"
+      className="glass-nav sticky top-0 z-50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-200/50">
             <MapPin className="h-5 w-5 text-white" />
           </div>
           <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-            Community<span className="text-blue-600"> Hyper</span>
+            Community<span className="text-gradient-primary"> Hyper</span>
           </span>
         </Link>
 
@@ -109,8 +109,8 @@ export function Navbar() {
               href={link.href as any}
               className={`text-base font-semibold transition-colors ${
                 pathname === link.href || pathname.startsWith(link.href + '/')
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400'
+                  ? 'text-primary'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-primary'
               }`}
             >
               {link.label}
@@ -125,10 +125,10 @@ export function Navbar() {
           {isLoggedIn ? (
             <>
               {/* Cart button */}
-              <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-xl hover:bg-white/25 dark:hover:bg-white/10 transition-colors">
                 <ShoppingCart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                 {totalItems > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-white text-[10px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
                 )}
               </button>
 
@@ -139,9 +139,9 @@ export function Navbar() {
               <div ref={userMenuRef} className="relative">
                 <button
                   onClick={() => setUserMenuOpen(v => !v)}
-                  className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-xl hover:bg-white/25 dark:hover:bg-white/10 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-lg">
+                  <div className="w-8 h-8 rounded-lg bg-primary/15 dark:bg-primary/20 flex items-center justify-center text-lg">
                     {user?.avatar ?? '👤'}
                   </div>
                   <span className="text-sm font-bold text-slate-700 dark:text-slate-200 max-w-[80px] truncate">
@@ -156,11 +156,11 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/auth/signin" className="text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Link href="/auth/signin" className="text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
                 {t.nav.signin}
               </Link>
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                <Link href="/auth/signup" className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-base font-semibold text-white shadow-md shadow-blue-200 hover:bg-blue-700 transition-colors">
+                <Link href="/auth/signup" className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-base font-semibold text-white shadow-md shadow-indigo-200/50 hover:bg-primary/90 transition-colors">
                   {t.nav.register}
                 </Link>
               </motion.div>
@@ -173,16 +173,16 @@ export function Navbar() {
           <ThemeLanguageToggle />
           {isLoggedIn && (
             <>
-              <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-lg hover:bg-white/25 dark:hover:bg-white/10 transition-colors">
                 <ShoppingCart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                 {totalItems > 0 && (
-                  <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
+                  <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-primary text-white text-[9px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
                 )}
               </button>
               <NotificationBell />
             </>
           )}
-          <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
+          <button className="p-2 rounded-lg hover:bg-white/25 dark:hover:bg-white/10 transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X className="h-5 w-5 text-slate-700 dark:text-slate-200" /> : <Menu className="h-5 w-5 text-slate-700 dark:text-slate-200" />}
           </button>
         </div>
@@ -193,19 +193,19 @@ export function Navbar() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 px-4 py-4 space-y-3"
+          className="md:hidden border-t border-white/30 dark:border-white/10 glass-heavy px-4 py-4 space-y-3"
         >
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href as any} onClick={() => setMenuOpen(false)}
-              className="block text-base font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 py-1.5">
+              className="block text-base font-semibold text-slate-700 dark:text-slate-200 hover:text-primary py-1.5">
               {link.label}
             </Link>
           ))}
-          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+          <div className="pt-2 border-t border-white/30 dark:border-white/10 flex flex-col gap-2">
             {isLoggedIn ? (
               <>
                 <Link href="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200 py-1.5">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-lg">{user?.avatar ?? '👤'}</div>
+                  <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center text-lg">{user?.avatar ?? '👤'}</div>
                   {user?.name}
                 </Link>
                 <Link href="/bookings"   onClick={() => setMenuOpen(false)} className="text-sm text-slate-600 dark:text-slate-300 py-1">การจองของฉัน</Link>
@@ -215,7 +215,7 @@ export function Navbar() {
             ) : (
               <>
                 <Link href="/auth/signin" onClick={() => setMenuOpen(false)} className="text-base text-slate-600 dark:text-slate-300 py-1">{t.nav.signin}</Link>
-                <Link href="/auth/signup" onClick={() => setMenuOpen(false)} className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-base font-semibold text-white">{t.nav.register}</Link>
+                <Link href="/auth/signup" onClick={() => setMenuOpen(false)} className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-base font-semibold text-white">{t.nav.register}</Link>
               </>
             )}
           </div>

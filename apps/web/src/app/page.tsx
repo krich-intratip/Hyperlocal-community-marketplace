@@ -31,34 +31,34 @@ export default function HomePage() {
   ]
 
   const FEATURES = [
-    { Icon: MapPin, title: t.home.feature1_title, desc: t.home.feature1_desc, bg: 'bg-blue-50', color: 'text-blue-600' },
-    { Icon: Shield, title: t.home.feature2_title, desc: t.home.feature2_desc, bg: 'bg-green-50', color: 'text-green-600' },
-    { Icon: Users, title: t.home.feature3_title, desc: t.home.feature3_desc, bg: 'bg-purple-50', color: 'text-purple-600' },
+    { Icon: MapPin, title: t.home.feature1_title, desc: t.home.feature1_desc, bg: 'glass-sm', color: 'text-primary' },
+    { Icon: Shield, title: t.home.feature2_title, desc: t.home.feature2_desc, bg: 'glass-sm', color: 'text-emerald-600' },
+    { Icon: Users, title: t.home.feature3_title, desc: t.home.feature3_desc, bg: 'glass-sm', color: 'text-violet-600' },
   ]
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-slate-50">
+    <main className="min-h-screen overflow-x-hidden">
       <MarketBackground />
 
       {/* ── Navbar ── */}
       <motion.nav
         initial={{ y: -64, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="border-b border-blue-100/60 bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm"
+        className="glass-nav sticky top-0 z-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-200/50">
               <MapPin className="h-4 w-4 text-white" />
             </div>
-            <span className="font-bold text-base sm:text-lg tracking-tight">Community<span className="text-blue-600"> Hyper</span></span>
+            <span className="font-bold text-base sm:text-lg tracking-tight">Community<span className="text-gradient-primary"> Hyper</span></span>
           </Link>
           <div className="flex items-center gap-3 sm:gap-5">
-            <Link href="/communities" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors hidden sm:block">{t.nav.communities}</Link>
-            <Link href="/franchise" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors hidden sm:block">{t.nav.franchise}</Link>
-            <Link href="/auth/signin" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">{t.nav.signin}</Link>
+            <Link href="/communities" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors hidden sm:block">{t.nav.communities}</Link>
+            <Link href="/franchise" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors hidden sm:block">{t.nav.franchise}</Link>
+            <Link href="/auth/signin" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">{t.nav.signin}</Link>
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link href="/auth/signin" className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-1.5 sm:px-4 sm:py-2 text-sm font-semibold text-white shadow-md shadow-blue-200 hover:bg-blue-700 transition-colors">
+              <Link href="/auth/signin" className="inline-flex items-center justify-center rounded-xl bg-primary px-3 py-1.5 sm:px-4 sm:py-2 text-sm font-semibold text-white shadow-md shadow-indigo-200/50 hover:bg-primary/90 transition-colors">
                 {t.nav.register}
               </Link>
             </motion.div>
@@ -78,11 +78,11 @@ export default function HomePage() {
       ))}
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative bg-gradient-to-b from-white via-blue-50/40 to-slate-50">
+      <section ref={heroRef} className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 text-center">
           <motion.div style={{ y: heroY, opacity: heroOpacity }}>
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
-              className="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-sm font-medium text-blue-700 mb-8">
+              className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium text-primary mb-8">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
@@ -95,7 +95,7 @@ export default function HomePage() {
               {t.home.headline1}
               <br />
               <span className="relative inline-block">
-                <span className="text-blue-600">{t.home.headline2}</span>
+                <span className="text-gradient-primary">{t.home.headline2}</span>
                 <motion.span className="absolute -bottom-1 left-0 right-0 h-1 bg-blue-200 rounded-full"
                   initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.8, duration: 0.6, ease: 'easeOut' }} />
               </span>
@@ -110,19 +110,19 @@ export default function HomePage() {
               className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
               <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
                 <Link href="/communities"
-                  className="inline-flex items-center gap-2 justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors">
+                  className="inline-flex items-center gap-2 justify-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200/60 hover:bg-primary/90 transition-colors">
                   🛍️ {t.home.cta_browse} <ArrowRight className="h-4 w-4" />
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
                 <Link href="/auth/signin?role=provider"
-                  className="inline-flex items-center gap-2 justify-center rounded-xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm px-6 py-3 text-sm font-semibold text-slate-700 hover:border-amber-300 hover:text-amber-700 transition-colors">
+                  className="inline-flex items-center gap-2 justify-center rounded-xl glass px-6 py-3 text-sm font-semibold text-slate-700 hover:border-amber-300 hover:text-amber-700 transition-colors">
                   <Sparkles className="h-4 w-4 text-amber-500" /> {t.home.cta_provider}
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
                 <Link href="/franchise"
-                  className="inline-flex items-center gap-2 justify-center rounded-xl border-2 border-amber-200 bg-amber-50/80 backdrop-blur-sm px-6 py-3 text-sm font-semibold text-amber-700 hover:border-amber-400 hover:bg-amber-100 transition-colors">
+                  className="inline-flex items-center gap-2 justify-center rounded-xl border border-amber-300/60 glass px-6 py-3 text-sm font-semibold text-amber-700 hover:border-amber-400 transition-colors">
                   <Store className="h-4 w-4" /> {t.home.cta_franchise}
                 </Link>
               </motion.div>
@@ -142,7 +142,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Join Us — 3 Roles Section ── */}
-      <section className="bg-slate-50 border-y border-slate-200/60">
+      <section className="border-y border-white/30 dark:border-white/10 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-slate-900 mb-2">{t.home.roles_title}</h2>
@@ -154,7 +154,7 @@ export default function HomePage() {
             {/* Customer card */}
             <motion.div variants={fadeUp} custom={0}
               whileHover={{ y: -8, boxShadow: '0 24px 48px -12px rgba(37,99,235,0.18)' }}
-              className="relative rounded-3xl bg-gradient-to-br from-blue-600 to-blue-700 p-7 text-white overflow-hidden group">
+              className="relative rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 p-7 text-white overflow-hidden group shadow-lg shadow-indigo-300/30">
               <div className="absolute top-3 right-4 text-6xl opacity-20">🛍️</div>
               <div className="relative z-10">
                 <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-4 text-2xl">🛍️</div>
@@ -179,13 +179,13 @@ export default function HomePage() {
             {/* Provider card */}
             <motion.div variants={fadeUp} custom={1}
               whileHover={{ y: -8, boxShadow: '0 24px 48px -12px rgba(245,158,11,0.18)' }}
-              className="relative rounded-3xl bg-white border-2 border-amber-200 p-7 overflow-hidden group shadow-sm">
+              className="relative rounded-3xl glass-card p-7 overflow-hidden group">
               <div className="absolute top-3 right-4 text-6xl opacity-10">⭐</div>
               <div className="relative z-10">
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center mb-4 text-2xl">⭐</div>
                 <h3 className="text-lg font-extrabold text-slate-900 mb-2">{t.home.provider_title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-3">{t.home.provider_sub}</p>
-                <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 mb-4">
+                <div className="flex items-center gap-2 glass-sm rounded-xl px-3 py-2 mb-4">
                   <UserCheck className="h-4 w-4 text-blue-500 flex-shrink-0" />
                   <p className="text-xs text-blue-700 font-medium">{t.home.provider_note}</p>
                 </div>
@@ -198,7 +198,7 @@ export default function HomePage() {
                 </ul>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link href="/providers/apply"
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 text-white font-bold py-2.5 text-sm hover:bg-amber-600 shadow-lg shadow-amber-100 transition-colors">
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 text-white font-bold py-2.5 text-sm hover:bg-amber-600 shadow-md shadow-amber-200/50 transition-colors">
                     {t.home.provider_cta} <ArrowRight className="h-4 w-4" />
                   </Link>
                 </motion.div>
@@ -208,13 +208,13 @@ export default function HomePage() {
             {/* Community Admin card */}
             <motion.div variants={fadeUp} custom={2}
               whileHover={{ y: -8, boxShadow: '0 24px 48px -12px rgba(124,58,237,0.18)' }}
-              className="relative rounded-3xl bg-white border-2 border-purple-200 p-7 overflow-hidden group shadow-sm">
+              className="relative rounded-3xl glass-card p-7 overflow-hidden group">
               <div className="absolute top-3 right-4 text-6xl opacity-10">🏘️</div>
               <div className="relative z-10">
                 <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center mb-4 text-2xl">🏘️</div>
                 <h3 className="text-lg font-extrabold text-slate-900 mb-2">{t.home.admin_title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-3">{t.home.admin_sub}</p>
-                <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 mb-4">
+                <div className="flex items-center gap-2 glass-sm rounded-xl px-3 py-2 mb-4">
                   <UserCheck className="h-4 w-4 text-blue-500 flex-shrink-0" />
                   <p className="text-xs text-blue-700 font-medium">{t.home.admin_note}</p>
                 </div>
@@ -227,7 +227,7 @@ export default function HomePage() {
                 </ul>
                 <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link href="/franchise/apply"
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-purple-600 text-white font-bold py-2.5 text-sm hover:bg-purple-700 shadow-lg shadow-purple-100 transition-colors">
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-600 text-white font-bold py-2.5 text-sm hover:bg-violet-700 shadow-md shadow-violet-200/50 transition-colors">
                     {t.home.admin_cta} <ArrowRight className="h-4 w-4" />
                   </Link>
                 </motion.div>
@@ -238,7 +238,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Active Communities ── */}
-      <section className="bg-white">
+      <section className="">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
             <div className="flex items-center justify-between mb-3">
@@ -265,12 +265,12 @@ export default function HomePage() {
               <motion.div key={c.id} variants={fadeUp} custom={i}
                 whileHover={{ y: -5, boxShadow: '0 16px 32px -8px rgba(37,99,235,0.12)' }}>
                 <Link href={`/communities/${c.id}`}
-                  className="block bg-white rounded-2xl border border-slate-200 p-5 hover:border-blue-300 transition-all group">
+                  className="block glass-card rounded-2xl p-5 group">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-xl">{c.emoji}</div>
                       <div>
-                        <h3 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors text-sm">{c.name}</h3>
+                        <h3 className="font-bold text-slate-900 group-hover:text-primary transition-colors text-sm">{c.name}</h3>
                         <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
                           <MapPin className="h-3 w-3" />{c.area}
                         </div>
@@ -281,22 +281,22 @@ export default function HomePage() {
                     )}
                   </div>
                   <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div className="text-center bg-slate-50 rounded-xl py-2">
+                    <div className="text-center glass-sm rounded-xl py-2">
                       <div className="font-bold text-slate-900 text-sm">{c.providers}</div>
                       <div className="text-xs text-slate-500">{t.home.communities_providers}</div>
                     </div>
-                    <div className="text-center bg-slate-50 rounded-xl py-2">
+                    <div className="text-center glass-sm rounded-xl py-2">
                       <div className="font-bold text-slate-900 text-sm">{c.members}</div>
                       <div className="text-xs text-slate-500">{t.home.communities_members}</div>
                     </div>
-                    <div className="text-center bg-slate-50 rounded-xl py-2">
+                    <div className="text-center glass-sm rounded-xl py-2">
                       <div className="font-bold text-slate-900 text-sm">{c.categories}</div>
                       <div className="text-xs text-slate-500">{t.home.communities_categories}</div>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {c.tags.map(tag => (
-                      <span key={tag} className="text-xs bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded-full">{tag}</span>
+                      <span key={tag} className="text-xs glass-sm text-primary px-2 py-0.5 rounded-full">{tag}</span>
                     ))}
                   </div>
                 </Link>
@@ -307,7 +307,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Feature cards ── */}
-      <section className="bg-gradient-to-b from-slate-50 to-blue-50/30 border-y border-slate-200/60">
+      <section className="border-y border-white/30 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-slate-900 mb-10">{t.home.features_title}</h2>
@@ -317,7 +317,7 @@ export default function HomePage() {
             {FEATURES.map((f, i) => (
               <motion.div key={f.title} variants={fadeUp} custom={i}
                 whileHover={{ y: -6, boxShadow: '0 20px 40px -12px rgba(37,99,235,0.15)' }}
-                className="group text-center p-8 rounded-2xl bg-white shadow-sm border border-slate-100 cursor-default transition-all">
+                className="group text-center p-8 rounded-2xl glass-card cursor-default transition-all">
                 <div className={`w-12 h-12 rounded-2xl ${f.bg} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                   <f.Icon className={`h-6 w-6 ${f.color}`} />
                 </div>
@@ -330,20 +330,20 @@ export default function HomePage() {
       </section>
 
       {/* ── Category grid ── */}
-      <section className="bg-slate-900">
+      <section className="bg-gradient-to-br from-indigo-900 via-violet-900 to-fuchsia-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-white mb-2">{t.home.categories_title}</h2>
-            <p className="text-center text-slate-400 mb-10 text-sm">{t.home.categories_sub}</p>
+            <p className="text-center text-indigo-200/70 mb-10 text-sm">{t.home.categories_sub}</p>
           </motion.div>
           <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}
             className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {CATEGORIES.map((cat, i) => (
               <motion.div key={cat.slug} variants={fadeUp} custom={i * 0.5} whileHover={{ scale: 1.07, y: -4 }} whileTap={{ scale: 0.96 }}>
                 <Link href={`/marketplace?category=${cat.slug}`}
-                  className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/10 border border-white/10 hover:border-blue-400 hover:bg-white/20 transition-all group">
+                  className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 hover:border-white/40 hover:bg-white/20 transition-all group">
                   <span className="text-3xl group-hover:scale-110 transition-transform inline-block">{cat.icon}</span>
-                  <span className="text-xs font-semibold text-center text-slate-200 group-hover:text-white transition-colors">{cat.name}</span>
+                  <span className="text-xs font-semibold text-center text-white/80 group-hover:text-white transition-colors">{cat.name}</span>
                 </Link>
               </motion.div>
             ))}
@@ -352,7 +352,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-slate-900 border-t border-white/10">
+      <footer className="bg-gradient-to-br from-indigo-950 to-violet-950 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-slate-500">
           {t.home.footer}
         </div>

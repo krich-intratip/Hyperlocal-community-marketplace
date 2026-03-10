@@ -138,7 +138,7 @@ export default function CommunitiesPage() {
               placeholder="ค้นหาชุมชน, พื้นที่, หรือประเภทบริการ..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white/90 backdrop-blur-sm text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl glass border-none text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
             />
           </div>
 
@@ -149,7 +149,7 @@ export default function CommunitiesPage() {
               <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                 onClick={requestLocation}
                 disabled={geoState === 'loading'}
-                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-200 hover:bg-blue-700 disabled:opacity-60 transition-colors">
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-indigo-200/50 hover:bg-primary/90 disabled:opacity-60 transition-colors">
                 {geoState === 'loading'
                   ? <><Loader2 className="h-4 w-4 animate-spin" /> กำลังหาตำแหน่ง...</>
                   : <><Navigation className="h-4 w-4" /> ค้นหาใกล้ฉัน</>}
@@ -172,7 +172,7 @@ export default function CommunitiesPage() {
               <div className="relative">
                 <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   onClick={() => setShowRadiusPicker(p => !p)}
-                  className="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:border-blue-300 transition-colors">
+                  className="inline-flex items-center gap-2 rounded-xl glass px-4 py-2 text-sm font-bold text-slate-700 hover:border-primary/40 transition-colors">
                   <SlidersHorizontal className="h-3.5 w-3.5" />
                   รัศมี {searchRadius} กม.
                 </motion.button>
@@ -180,13 +180,13 @@ export default function CommunitiesPage() {
                   {showRadiusPicker && (
                     <motion.div
                       initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                      className="absolute top-full mt-2 left-0 bg-white rounded-2xl shadow-xl border border-slate-100 p-3 z-20 flex gap-2">
+                      className="absolute top-full mt-2 left-0 glass-heavy rounded-2xl shadow-xl p-3 z-20 flex gap-2">
                       {RADIUS_OPTIONS.map((r) => (
                         <button key={r} onClick={() => { setSearchRadius(r); setShowRadiusPicker(false) }}
                           className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${
                             searchRadius === r
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600'
+                              ? 'bg-primary text-white'
+                              : 'glass-sm text-slate-600 hover:text-primary'
                           }`}>
                           {r} กม.
                         </button>
@@ -255,7 +255,7 @@ export default function CommunitiesPage() {
             <motion.div key={community.id} variants={fadeUp} custom={i}
               whileHover={{ y: -5, boxShadow: '0 20px 40px -12px rgba(37,99,235,0.12)' }}>
               <Link href={`/communities/${community.id}`}
-                className="block p-6 rounded-2xl bg-white/85 backdrop-blur-sm border border-slate-100 shadow-sm hover:border-blue-200 transition-all group">
+                className="block p-6 rounded-2xl glass-card group">
 
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -273,7 +273,7 @@ export default function CommunitiesPage() {
                   </div>
                   <div className="flex flex-col items-end gap-1.5">
                     {community.trial && (
-                      <span className="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full border border-green-200 whitespace-nowrap">
+                      <span className="text-xs cat-health font-semibold px-2 py-0.5 rounded-full whitespace-nowrap">
                         ฟรี
                       </span>
                     )}
@@ -281,8 +281,8 @@ export default function CommunitiesPage() {
                     {community.distKm !== null && (
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
                         community.inServiceArea
-                          ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                          : 'bg-slate-100 text-slate-500 border border-slate-200'
+                          ? 'bg-primary/15 text-primary'
+                          : 'glass-sm text-slate-500'
                       }`}>
                         📍 {fmtDist(community.distKm)}
                       </span>
@@ -294,8 +294,8 @@ export default function CommunitiesPage() {
                 {community.distKm !== null && (
                   <div className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg mb-3 ${
                     community.inServiceArea
-                      ? 'bg-blue-50 text-blue-600 border border-blue-100'
-                      : 'bg-slate-50 text-slate-400 border border-slate-100'
+                      ? 'glass-sm text-primary'
+                      : 'glass-sm text-slate-400'
                   }`}>
                     <Navigation className={`h-3 w-3 ${community.inServiceArea ? 'fill-blue-400' : ''}`} />
                     {community.inServiceArea
@@ -314,13 +314,13 @@ export default function CommunitiesPage() {
                     <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                     {community.rating}
                   </div>
-                  <div className="text-xs text-blue-600 font-medium">{community.providers} Provider</div>
+                  <div className="text-xs text-primary font-medium">{community.providers} Provider</div>
                 </div>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {community.tags.map((tag) => (
-                    <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-100">
+                    <span key={tag} className="text-xs glass-sm text-primary px-2 py-0.5 rounded-full">
                       {tag}
                     </span>
                   ))}
@@ -328,7 +328,7 @@ export default function CommunitiesPage() {
 
                 {/* Trial info */}
                 {community.trial && community.trialEnd && (
-                  <div className="flex items-center gap-1.5 text-xs text-green-600 bg-green-50 rounded-lg px-3 py-2 mb-3 border border-green-100">
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 glass-sm rounded-lg px-3 py-2 mb-3">
                     <Calendar className="h-3.5 w-3.5" />
                     ทดลองฟรีถึง {community.trialEnd}
                   </div>
@@ -336,7 +336,7 @@ export default function CommunitiesPage() {
 
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-400">{community.providers} ผู้ให้บริการในชุมชน</span>
-                  <ChevronRight className="h-4 w-4 text-blue-400 group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="h-4 w-4 text-primary/60 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             </motion.div>
@@ -357,7 +357,7 @@ export default function CommunitiesPage() {
               <div className="flex gap-2 justify-center flex-wrap">
                 {RADIUS_OPTIONS.filter(r => r > searchRadius).slice(0, 3).map(r => (
                   <button key={r} onClick={() => setSearchRadius(r)}
-                    className="px-4 py-2 rounded-xl bg-blue-50 border border-blue-200 text-sm font-bold text-blue-600 hover:bg-blue-100 transition-colors">
+                    className="px-4 py-2 rounded-xl glass text-sm font-bold text-primary hover:bg-white/30 transition-colors">
                     ขยายเป็น {r} กม.
                   </button>
                 ))}
@@ -372,7 +372,7 @@ export default function CommunitiesPage() {
           <p className="text-slate-500 mb-4">ไม่พบชุมชนในพื้นที่ของคุณ?</p>
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
             <Link href="/franchise/apply"
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-amber-200 bg-amber-50 px-6 py-3 text-sm font-semibold text-amber-700 hover:bg-amber-100 transition-colors">
+              className="inline-flex items-center gap-2 rounded-xl glass px-6 py-3 text-sm font-semibold text-amber-600 dark:text-amber-400 hover:bg-white/30 transition-colors">
               🏘️ ขอเปิดตลาดชุมชนในพื้นที่ของคุณ <ChevronRight className="h-4 w-4" />
             </Link>
           </motion.div>

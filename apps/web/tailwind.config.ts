@@ -47,6 +47,20 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-sans)'],
       },
+      keyframes: {
+        'float-slow': {
+          '0%, 100%': { transform: 'translateY(0px) scale(1)' },
+          '50%':       { transform: 'translateY(-24px) scale(1.04)' },
+        },
+        'float-med': {
+          '0%, 100%': { transform: 'translateY(0px) scale(1)' },
+          '50%':      { transform: 'translateY(-14px) scale(1.02)' },
+        },
+      },
+      animation: {
+        'float-slow': 'float-slow 12s ease-in-out infinite',
+        'float-med':  'float-med 8s ease-in-out infinite',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

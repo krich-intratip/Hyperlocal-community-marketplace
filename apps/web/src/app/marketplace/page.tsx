@@ -47,6 +47,20 @@ const CAT_NAMES: Record<string, string> = {
   FREELANCE: 'ฟรีแลนซ์', COMMUNITY_SHARING: 'Community Sharing',
 }
 
+// Map category slug → glass chip CSS class (from globals.css)
+const CAT_CHIP: Record<string, string> = {
+  FOOD:              'cat-food',
+  REPAIR:            'cat-repair',
+  HOME_SERVICES:     'cat-home',
+  TUTORING:          'cat-tutoring',
+  ELDERLY_CARE:      'cat-elderly',
+  HANDMADE:          'cat-handmade',
+  HEALTH_WELLNESS:   'cat-health',
+  AGRICULTURE:       'cat-agri',
+  FREELANCE:         'cat-freelance',
+  COMMUNITY_SHARING: 'cat-community',
+}
+
 type ProviderStatus = 'available' | 'busy' | 'offline'
 
 const DAY_LABELS = ['จ','อ','พ','พฤ','ศ','ส','อา']
@@ -118,7 +132,7 @@ function MarketplacePageInner() {
   }))
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
+    <main className="min-h-screen overflow-x-hidden">
       <MarketBackground />
       <Navbar />
 
@@ -138,10 +152,10 @@ function MarketplacePageInner() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input type="text" placeholder={t.marketplace.searchPlaceholder}
               value={search} onChange={e => updateParam('q', e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all" />
+              className="w-full pl-11 pr-4 py-3 rounded-2xl glass border-none text-base text-slate-800 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
           </div>
           <select value={sortBy} onChange={e => updateParam('sort', e.target.value)}
-            className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800 text-base text-slate-700 dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 cursor-pointer">
+            className="px-4 py-3 rounded-2xl glass border-none text-base text-slate-700 dark:text-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer">
             <option value="rating">{t.marketplace.sortRating}</option>
             <option value="price">{t.marketplace.sortPrice}</option>
           </select>
@@ -151,11 +165,11 @@ function MarketplacePageInner() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
           className="flex flex-wrap items-center gap-3 mb-4">
           {/* Status filter */}
-          <div className="flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 overflow-hidden">
+          <div className="flex items-center rounded-xl glass overflow-hidden">
             {(['ALL','available','busy','offline'] as const).map(val => (
               <button key={val} onClick={() => updateParam('status', val)}
                 className={`px-3 py-1.5 text-sm font-semibold transition-colors ${
-                  statusFilter === val ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-blue-600'
+                  statusFilter === val ? 'bg-primary text-white' : 'text-slate-500 dark:text-slate-400 hover:text-primary'
                 }`}>
                 {val === 'ALL' ? 'ทั้งหมด' : val === 'available' ? '🟢 ว่าง' : val === 'busy' ? '🟡 ไม่ว่าง' : '⚫ หยุด'}
               </button>
@@ -163,7 +177,7 @@ function MarketplacePageInner() {
           </div>
 
           {/* Radius filter */}
-          <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5">
+          <div className="flex items-center gap-2 glass rounded-xl px-3 py-1.5">
             <MapPin className="h-4 w-4 text-blue-500" />
             <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{t.marketplace.filterRadius}</span>
             <input type="range" min={1} max={10} step={0.5} value={radiusKm}
@@ -173,16 +187,16 @@ function MarketplacePageInner() {
           </div>
 
           {/* View toggle */}
-          <div className="flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 overflow-hidden ml-auto">
+          <div className="flex items-center rounded-xl glass overflow-hidden ml-auto">
             <button onClick={() => setViewMode('list')}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold transition-colors ${
-                viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-blue-600'
+                viewMode === 'list' ? 'bg-primary text-white' : 'text-slate-500 dark:text-slate-400 hover:text-primary'
               }`}>
               <List className="h-4 w-4" /> {t.marketplace.listView}
             </button>
             <button onClick={() => setViewMode('map')}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold transition-colors ${
-                viewMode === 'map' ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-blue-600'
+                viewMode === 'map' ? 'bg-primary text-white' : 'text-slate-500 dark:text-slate-400 hover:text-primary'
               }`}>
               <Map className="h-4 w-4" /> {t.marketplace.mapView}
             </button>
@@ -204,8 +218,8 @@ function MarketplacePageInner() {
                   onClick={() => updateParam('category', cat.slug)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border flex-shrink-0 ${
                     activeCategory === cat.slug
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200'
-                      : 'bg-white/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                      ? 'bg-primary text-white border-primary shadow-md shadow-indigo-200/40'
+                      : 'glass text-slate-600 dark:text-slate-300'
                   }`}>
                   <span>{cat.icon}</span>
                   <span>{CAT_NAMES[cat.slug]}</span>
@@ -231,8 +245,8 @@ function MarketplacePageInner() {
                   onClick={() => updateParam('category', cat.slug)}
                   className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
                     isActive
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200 dark:shadow-blue-900/30'
-                      : 'bg-white/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-300 hover:text-blue-600'
+                      ? 'bg-primary text-white border-primary shadow-md shadow-indigo-200/40'
+                      : 'glass text-slate-600 dark:text-slate-300 hover:text-primary'
                   }`}>
                   <span className="text-base leading-none">{cat.icon}</span>
                   <span>{CAT_NAMES[cat.slug]}</span>
@@ -270,7 +284,7 @@ function MarketplacePageInner() {
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 h-64 animate-pulse" />
+                <div key={i} className="rounded-2xl glass h-64 animate-pulse" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
@@ -285,10 +299,10 @@ function MarketplacePageInner() {
                 <motion.div key={listing.id} variants={fadeUp} custom={i}
                   whileHover={{ y: -5, boxShadow: '0 20px 40px -12px rgba(37,99,235,0.12)' }}>
                   <Link href={`/marketplace/${listing.id}`}
-                    className="block rounded-2xl bg-white/90 dark:bg-slate-800 backdrop-blur-sm border border-slate-100 dark:border-slate-700 shadow-sm hover:border-blue-200 dark:hover:border-blue-600 transition-all overflow-hidden group">
+                    className="block rounded-2xl glass-card overflow-hidden group">
 
                     {/* Image + status overlay */}
-                    <div className="relative h-40 bg-gradient-to-br from-blue-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-6xl">
+                    <div className="relative h-40 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 flex items-center justify-center text-6xl">
                       {listing.image}
                       {/* Top-left: status + promoted badge */}
                       <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
@@ -342,8 +356,8 @@ function MarketplacePageInner() {
                           {DAY_LABELS.map((d, idx) => (
                             <span key={idx} className={`text-xs px-1.5 py-0.5 rounded font-bold ${
                               listing.availableDays!.includes(idx)
-                                ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300'
-                                : 'bg-slate-100 dark:bg-slate-700 text-slate-300 dark:text-slate-600'
+                                ? 'bg-primary/15 text-primary'
+                                : 'glass-sm text-slate-300 dark:text-slate-600'
                             }`}>{d}</span>
                           ))}
                           {listing.openTime && (
@@ -354,7 +368,7 @@ function MarketplacePageInner() {
 
                       {/* Food / handmade stock */}
                       {listing.menuStock && listing.menuStock.length > 0 && (
-                        <div className="mb-3 space-y-1.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
+                        <div className="mb-3 space-y-1.5 glass-sm rounded-xl p-3">
                           <p className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">สต็อกคงเหลือ</p>
                           {listing.menuStock.map(m => (
                             <div key={m.name}>
@@ -370,8 +384,11 @@ function MarketplacePageInner() {
 
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1 mb-3">
-                        {listing.tags.slice(0, 2).map(tag => (
-                          <span key={tag} className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md">{tag}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-md font-semibold ${CAT_CHIP[listing.category] ?? 'glass-sm text-slate-500'}`}>
+                          {CAT_NAMES[listing.category]}
+                        </span>
+                        {listing.tags.slice(0, 1).map(tag => (
+                          <span key={tag} className="text-xs glass-sm text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md">{tag}</span>
                         ))}
                       </div>
 
