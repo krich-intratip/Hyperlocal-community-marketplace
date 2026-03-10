@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.4.7 | **Updated:** 2026-03-09
+> **Version:** v0.4.8 | **Updated:** 2026-03-10
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -74,7 +74,13 @@
   - **Listing detail** — "เพิ่มในตะกร้า" button (amber, with ✅ feedback) alongside existing "Book Now". Respects selected menu + qty.
   - **`/cart` page** — 3-step checkout: (1) review items grouped by provider + per-item note + per-provider delivery address, (2) PromptPay QR / cash payment selector, (3) done screen with order IDs + links to `/bookings`.
 
-## Phase 11: Roadmap (Next Sessions)
+## Phase 11: Completed (v0.4.8)
+- **Franchise Pricing Page** — Added `PRICING_PLANS` array with 3 tiers: Trial (฿500/3mo), Package 1 (฿10,000/1yr, 50% off ฿20,000), Package 2 (฿17,000/2yr, 58% off ฿40,000). Full pricing section with plan cards, feature lists, and footnote explaining the promotion.
+- **Provider Listings: Image + Description** — Added `imageUrl` and `description` fields to `Listing` interface and `FormData`. Form modal now has a description textarea and imageUrl input with live preview. Listing cards show image (or emoji fallback) and description.
+- **Super Admin Dashboard: Drillable Communities** — Updated `TOP_COMMUNITIES` IDs to match actual route params (numeric strings). Community rows wrapped in `<Link href="/communities/{id}">` with hover effects and ChevronRight indicator. Stats updated: 15 total, 12 active communities.
+- **Community Admin Dashboard: Provider Overview** — Added prominent `ภาพรวม Provider` section above the 2-column grid. Shows top 5 approved providers per community with name, category, bookings, revenue, rating, and status. Each row links to `/providers/{id}`. "ดูทั้งหมด →" button links to `/dashboard/admin/providers`. "Provider Approval" panel header also gets a "ทั้งหมด →" link. Added `Link` from next/link and `Star` icon.
+
+## Phase 12: Roadmap (Next Sessions)
 
 ### 🔴 High — CART-7: Cart Backend API
 - **Backend:** Create `POST /orders` endpoint in NestJS accepting `{ items: [{listingId, menuName, qty, note}][], deliveryAddress, paymentMethod }`. Auto-calculate total server-side. Create `Order` entity with `OrderItem[]` relation.

@@ -22,8 +22,8 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 // ── Mock Data ──────────────────────────────────────────────────────────────────
 
 const PLATFORM_STATS = {
-  totalCommunities: 12,
-  activeCommunities: 9,
+  totalCommunities: 15,
+  activeCommunities: 12,
   pendingApplications: 3,
   suspendedCommunities: 1,
   totalProviders: 340,
@@ -41,9 +41,11 @@ const RECENT_APPLICATIONS = [
 ]
 
 const TOP_COMMUNITIES = [
-  { id: 'C001', name: 'หมู่บ้านศรีนคร', province: 'กรุงเทพฯ', providers: 34, bookings: 1204, revenue: 85400, trustScore: 98 },
-  { id: 'C002', name: 'คอนโด The Base Rama9', province: 'กรุงเทพฯ', providers: 21, bookings: 876, revenue: 62000, trustScore: 95 },
-  { id: 'C003', name: 'ชุมชนเมืองทอง', province: 'นนทบุรี', providers: 18, bookings: 654, revenue: 44000, trustScore: 91 },
+  { id: '1', name: 'หมู่บ้านศรีนคร', province: 'กรุงเทพฯ', providers: 34, bookings: 1204, revenue: 85400, trustScore: 98 },
+  { id: '2', name: 'คอนโด The Base Rama9', province: 'กรุงเทพฯ', providers: 21, bookings: 876, revenue: 62000, trustScore: 95 },
+  { id: '3', name: 'ชุมชนเมืองทอง', province: 'นนทบุรี', providers: 18, bookings: 654, revenue: 44000, trustScore: 91 },
+  { id: '6', name: 'เมืองเชียงใหม่ซิตี้', province: 'เชียงใหม่', providers: 25, bookings: 934, revenue: 72000, trustScore: 93 },
+  { id: '8', name: 'ป่าตอง ซีไซด์', province: 'ภูเก็ต', providers: 19, bookings: 712, revenue: 58000, trustScore: 89 },
 ]
 
 const ALERTS = [
@@ -196,19 +198,20 @@ export default function SuperAdminDashboardPage() {
                 <TrendingUp className="h-4 w-4 text-blue-500" />
                 <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Top Communities</h3>
               </div>
-              <Link href="/dashboard/superadmin/franchise"
+              <Link href="/communities"
                 className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700">
-                {t.superadmin.communities_title} <ChevronRight className="h-3.5 w-3.5" />
+                ดูทั้งหมด <ChevronRight className="h-3.5 w-3.5" />
               </Link>
             </div>
             <div className="divide-y divide-slate-100 dark:divide-slate-700">
               {TOP_COMMUNITIES.map((c, idx) => (
-                <div key={c.id} className="flex items-center gap-4 px-5 py-3.5">
+                <Link key={c.id} href={`/communities/${c.id}` as any}
+                  className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
                   <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs font-extrabold text-slate-500">
                     {idx + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">{c.name}</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{c.name}</p>
                     <p className="text-xs text-slate-500 mt-0.5">{c.province} · {c.providers} provider</p>
                   </div>
                   <div className="text-right">
@@ -220,7 +223,8 @@ export default function SuperAdminDashboardPage() {
                     c.trustScore >= 80 ? 'bg-blue-100 text-blue-700' :
                     'bg-amber-100 text-amber-700'
                   }`}>{c.trustScore}%</div>
-                </div>
+                  <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors flex-shrink-0" />
+                </Link>
               ))}
             </div>
           </motion.div>

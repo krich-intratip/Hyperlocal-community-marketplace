@@ -6,7 +6,7 @@ import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
 import {
   Building2, DollarSign, Users, TrendingUp, Shield, ChevronRight,
-  CheckCircle, MapPin, Star, BarChart3, Zap, Globe
+  CheckCircle, MapPin, Star, BarChart3, Zap, Globe, Tag,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -19,10 +19,49 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } }
 const BENEFITS = [
   { icon: DollarSign, title: 'Revenue Share 40%', desc: 'รับ 40% จาก Commission ที่แพลตฟอร์มเก็บจากผู้ให้บริการในชุมชนของคุณ จ่ายทุกวันที่ 1 ของเดือน', color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/30' },
   { icon: Users, title: 'จัดการชุมชนเอง', desc: 'อนุมัติ Provider รายใหม่ ตั้งราคา Promoted Listings ดูแลคุณภาพบริการ', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/30' },
-  { icon: Shield, title: 'ช่วงทดลองฟรี', desc: 'แพลตฟอร์มให้ช่วงทดลองตามที่ตกลง ไม่มีค่าใช้จ่ายในการเริ่มต้น', color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/30' },
+  { icon: Shield, title: 'ทดลองใช้งาน ฿500/3 เดือน', desc: 'เริ่มต้นเพียง ฿500 สำหรับ 3 เดือนแรก จากนั้นเลือกแพ็คเกจที่เหมาะสมกับชุมชนของคุณ', color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/30' },
   { icon: BarChart3, title: 'ข้อมูล Real-time', desc: 'Dashboard แสดงยอด Booking รายได้ และ Trust Score ของทุก Provider', color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30' },
   { icon: Zap, title: 'เครื่องมือครบครัน', desc: 'ระบบจัดการ Promotion, Notification ชุมชน และ Campaign Marketing', color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-900/30' },
   { icon: Globe, title: 'แบรนด์ระดับชาติ', desc: 'อยู่ภายใต้แบรนด์ Community Hyper Marketplace ที่น่าเชื่อถือ', color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-900/30' },
+]
+
+const PRICING_PLANS = [
+  {
+    id: 'trial',
+    label: 'ทดลองใช้งาน',
+    price: 500,
+    period: '3 เดือน',
+    pricePerYear: null,
+    originalPrice: null,
+    discount: null,
+    highlight: false,
+    badge: null,
+    features: ['ฟีเจอร์ครบทุกอย่าง', 'รองรับ Provider ไม่จำกัด', 'Dashboard + Analytics', 'Revenue Share 40%', 'Support ตลอด 3 เดือน'],
+  },
+  {
+    id: 'yearly',
+    label: 'แพ็คเกจ 1 ปี',
+    price: 10000,
+    period: '1 ปี',
+    pricePerYear: 10000,
+    originalPrice: 20000,
+    discount: '50%',
+    highlight: true,
+    badge: 'ยอดนิยม',
+    features: ['ฟีเจอร์ครบทุกอย่าง', 'รองรับ Provider ไม่จำกัด', 'Dashboard + Analytics', 'Revenue Share 40%', 'Support ตลอด 1 ปี', 'ประหยัด ฿10,000 จากราคาเต็ม'],
+  },
+  {
+    id: 'biennial',
+    label: 'แพ็คเกจ 2 ปี',
+    price: 17000,
+    period: '2 ปี',
+    pricePerYear: 8500,
+    originalPrice: 40000,
+    discount: '58%',
+    highlight: false,
+    badge: 'คุ้มสุด',
+    features: ['ฟีเจอร์ครบทุกอย่าง', 'รองรับ Provider ไม่จำกัด', 'Dashboard + Analytics', 'Revenue Share 40%', 'Support ตลอด 2 ปี', 'ประหยัด ฿23,000 จากราคาเต็ม', 'เพียง ฿8,500/ปี'],
+  },
 ]
 
 const STEPS_PROCESS = [
@@ -75,8 +114,8 @@ export default function FranchisePage() {
               สมัครเป็นผู้จัดการชุมชน <ChevronRight className="h-5 w-5" />
             </Link>
           </motion.div>
-          <Link href="#revenue" className="text-base font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 transition-colors">
-            ดูรายได้ที่เป็นไปได้ →
+          <Link href="#pricing" className="text-base font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 transition-colors">
+            ดูแพ็คเกจราคา →
           </Link>
         </motion.div>
       </section>
@@ -167,6 +206,79 @@ export default function FranchisePage() {
             </motion.div>
           ))}
         </motion.div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="text-center mb-3">
+          <span className="inline-flex items-center gap-2 text-sm font-bold text-amber-700 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 px-4 py-1.5 rounded-full mb-4">
+            โปรโมชัน — ลด 50% จากราคาเต็ม ฿20,000/ปี
+          </span>
+        </motion.div>
+        <motion.h2 variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={1}
+          className="text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-2">
+          แพ็คเกจ Franchise
+        </motion.h2>
+        <motion.p variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={2}
+          className="text-center text-slate-500 dark:text-slate-400 mb-10 text-base">
+          เริ่มต้นทดลองใช้งานในราคาพิเศษ ก่อนเลือกแพ็คเกจที่เหมาะกับชุมชนของคุณ
+        </motion.p>
+        <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {PRICING_PLANS.map((plan, i) => (
+            <motion.div key={plan.id} variants={fadeUp} custom={i} whileHover={{ y: -6 }}
+              className={`relative bg-white/90 dark:bg-slate-800 rounded-2xl border shadow-sm p-6 flex flex-col ${
+                plan.highlight
+                  ? 'border-amber-400 shadow-amber-200 dark:shadow-amber-900/30 ring-2 ring-amber-400'
+                  : 'border-slate-100 dark:border-slate-700'
+              }`}>
+              {plan.badge && (
+                <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-extrabold text-white shadow-lg ${
+                  plan.highlight ? 'bg-amber-500' : 'bg-indigo-500'
+                }`}>
+                  {plan.badge}
+                </div>
+              )}
+              <div className="mb-4">
+                <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-1">{plan.label}</p>
+                <div className="flex items-end gap-2">
+                  <span className="text-3xl font-extrabold text-slate-900 dark:text-white">฿{plan.price.toLocaleString()}</span>
+                  <span className="text-slate-400 text-sm pb-1">/ {plan.period}</span>
+                </div>
+                {plan.originalPrice && (
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm text-slate-400 line-through">฿{plan.originalPrice.toLocaleString()}</span>
+                    <span className="text-xs font-bold text-green-600 bg-green-100 dark:bg-green-900/40 px-2 py-0.5 rounded-full">
+                      ประหยัด {plan.discount}
+                    </span>
+                  </div>
+                )}
+                {plan.pricePerYear && plan.id === 'biennial' && (
+                  <p className="text-xs text-slate-400 mt-1">เฉลี่ย ฿{plan.pricePerYear.toLocaleString()}/ปี</p>
+                )}
+              </div>
+              <ul className="space-y-2 flex-1 mb-6">
+                {plan.features.map(f => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
+                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/franchise/apply"
+                className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-colors ${
+                  plan.highlight
+                    ? 'bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-200'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600'
+                }`}>
+                เริ่มต้นกับแพ็คเกจนี้ <ChevronRight className="h-4 w-4" />
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+        <p className="text-center text-sm text-slate-400 dark:text-slate-500 mt-5">
+          * ราคาเต็มปกติ ฿20,000/ปี · โปรโมชันปัจจุบัน 50% off · ราคาอาจเปลี่ยนแปลงโดยไม่แจ้งล่วงหน้า
+        </p>
       </section>
 
       {/* Active communities */}

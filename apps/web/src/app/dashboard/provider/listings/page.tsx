@@ -30,17 +30,18 @@ const CAT_TH: Record<string, string> = {
 
 interface Listing {
   id: string; title: string; category: string; price: number; unit: string
-  image: string; views: number; bookings: number; rating: number; active: boolean
+  image: string; description: string; imageUrl: string
+  views: number; bookings: number; rating: number; active: boolean
 }
 
 const INITIAL_LISTINGS: Listing[] = [
-  { id: '1', title: 'ทำอาหารกล่องส่งถึงที่', category: 'FOOD', price: 80, unit: 'กล่อง', image: '🍱', views: 234, bookings: 128, rating: 4.9, active: true },
-  { id: '2', title: 'อาหารคลีนออเดอร์ล่วงหน้า', category: 'FOOD', price: 120, unit: 'กล่อง', image: '🥗', views: 89, bookings: 34, rating: 4.8, active: true },
-  { id: '3', title: 'ข้าวกล่องส้มตำ', category: 'FOOD', price: 65, unit: 'กล่อง', image: '🍛', views: 45, bookings: 12, rating: 4.7, active: false },
+  { id: '1', title: 'ทำอาหารกล่องส่งถึงที่', category: 'FOOD', price: 80, unit: 'กล่อง', image: '🍱', description: 'อาหารกล่องสดใหม่ปรุงทุกวัน ส้มตำ ลาบ ข้าวหน้าต่างๆ ส่งถึงที่ในหมู่บ้าน', imageUrl: '', views: 234, bookings: 128, rating: 4.9, active: true },
+  { id: '2', title: 'อาหารคลีนออเดอร์ล่วงหน้า', category: 'FOOD', price: 120, unit: 'กล่อง', image: '🥗', description: 'อาหารคลีนแคลอรี่ต่ำ สั่งล่วงหน้า 1 วัน เหมาะกับผู้รักสุขภาพ', imageUrl: '', views: 89, bookings: 34, rating: 4.8, active: true },
+  { id: '3', title: 'ข้าวกล่องส้มตำ', category: 'FOOD', price: 65, unit: 'กล่อง', image: '🍛', description: 'ส้มตำไทย ส้มตำปู ลาบหมู น้ำตก พร้อมข้าวสวย', imageUrl: '', views: 45, bookings: 12, rating: 4.7, active: false },
 ]
 
-interface FormData { title: string; category: string; price: string; unit: string; image: string }
-const EMPTY_FORM: FormData = { title: '', category: 'FOOD', price: '', unit: 'กล่อง', image: '🍱' }
+interface FormData { title: string; category: string; price: string; unit: string; image: string; description: string; imageUrl: string }
+const EMPTY_FORM: FormData = { title: '', category: 'FOOD', price: '', unit: 'กล่อง', image: '🍱', description: '', imageUrl: '' }
 const EMOJI_OPTIONS = ['🍱', '🥗', '🍛', '🍖', '🔧', '🏠', '📚', '💆', '🎨', '🌿', '💻', '🤝', '👴']
 
 export default function ProviderListingsPage() {
@@ -60,7 +61,7 @@ export default function ProviderListingsPage() {
 
   function openEdit(l: Listing) {
     setEditId(l.id)
-    setForm({ title: l.title, category: l.category, price: String(l.price), unit: l.unit, image: l.image })
+    setForm({ title: l.title, category: l.category, price: String(l.price), unit: l.unit, image: l.image, description: l.description, imageUrl: l.imageUrl })
     setShowModal(true)
   }
 
@@ -68,7 +69,7 @@ export default function ProviderListingsPage() {
     if (!form.title || !form.price) return
     if (editId) {
       setListings(prev => prev.map(l => l.id === editId
-        ? { ...l, title: form.title, category: form.category, price: Number(form.price), unit: form.unit, image: form.image }
+        ? { ...l, title: form.title, category: form.category, price: Number(form.price), unit: form.unit, image: form.image, description: form.description, imageUrl: form.imageUrl }
         : l
       ))
     } else {
@@ -76,6 +77,7 @@ export default function ProviderListingsPage() {
       setListings(prev => [...prev, {
         id: newId, title: form.title, category: form.category,
         price: Number(form.price), unit: form.unit, image: form.image,
+        description: form.description, imageUrl: form.imageUrl,
         views: 0, bookings: 0, rating: 0, active: true,
       }])
     }
@@ -196,6 +198,30 @@ export default function ProviderListingsPage() {
                   </div>
                 </div>
 
+                {/* Description */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">คำอธิบายบริการ</label>
+                  <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                    rows={3} placeholder="อธิบายรายละเอียดบริการ วัตถุดิบ ขั้นตอน หรือเงื่อนไขพิเศษ..."
+                    className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 outline-none resize-none" />
+                </div>
+
+                {/* Image URL */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">URL รูปภาพ (ถ้ามี)</label>
+                  <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+                    placeholder="https://... (เช่น รูปจาก Google Drive, Imgur)"
+                    className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 outline-none" />
+                  {form.imageUrl && (
+                    <div className="mt-2 rounded-xl overflow-hidden border border-slate-200 h-24 bg-slate-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover"
+                        onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                    </div>
+                  )}
+                  <p className="text-xs text-slate-400 mt-1">หากไม่ใส่ URL จะใช้ไอคอน Emoji แทน</p>
+                </div>
+
                 <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   onClick={handleSave}
                   disabled={!form.title || !form.price}
@@ -263,8 +289,10 @@ export default function ProviderListingsPage() {
                     listing.active ? 'border-slate-100' : 'border-slate-200 opacity-70'
                   }`}>
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
-                      {listing.image}
+                    <div className="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
+                      {listing.imageUrl
+                        ? <img src={listing.imageUrl} alt={listing.title} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                        : listing.image}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -273,6 +301,9 @@ export default function ProviderListingsPage() {
                           listing.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'
                         }`}>{listing.active ? 'เปิดรับงาน' : 'ปิดชั่วคราว'}</span>
                       </div>
+                      {listing.description && (
+                        <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{listing.description}</p>
+                      )}
                       <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 flex-wrap">
                         <span className="font-bold text-blue-600">฿{listing.price}/{listing.unit}</span>
                         <span>{CAT_TH[listing.category]}</span>

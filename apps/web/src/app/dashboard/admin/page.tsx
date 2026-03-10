@@ -8,9 +8,10 @@ import {
   Users, DollarSign, TrendingUp, Shield, CheckCircle, XCircle,
   Clock, ChevronRight, BarChart3, MapPin, Plus, Store,
   Info, AlertTriangle, Eye, FileText, ChevronDown, Send, Layers,
-  Megaphone, Pencil, Trash2,
+  Megaphone, Pencil, Trash2, Star,
 } from 'lucide-react'
 import { useState } from 'react'
+import Link from 'next/link'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
@@ -89,6 +90,24 @@ const PENDING_PROVIDERS_BY_COMMUNITY: Record<string, PendingProvider[]> = {
   C003: [],
 }
 
+type ApprovedProvider = { id: string; name: string; category: string; rating: number; bookings: number; revenue: number; joined: string; status: 'active' | 'inactive' }
+const APPROVED_PROVIDERS_BY_COMMUNITY: Record<string, ApprovedProvider[]> = {
+  C001: [
+    { id: '1',  name: 'ร้านส้มตำครัวไทย',   category: 'อาหาร 🍱',      rating: 4.9, bookings: 28, revenue: 4200, joined: 'ม.ค. 2569', status: 'active' },
+    { id: '2',  name: 'ช่างสมศักดิ์',        category: 'งานช่าง 🔧',    rating: 4.7, bookings: 15, revenue: 6750, joined: 'ก.พ. 2569', status: 'active' },
+    { id: '3',  name: 'ครูนิตยา',            category: 'สอนพิเศษ 📚',   rating: 4.8, bookings: 22, revenue: 8800, joined: 'ม.ค. 2569', status: 'active' },
+    { id: '4',  name: 'ร้านขนมบ้านๆ',        category: 'อาหาร 🍱',      rating: 4.5, bookings: 12, revenue: 1800, joined: 'มี.ค. 2569', status: 'inactive' },
+    { id: '5',  name: 'แม่บ้านคลีนดีจริง',   category: 'งานบ้าน 🏠',    rating: 4.6, bookings: 10, revenue: 3000, joined: 'มี.ค. 2569', status: 'active' },
+  ],
+  C002: [
+    { id: '6',  name: 'ร้านก๋วยเตี๋ยวลุงแดง', category: 'อาหาร 🍱',    rating: 4.9, bookings: 45, revenue: 6750, joined: 'ต.ค. 2568', status: 'active' },
+    { id: '7',  name: 'ร้านกาแฟ Hipster',     category: 'เครื่องดื่ม ☕', rating: 4.8, bookings: 38, revenue: 5700, joined: 'พ.ย. 2568', status: 'active' },
+    { id: '8',  name: 'คุณยายใจดี',           category: 'อาหาร 🍱',      rating: 4.6, bookings: 30, revenue: 4500, joined: 'ธ.ค. 2568', status: 'active' },
+    { id: '9',  name: 'ร้านนวดแผนไทย',        category: 'สุขภาพ 💆',     rating: 4.9, bookings: 43, revenue: 8600, joined: 'ต.ค. 2568', status: 'active' },
+  ],
+  C003: [],
+}
+
 /* ── Create Market Form (reused) ── */
 function CreateMarketPanel({ location, onCreated }: { location: string; onCreated: () => void }) {
   const [form, setForm] = useState({ name: '', zone: '', description: '', openDays: [] as string[] })
@@ -161,6 +180,7 @@ export default function CommunityAdminDashboardPage() {
   const activeCommunity = communities.find(c => c.id === activeCommunityId)!
   const approvedCommunities = communities.filter(c => c.grantStatus === 'APPROVED')
   const currentProviders = providersByComm[activeCommunityId] ?? []
+  const currentApprovedProviders = APPROVED_PROVIDERS_BY_COMMUNITY[activeCommunityId] ?? []
 
   function approveProvider(id: string) {
     setApprovedIds(p => [...p, id])
@@ -360,21 +380,94 @@ export default function CommunityAdminDashboardPage() {
               ))}
             </motion.div>
 
+            {/* ── Provider Overview (primary drillable view) ── */}
+            <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
+              className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm mb-6">
+              <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
+                <div>
+                  <h2 className="font-bold text-slate-900 dark:text-white">ภาพรวม Provider</h2>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    {activeCommunity.name} · {activeCommunity.providers} Provider ทั้งหมด
+                  </p>
+                </div>
+                <Link href="/dashboard/admin/providers"
+                  className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-xl transition-colors">
+                  ดูทั้งหมด <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              {currentApprovedProviders.length === 0 ? (
+                <div className="p-8 text-center text-slate-400 dark:text-slate-500">
+                  <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">ยังไม่มี Provider ที่ Approve แล้ว</p>
+                  <p className="text-xs mt-1">อนุมัติ Provider ในแผง "อนุมัติ Provider" ด้านล่าง</p>
+                </div>
+              ) : (
+                <>
+                  <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                    {currentApprovedProviders.slice(0, 5).map((p) => (
+                      <Link key={p.id} href={`/providers/${p.id}` as string}
+                        className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-50 dark:from-purple-900/40 dark:to-indigo-900/20 flex items-center justify-center font-bold text-purple-700 dark:text-purple-300 flex-shrink-0 text-sm">
+                          {p.name.charAt(0)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">{p.name}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500">{p.category} · เข้าร่วม {p.joined}</p>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <div className="hidden sm:block text-right">
+                            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{p.bookings} บุ๊ก</p>
+                            <p className="text-xs text-green-600 dark:text-green-400">฿{p.revenue.toLocaleString()}</p>
+                          </div>
+                          <div className="flex items-center gap-0.5">
+                            <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
+                            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{p.rating}</span>
+                          </div>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                            p.status === 'active'
+                              ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500'
+                          }`}>
+                            {p.status === 'active' ? 'Active' : 'Inactive'}
+                          </span>
+                          <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 transition-colors" />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  {currentApprovedProviders.length > 5 && (
+                    <div className="p-4 border-t border-slate-100 dark:border-slate-700 text-center">
+                      <Link href="/dashboard/admin/providers"
+                        className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors">
+                        ดู Provider อีก {currentApprovedProviders.length - 5} ราย →
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )}
+            </motion.div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
               {/* ── Provider Approval ── */}
-              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
                 className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
                   <div>
                     <h2 className="font-bold text-slate-900 dark:text-white">อนุมัติ Provider</h2>
                     <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{activeCommunity.name}</p>
                   </div>
-                  {currentProviders.length > 0 && (
-                    <span className="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-semibold border border-amber-200 dark:border-amber-700">
-                      {currentProviders.length} รอ
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {currentProviders.length > 0 && (
+                      <span className="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-semibold border border-amber-200 dark:border-amber-700">
+                        {currentProviders.length} รอ
+                      </span>
+                    )}
+                    <Link href="/dashboard/admin/providers"
+                      className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors flex items-center gap-1">
+                      ทั้งหมด <ChevronRight className="h-3 w-3" />
+                    </Link>
+                  </div>
                 </div>
                 {currentProviders.length === 0 ? (
                   <div className="p-8 text-center text-slate-400 dark:text-slate-500">
@@ -430,7 +523,7 @@ export default function CommunityAdminDashboardPage() {
               </motion.div>
 
               {/* ── Revenue Share ── */}
-              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
                 className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="p-5 border-b border-slate-100 dark:border-slate-700">
                   <h2 className="font-bold text-slate-900 dark:text-white">Revenue Share เดือนนี้</h2>
@@ -455,7 +548,7 @@ export default function CommunityAdminDashboardPage() {
               </motion.div>
 
               {/* ── All Communities Summary ── */}
-              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
                 className="lg:col-span-2 bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="p-5 border-b border-slate-100 dark:border-slate-700">
                   <h2 className="font-bold text-slate-900 dark:text-white">สรุปทุกตลาดที่บริหาร</h2>
@@ -532,7 +625,7 @@ export default function CommunityAdminDashboardPage() {
               </motion.div>
 
               {/* ── Trial Period for active community ── */}
-              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={8}
                 className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="p-5 border-b border-slate-100 dark:border-slate-700">
                   <h2 className="font-bold text-slate-900 dark:text-white">ช่วงทดลองฟรี</h2>
@@ -558,7 +651,7 @@ export default function CommunityAdminDashboardPage() {
               </motion.div>
 
               {/* ── Announcements (CA) ── */}
-              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={8}
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={9}
                 className="lg:col-span-2 bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
                   <div>
