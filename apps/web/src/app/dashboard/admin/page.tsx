@@ -34,8 +34,8 @@ interface CAAnnouncement {
   createdAt: string
 }
 const INIT_CA_ANNOUNCEMENTS: CAAnnouncement[] = [
-  { id: 'CA1', communityId: 'C001', title: 'ประกาศรับสมัครผู้ให้บริการอาหาร', body: 'ชุมชนต้องการผู้ให้บริการอาหารเพิ่มเติม สนใจติดต่อ CA', type: 'info', status: 'PUBLISHED', createdAt: '15 มี.ค. 2569' },
-  { id: 'CA2', communityId: 'C001', title: 'ไหวพรุ่งนี้! โปรโมชันพิเศษ', body: 'พรุ่งนี้ผู้ให้บริการหลายรายไฟแล้วโปรโมชันพิเศษ 10% สำหรับจอง 3 ครั้งขึ้นไป', type: 'success', status: 'PENDING', createdAt: '17 มี.ค. 2569' },
+  { id: 'CA1', communityId: '1', title: 'ประกาศรับสมัครผู้ให้บริการอาหาร', body: 'ชุมชนต้องการผู้ให้บริการอาหารเพิ่มเติม สนใจติดต่อ CA', type: 'info', status: 'PUBLISHED', createdAt: '15 มี.ค. 2569' },
+  { id: 'CA2', communityId: '1', title: 'ไหวพรุ่งนี้! โปรโมชันพิเศษ', body: 'พรุ่งนี้ผู้ให้บริการหลายรายไฟแล้วโปรโมชันพิเศษ 10% สำหรับจอง 3 ครั้งขึ้นไป', type: 'success', status: 'PENDING', createdAt: '17 มี.ค. 2569' },
 ]
 type ManagedCommunity = {
   id: string; name: string; location: string; zone: string
@@ -50,19 +50,19 @@ const MOCK_ADMIN = { name: 'คุณสมชาย ใจดี', totalRevenue
 /* ── Mock communities this admin manages ── */
 const INITIAL_COMMUNITIES: ManagedCommunity[] = [
   {
-    id: 'C001', name: 'ตลาดชุมชนหมู่บ้านศรีนคร', location: 'บางแค, กรุงเทพฯ',
+    id: '1', name: 'ตลาดชุมชนหมู่บ้านศรีนคร', location: 'บางแค, กรุงเทพฯ',
     zone: 'สวนสาธารณะกลางหมู่บ้าน', members: 248, providers: 34, pendingProviders: 3,
     monthBookings: 87, revenue: 8500, revenueShare: 850, rating: 4.8,
     trialEnd: '30 มิ.ย. 2569', marketCreated: true, grantStatus: 'APPROVED', isPrimary: true,
   },
   {
-    id: 'C002', name: 'ตลาดคอนโด The Base ลาดพร้าว', location: 'ลาดพร้าว, กรุงเทพฯ',
+    id: '2', name: 'ตลาดคอนโด The Base ลาดพร้าว', location: 'ลาดพร้าว, กรุงเทพฯ',
     zone: 'ลานจอดรถชั้น G', members: 512, providers: 67, pendingProviders: 1,
     monthBookings: 156, revenue: 16000, revenueShare: 800, rating: 4.9,
     trialEnd: 'หมดแล้ว', marketCreated: true, grantStatus: 'APPROVED', isPrimary: false,
   },
   {
-    id: 'C003', name: 'ตลาดชุมชนเมืองทองธานี', location: 'นนทบุรี',
+    id: '3', name: 'ตลาดชุมชนเมืองทองธานี', location: 'นนทบุรี',
     zone: 'ยังไม่ได้กำหนด', members: 0, providers: 0, pendingProviders: 0,
     monthBookings: 0, revenue: 0, revenueShare: 0, rating: 0,
     trialEnd: 'รอสร้างตลาด', marketCreated: false, grantStatus: 'APPROVED', isPrimary: false,
@@ -79,33 +79,33 @@ const MOCK_PENDING_REQUEST = {
 
 type PendingProvider = { id: string; name: string; category: string; applied: string; experience: string; phone: string; note: string }
 const PENDING_PROVIDERS_BY_COMMUNITY: Record<string, PendingProvider[]> = {
-  C001: [
+  '1': [
     { id: 'P001', name: 'ช่างวิชัย', category: 'งานช่าง 🔧', applied: '7 เม.ย. 2569', experience: '5 ปี', phone: '081-234-5678', note: 'ช่างไฟ ช่างประปา มีใบอนุญาต' },
     { id: 'P002', name: 'ครูสมหญิง', category: 'สอนพิเศษ 📚', applied: '8 เม.ย. 2569', experience: '3 ปี', phone: '082-345-6789', note: 'สอนคณิต-วิทย์ ม.1-6' },
     { id: 'P003', name: 'คุณสมพงษ์', category: 'งานบ้าน 🏠', applied: '8 เม.ย. 2569', experience: '2 ปี', phone: '083-456-7890', note: 'ทำความสะอาด ดูแลบ้าน' },
   ],
-  C002: [
+  '2': [
     { id: 'P004', name: 'คุณนิตยา', category: 'อาหาร 🍱', applied: '6 เม.ย. 2569', experience: '4 ปี', phone: '084-567-8901', note: 'อาหารสุขภาพ คลีน' },
   ],
-  C003: [],
+  '3': [],
 }
 
 type ApprovedProvider = { id: string; name: string; category: string; rating: number; bookings: number; revenue: number; joined: string; status: 'active' | 'inactive' }
 const APPROVED_PROVIDERS_BY_COMMUNITY: Record<string, ApprovedProvider[]> = {
-  C001: [
+  '1': [
     { id: '1',  name: 'ร้านส้มตำครัวไทย',   category: 'อาหาร 🍱',      rating: 4.9, bookings: 28, revenue: 4200, joined: 'ม.ค. 2569', status: 'active' },
     { id: '2',  name: 'ช่างสมศักดิ์',        category: 'งานช่าง 🔧',    rating: 4.7, bookings: 15, revenue: 6750, joined: 'ก.พ. 2569', status: 'active' },
     { id: '3',  name: 'ครูนิตยา',            category: 'สอนพิเศษ 📚',   rating: 4.8, bookings: 22, revenue: 8800, joined: 'ม.ค. 2569', status: 'active' },
     { id: '4',  name: 'ร้านขนมบ้านๆ',        category: 'อาหาร 🍱',      rating: 4.5, bookings: 12, revenue: 1800, joined: 'มี.ค. 2569', status: 'inactive' },
     { id: '5',  name: 'แม่บ้านคลีนดีจริง',   category: 'งานบ้าน 🏠',    rating: 4.6, bookings: 10, revenue: 3000, joined: 'มี.ค. 2569', status: 'active' },
   ],
-  C002: [
+  '2': [
     { id: '6',  name: 'ร้านก๋วยเตี๋ยวลุงแดง', category: 'อาหาร 🍱',    rating: 4.9, bookings: 45, revenue: 6750, joined: 'ต.ค. 2568', status: 'active' },
     { id: '7',  name: 'ร้านกาแฟ Hipster',     category: 'เครื่องดื่ม ☕', rating: 4.8, bookings: 38, revenue: 5700, joined: 'พ.ย. 2568', status: 'active' },
     { id: '8',  name: 'คุณยายใจดี',           category: 'อาหาร 🍱',      rating: 4.6, bookings: 30, revenue: 4500, joined: 'ธ.ค. 2568', status: 'active' },
     { id: '9',  name: 'ร้านนวดแผนไทย',        category: 'สุขภาพ 💆',     rating: 4.9, bookings: 43, revenue: 8600, joined: 'ต.ค. 2568', status: 'active' },
   ],
-  C003: [],
+  '3': [],
 }
 
 /* ── Create Market Form (reused) ── */
@@ -164,7 +164,7 @@ function CreateMarketPanel({ location, onCreated }: { location: string; onCreate
 export default function CommunityAdminDashboardPage() {
   useAuthGuard(['admin', 'superadmin'])
   const [communities, setCommunities] = useState(INITIAL_COMMUNITIES)
-  const [activeCommunityId, setActiveCommunityId] = useState('C001')
+  const [activeCommunityId, setActiveCommunityId] = useState('1')
   const [caAnnouncements, setCaAnnouncements] = useState<CAAnnouncement[]>(INIT_CA_ANNOUNCEMENTS)
   const [showAnnForm, setShowAnnForm] = useState(false)
   const [editingAnn, setEditingAnn] = useState<CAAnnouncement | null>(null)

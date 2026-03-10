@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 import { AppFooter } from '@/components/app-footer'
 import { Navbar } from '@/components/navbar'
 import { MarketBackground } from '@/components/market-background'
@@ -109,10 +110,10 @@ export default function ProviderDashboardPage() {
             </div>
           </div>
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-            <a href="/providers/listings/new"
+            <Link href="/dashboard/provider/listings"
               className="flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-200 hover:bg-amber-600 transition-colors">
               <Plus className="h-4 w-4" /> เพิ่ม Listing
-            </a>
+            </Link>
           </motion.div>
         </motion.div>
 
@@ -175,9 +176,9 @@ export default function ProviderDashboardPage() {
             className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm">
             <div className="flex items-center justify-between p-5 border-b border-slate-100">
               <h2 className="font-bold text-slate-900">Listings ของฉัน</h2>
-              <a href="/providers/listings/new" className="text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
+              <Link href="/dashboard/provider/listings" className="text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
                 <Plus className="h-3.5 w-3.5" /> เพิ่ม
-              </a>
+              </Link>
             </div>
             <div className="divide-y divide-slate-100">
               {MOCK_LISTINGS.map((listing) => (
