@@ -40,6 +40,17 @@ const MOCK_COMMUNITIES: MockCommunity[] = [
   { id: '13', name: 'โคราช พลาซ่า', type: 'city', province: 'นครราชสีมา', members: 650, providers: 40, activeListings: 38, image: '🦁', description: 'ประตูอีสาน เมืองโคราช อาหาร ช่าง งานบ้าน ใกล้รถไฟความเร็วสูง', lat: 14.9700, lng: 102.1011 },
   // ── ภาคตะวันออก ─────────────────────────────────────────────────────
   { id: '14', name: 'ระยอง ซีวิว', type: 'village', province: 'ระยอง', members: 290, providers: 22, activeListings: 18, image: '⚓', description: 'เมืองท่าระยอง อาหารทะเล ผลไม้เมืองร้อน เกษตรกรรม', lat: 12.6840, lng: 101.2520 },
+  // ── Phase 13: ชุมชนทั่วประเทศ 16–25 ─────────────────────────────────
+  { id: '16', name: 'อุดรธานี คิตี้ซิตี้', type: 'city', province: 'อุดรธานี', members: 342, providers: 20, activeListings: 26, image: '🛍️', description: 'ศูนย์กลางอีสานตอนบน ตลาดกลางคืน Korean Town อาหาร ช้อปปิ้ง', lat: 17.4138, lng: 102.7869 },
+  { id: '17', name: 'อุบลราชธานี เมืองเก่า', type: 'city', province: 'อุบลราชธานี', members: 198, providers: 14, activeListings: 11, image: '🏛️', description: 'เมืองเก่าริมแม่น้ำมูล ประเพณีแห่เทียนพรรษา วัฒนธรรมอีสาน', lat: 15.2448, lng: 104.8453 },
+  { id: '18', name: 'พัทยา บีชซิตี้', type: 'city', province: 'ชลบุรี', members: 456, providers: 35, activeListings: 44, image: '🎡', description: 'เมืองท่องเที่ยวระดับโลก ชายหาด ดำน้ำ กีฬาทางน้ำ งานช่างครบ', lat: 12.9350, lng: 100.8825 },
+  { id: '19', name: 'สุราษฎร์ธานี เมือง', type: 'city', province: 'สุราษฎร์ธานี', members: 267, providers: 18, activeListings: 19, image: '🍊', description: 'ประตูสู่เกาะสมุย ดุเรียน เงาะ มังคุด ผลไม้ขึ้นชื่อ บริการชุมชน', lat: 9.1400, lng: 99.3275 },
+  { id: '20', name: 'ลำปาง เซรามิค', type: 'city', province: 'ลำปาง', members: 178, providers: 12, activeListings: 10, image: '🏺', description: 'เมืองม้าขาว งานหัตถกรรมเซรามิคระดับประเทศ วัดสำคัญ บรรยากาศเมืองเก่า', lat: 18.2888, lng: 99.4977 },
+  { id: '21', name: 'นครสวรรค์ เมือง', type: 'city', province: 'นครสวรรค์', members: 312, providers: 22, activeListings: 21, image: '🐉', description: 'เมืองปากน้ำโพ ก๋วยเตี๋ยวเนื้อชื่อดัง งานตรุษจีน สินค้า OTOP', lat: 15.7047, lng: 100.1368 },
+  { id: '22', name: 'สมุทรปราการ เมือง', type: 'city', province: 'สมุทรปราการ', members: 445, providers: 28, activeListings: 33, image: '🏭', description: 'เมืองอุตสาหกรรมใกล้กรุงเทพฯ บางปู ตลาดอาหารทะเล BTS สายสีเขียว', lat: 13.5990, lng: 100.6000 },
+  { id: '23', name: 'นครศรีธรรมราช', type: 'city', province: 'นครศรีธรรมราช', members: 289, providers: 20, activeListings: 18, image: '🕌', description: 'เมืองประวัติศาสตร์ภาคใต้ วัดพระมหาธาตุ หนังตะลุง อาหารทะเล', lat: 8.4304, lng: 99.9631 },
+  { id: '24', name: 'กาญจนบุรี ริเวอร์', type: 'city', province: 'กาญจนบุรี', members: 234, providers: 16, activeListings: 16, image: '🛶', description: 'ริมแม่น้ำแคว ล่องแก่ง น้ำตก สะพานข้ามแม่น้ำแคว ธรรมชาติสมบูรณ์', lat: 14.0063, lng: 99.5481 },
+  { id: '25', name: 'บึงกาฬ ริมโขง', type: 'city', province: 'บึงกาฬ', members: 124, providers: 8, activeListings: 7, image: '🌲', description: 'จังหวัดน้องใหม่ที่สุดของไทย ริมโขง เขตรักษาพันธุ์สัตว์ป่า เกษตรออร์แกนิค', lat: 18.3609, lng: 103.6521 },
 ]
 
 export const communityKeys = {

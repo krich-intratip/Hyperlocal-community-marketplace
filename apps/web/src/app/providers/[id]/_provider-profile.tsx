@@ -41,6 +41,17 @@ const COMMUNITY_COORDS: Record<string, { lat: number; lng: number }> = {
   '13': { lat: 14.9700, lng: 102.1011 },
   '14': { lat: 12.6840, lng: 101.2520 },
   '15': { lat: 9.5400,  lng: 100.0640 },
+  // Phase 13: ชุมชนทั่วประเทศ
+  '16': { lat: 17.4138, lng: 102.7869 },
+  '17': { lat: 15.2448, lng: 104.8453 },
+  '18': { lat: 12.9350, lng: 100.8825 },
+  '19': { lat: 9.1400,  lng: 99.3275  },
+  '20': { lat: 18.2888, lng: 99.4977  },
+  '21': { lat: 15.7047, lng: 100.1368 },
+  '22': { lat: 13.5990, lng: 100.6000 },
+  '23': { lat: 8.4304,  lng: 99.9631  },
+  '24': { lat: 14.0063, lng: 99.5481  },
+  '25': { lat: 18.3609, lng: 103.6521 },
 }
 
 export default function ProviderProfileClient({ id }: { id: string }) {
@@ -67,7 +78,8 @@ export default function ProviderProfileClient({ id }: { id: string }) {
     )
   }
 
-  const coords = COMMUNITY_COORDS[provider.communityId] ?? { lat: 13.7563, lng: 100.5018 }
+  const primaryCommunityId = provider.communityIds[0] ?? ''
+  const coords = COMMUNITY_COORDS[primaryCommunityId] ?? { lat: 13.7563, lng: 100.5018 }
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -300,7 +312,7 @@ export default function ProviderProfileClient({ id }: { id: string }) {
               {/* Community link */}
               <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 p-5">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">ชุมชน</p>
-                <Link href={`/communities/${provider.communityId}` as string}
+                <Link href={`/communities/${provider.communityIds[0]}` as string}
                   className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                   <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">🏘️</div>
                   <div className="flex-1">

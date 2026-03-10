@@ -606,6 +606,378 @@ export const COMMUNITY_DETAIL_MAP: Record<string, CommunityDetail> = {
       },
     ],
   },
+
+  // ── Phase 13: ชุมชนทั่วประเทศ 16–25 ─────────────────────────────────────
+
+  '16': {
+    community: {
+      id: '16', name: 'อุดรธานี คิตี้ซิตี้', area: 'เมือง, อุดรธานี', emoji: '🛍️',
+      description: 'ศูนย์กลางชุมชนอีสานตอนบน ตลาดกลางคืน Korean Town และ UD Town ผู้ให้บริการอาหาร ช่าง และบริการครบวงจร',
+      members: 342, providers: 20, rating: 4.6, totalBookings: 678,
+      trial: true, trialEnd: '31 ก.ค. 2569',
+      admin: 'คุณปรียา ภูธร', founded: 'ก.พ. 2568',
+      tags: ['อาหาร', 'ตลาดกลางคืน', 'ช้อปปิ้ง', 'บริการ'],
+    },
+    providers: [
+      { id: '21', name: 'ร้านก๋วยเตี๋ยวนครสวรรค์', service: 'ก๋วยเตี๋ยวเนื้อ หมู แบบอีสาน', rating: 4.7, reviews: 45, emoji: '🍜', verified: true, category: 'FOOD' },
+      { id: '22', name: 'ช่างพัทยา ครบวงจร', service: 'ซ่อมแซม ไฟฟ้า ประปา', rating: 4.6, reviews: 38, emoji: '🔩', verified: true, category: 'REPAIR' },
+    ],
+    recent: [
+      { emoji: '🍜', title: 'ก๋วยเตี๋ยวเนื้อต้มยำ', provider: 'ร้านก๋วยเตี๋ยวนครสวรรค์', price: 60 },
+      { emoji: '🔧', title: 'ซ่อมก๊อกน้ำรั่ว', provider: 'ช่างพัทยา ครบวงจร', price: 350 },
+      { emoji: '🌙', title: 'อาหารตลาดกลางคืน (Set 2 ที่)', provider: 'ร้านก๋วยเตี๋ยวนครสวรรค์', price: 120 },
+    ],
+    categories: [
+      { slug: 'FOOD', name: 'อาหาร', icon: '🍜', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 9 },
+      { slug: 'REPAIR', name: 'งานช่าง', icon: '🔧', color: 'bg-slate-50 border-slate-200', bar: 'bg-slate-400', count: 6 },
+      { slug: 'HOME_SERVICE', name: 'งานบ้าน', icon: '🏠', color: 'bg-green-50 border-green-100', bar: 'bg-green-400', count: 5 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'อุดรธานี: ชุมชนใหม่ไฟแรงภาคอีสานตอนบน 🌟', createdAt: '1 มี.ค. 2569',
+        body: 'อุดรธานี คิตี้ซิตี้เข้าร่วมระบบ CHM อย่างเป็นทางการแล้ว เมืองศูนย์กลางอีสานตอนบนพร้อมเติบโตด้วยกัน',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณปรียา ภูธร', authorBadge: 'Community Admin',
+        title: 'ต้องการผู้ให้บริการนวด สปา และบิวตี้เพิ่ม!', createdAt: '5 มี.ค. 2569',
+        body: 'ชุมชนเรามีสมาชิกใหม่เพิ่มมากขึ้นทุกสัปดาห์ หากคุณให้บริการด้านสุขภาพและความงาม ลงทะเบียนได้เลย',
+      },
+    ],
+  },
+
+  '17': {
+    community: {
+      id: '17', name: 'อุบลราชธานี เมืองเก่า', area: 'วารินชำราบ, อุบลราชธานี', emoji: '🏛️',
+      description: 'เมืองเก่าริมแม่น้ำมูล แหล่งท่องเที่ยวทางวัฒนธรรม ประเพณีแห่เทียนพรรษา และอาหารอีสานแท้',
+      members: 198, providers: 14, rating: 4.4, totalBookings: 312,
+      trial: true, trialEnd: '31 ก.ค. 2569',
+      admin: 'คุณสมหวัง ดอกบัว', founded: 'มี.ค. 2568',
+      tags: ['วัฒนธรรม', 'อาหาร', 'ท่องเที่ยว', 'งานช่าง'],
+    },
+    providers: [
+      { id: '13', name: 'ตลาดนัดชุมชนโคราช', service: 'จัดตลาด OTOP สินค้าชุมชน', rating: 4.5, reviews: 32, emoji: '🛒', verified: true, category: 'MARKETPLACE' },
+      { id: '19', name: 'โฮมสเตย์ทุ่งศรีเมือง', service: 'ที่พักโฮมสเตย์ ชมธรรมชาติ', rating: 4.6, reviews: 27, emoji: '🌿', verified: true, category: 'RECREATION' },
+    ],
+    recent: [
+      { emoji: '🌿', title: 'โฮมสเตย์ริมมูล 1 คืน', provider: 'โฮมสเตย์ทุ่งศรีเมือง', price: 600 },
+      { emoji: '🛒', title: 'ซื้อสินค้า OTOP ชุมชน', provider: 'ตลาดนัดชุมชนโคราช', price: 250 },
+      { emoji: '🕯️', title: 'ทัวร์วัดและประเพณี', provider: 'โฮมสเตย์ทุ่งศรีเมือง', price: 400 },
+    ],
+    categories: [
+      { slug: 'RECREATION', name: 'ท่องเที่ยว', icon: '🌿', color: 'bg-green-50 border-green-100', bar: 'bg-green-400', count: 6 },
+      { slug: 'FOOD', name: 'อาหารอีสาน', icon: '🌶️', color: 'bg-red-50 border-red-100', bar: 'bg-red-400', count: 5 },
+      { slug: 'HOME_SERVICE', name: 'งานบ้าน', icon: '🏠', color: 'bg-sky-50 border-sky-100', bar: 'bg-sky-400', count: 3 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'อุบลราชธานี: เมืองวัฒนธรรมเข้าร่วม CHM แล้ว 🏛️', createdAt: '2 มี.ค. 2569',
+        body: 'ยินดีต้อนรับอุบลราชธานี เมืองเก่าสู่แพลตฟอร์ม CHM เราหวังว่าจะช่วยส่งเสริมวัฒนธรรมและการท่องเที่ยวของชุมชน',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณสมหวัง ดอกบัว', authorBadge: 'Community Admin',
+        title: 'เตรียมพร้อมงานเทศกาลแห่เทียนพรรษา ก.ค. นี้', createdAt: '8 มี.ค. 2569',
+        body: 'ผู้ให้บริการท่องเที่ยวและโฮมสเตย์ เตรียมเปิดรับนักท่องเที่ยวช่วงงานแห่เทียนพรรษา กรุณาเพิ่มสล็อตรองรับ',
+      },
+    ],
+  },
+
+  '18': {
+    community: {
+      id: '18', name: 'พัทยา บีชซิตี้', area: 'เมืองพัทยา, ชลบุรี', emoji: '🎡',
+      description: 'เมืองท่องเที่ยวระดับโลก ชายหาด ดำน้ำ กีฬาทางน้ำ และบริการซ่อมแซมครบวงจรสำหรับผู้พักอาศัย',
+      members: 456, providers: 35, rating: 4.7, totalBookings: 1205,
+      trial: false, trialEnd: '',
+      admin: 'คุณวันชนะ พัทยา', founded: 'ส.ค. 2567',
+      tags: ['ท่องเที่ยว', 'งานช่าง', 'ที่พัก', 'อาหาร'],
+    },
+    providers: [
+      { id: '22', name: 'ช่างพัทยา ครบวงจร', service: 'ซ่อมแซม แอร์ ประปา ไฟฟ้า', rating: 4.6, reviews: 38, emoji: '🔩', verified: true, category: 'REPAIR' },
+      { id: '17', name: 'ครูดำน้ำภูเก็ต', service: 'Snorkeling & Diving พัทยา', rating: 4.9, reviews: 78, emoji: '🤿', verified: true, category: 'FITNESS' },
+    ],
+    recent: [
+      { emoji: '🤿', title: 'Snorkeling เกาะล้าน Half Day', provider: 'ครูดำน้ำภูเก็ต', price: 950 },
+      { emoji: '❄️', title: 'ซ่อมแอร์ + เติมน้ำยา', provider: 'ช่างพัทยา ครบวงจร', price: 1200 },
+      { emoji: '🏄', title: 'Jet Ski 30 นาที', provider: 'ครูดำน้ำภูเก็ต', price: 800 },
+    ],
+    categories: [
+      { slug: 'RECREATION', name: 'กีฬาทางน้ำ', icon: '🤿', color: 'bg-blue-50 border-blue-100', bar: 'bg-blue-400', count: 14 },
+      { slug: 'REPAIR', name: 'งานช่าง', icon: '🔧', color: 'bg-slate-50 border-slate-200', bar: 'bg-slate-400', count: 10 },
+      { slug: 'FOOD', name: 'อาหาร', icon: '🍤', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 11 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'พัทยา: ชุมชนยอดนิยมอันดับต้นๆ ของระบบ 🏖️', createdAt: '5 มี.ค. 2569',
+        body: 'พัทยา บีชซิตี้มีการเติบโตอย่างก้าวกระโดด โดยมียอดจองเพิ่มขึ้น 40% เมื่อเดือนที่ผ่านมา',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณวันชนะ พัทยา', authorBadge: 'Community Admin',
+        title: 'ฤดูท่องเที่ยว: เพิ่มสล็อตบริการด่วน!', createdAt: '9 มี.ค. 2569',
+        body: 'นักท่องเที่ยวล้นเมืองช่วงนี้ ผู้ให้บริการทุกท่านควรเปิดสล็อตเพิ่ม และตอบรับจองให้เร็วที่สุด',
+      },
+    ],
+  },
+
+  '19': {
+    community: {
+      id: '19', name: 'สุราษฎร์ธานี เมือง', area: 'เมือง, สุราษฎร์ธานี', emoji: '🍊',
+      description: 'ประตูสู่เกาะสมุย ดุเรียน เงาะ มังคุด ผลไม้ขึ้นชื่อ และบริการชุมชนเมืองท่าปีะ',
+      members: 267, providers: 18, rating: 4.5, totalBookings: 534,
+      trial: true, trialEnd: '30 มิ.ย. 2569',
+      admin: 'คุณศิริพร ชุมพร', founded: 'ธ.ค. 2567',
+      tags: ['เกษตรกรรม', 'อาหาร', 'ผลไม้', 'งานช่าง'],
+    },
+    providers: [
+      { id: '24', name: 'สวนผลไม้สุราษฎร์', service: 'ดุเรียน เงาะ มังคุด ส่งตรงสวน', rating: 4.8, reviews: 62, emoji: '🍊', verified: true, category: 'FOOD' },
+      { id: '16', name: 'ป้าหนู อาหารทะเล', service: 'อาหารทะเลสดรสใต้', rating: 4.8, reviews: 89, emoji: '🦞', verified: true, category: 'FOOD' },
+    ],
+    recent: [
+      { emoji: '🍊', title: 'ดุเรียนหมอนทอง 5 กก.', provider: 'สวนผลไม้สุราษฎร์', price: 650 },
+      { emoji: '🦞', title: 'กุ้งแม่น้ำทอดกระเทียม', provider: 'ป้าหนู อาหารทะเล', price: 380 },
+      { emoji: '🌺', title: 'ผลไม้ตามฤดูกาล (Set)', provider: 'สวนผลไม้สุราษฎร์', price: 290 },
+    ],
+    categories: [
+      { slug: 'FOOD', name: 'อาหารและผลไม้', icon: '🍊', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 10 },
+      { slug: 'AGRICULTURE', name: 'เกษตรกรรม', icon: '🌱', color: 'bg-green-50 border-green-100', bar: 'bg-green-400', count: 5 },
+      { slug: 'HOME_SERVICE', name: 'งานบ้าน', icon: '🏠', color: 'bg-blue-50 border-blue-100', bar: 'bg-blue-400', count: 3 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'สุราษฎร์ธานี: แหล่งผลไม้ดีที่สุดในระบบ 🍊', createdAt: '3 มี.ค. 2569',
+        body: 'สุราษฎร์ธานีมีผู้ให้บริการด้านผลไม้และเกษตรกรรมที่ดีที่สุดในระบบ ขนส่งตรงจากสวนถึงบ้านคุณ',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณศิริพร ชุมพร', authorBadge: 'Community Admin',
+        title: 'ฤดูดุเรียนมาแล้ว! จองล่วงหน้าได้เลย 🌟', createdAt: '7 มี.ค. 2569',
+        body: 'ดุเรียนหมอนทองปีนี้ผลผลิตดีมาก สั่งจองล่วงหน้าได้ที่ร้านสวนผลไม้สุราษฎร์ ราคาสวนไม่ผ่านพ่อค้าคนกลาง',
+      },
+    ],
+  },
+
+  '20': {
+    community: {
+      id: '20', name: 'ลำปาง เซรามิค', area: 'เมือง, ลำปาง', emoji: '🏺',
+      description: 'เมืองม้าขาว แหล่งเซรามิคชื่อดัง งานหัตถกรรมระดับประเทศ วัดสำคัญ และบรรยากาศเมืองเก่า',
+      members: 178, providers: 12, rating: 4.5, totalBookings: 289,
+      trial: true, trialEnd: '31 ส.ค. 2569',
+      admin: 'คุณอุไร ม้าขาว', founded: 'เม.ย. 2568',
+      tags: ['งานฝีมือ', 'เซรามิค', 'อาหาร', 'งานช่าง'],
+    },
+    providers: [
+      { id: '25', name: 'เซรามิคลำปาง ช่างบุ', service: 'ถ้วยชาม แจกัน เซรามิคสั่งทำ', rating: 4.9, reviews: 53, emoji: '🏺', verified: true, category: 'CRAFT' },
+      { id: '6', name: 'ร้านป้าแดง', service: 'อาหารเหนือ ข้าวซอย น้ำเงี้ยว', rating: 4.9, reviews: 215, emoji: '🍲', verified: true, category: 'FOOD' },
+    ],
+    recent: [
+      { emoji: '🏺', title: 'แจกันดินเผาลายไทย', provider: 'เซรามิคลำปาง ช่างบุ', price: 450 },
+      { emoji: '🍲', title: 'ข้าวซอยไก่ + น้ำพริก', provider: 'ร้านป้าแดง', price: 80 },
+      { emoji: '🎁', title: 'ชุดเซรามิคของขวัญ (6 ชิ้น)', provider: 'เซรามิคลำปาง ช่างบุ', price: 1200 },
+    ],
+    categories: [
+      { slug: 'CRAFT', name: 'งานฝีมือ', icon: '🏺', color: 'bg-amber-50 border-amber-100', bar: 'bg-amber-400', count: 6 },
+      { slug: 'FOOD', name: 'อาหารเหนือ', icon: '🍲', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 4 },
+      { slug: 'REPAIR', name: 'งานช่าง', icon: '🔧', color: 'bg-slate-50 border-slate-200', bar: 'bg-slate-400', count: 2 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'ลำปาง: งานหัตถกรรมระดับประเทศบน CHM 🏺', createdAt: '4 มี.ค. 2569',
+        body: 'เซรามิคลำปางเป็นที่ขึ้นชื่อทั่วประเทศ ตอนนี้สั่งซื้อออนไลน์ได้แล้วผ่านแพลตฟอร์ม CHM',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณอุไร ม้าขาว', authorBadge: 'Community Admin',
+        title: 'งาน Lampang Craft Fair มีนาคม 2569', createdAt: '6 มี.ค. 2569',
+        body: 'เชิญชวนลูกค้าและผู้สนใจมาร่วมงาน Lampang Craft Fair วันที่ 25-27 มีนาคมนี้ มีสาธิตการทำเซรามิคฟรี',
+      },
+    ],
+  },
+
+  '21': {
+    community: {
+      id: '21', name: 'นครสวรรค์ เมือง', area: 'เมือง, นครสวรรค์', emoji: '🐉',
+      description: 'เมืองปากน้ำโพ ขึ้นชื่อเรื่องงานตรุษจีนและขบวนมังกร ก๋วยเตี๋ยวเนื้อสไตล์นครสวรรค์ และสินค้า OTOP',
+      members: 312, providers: 22, rating: 4.6, totalBookings: 623,
+      trial: true, trialEnd: '31 พ.ค. 2569',
+      admin: 'คุณศักดา ปากน้ำโพ', founded: 'พ.ย. 2567',
+      tags: ['อาหาร', 'วัฒนธรรม', 'ช้อปปิ้ง', 'งานช่าง'],
+    },
+    providers: [
+      { id: '21', name: 'ร้านก๋วยเตี๋ยวนครสวรรค์', service: 'ก๋วยเตี๋ยวเนื้อ หมู สไตล์นคร', rating: 4.7, reviews: 45, emoji: '🍜', verified: true, category: 'FOOD' },
+      { id: '8', name: 'สวนคุณลุงทอง', service: 'ผักปลอดสาร ผลไม้ตามฤดู', rating: 4.7, reviews: 63, emoji: '🥬', verified: true, category: 'FOOD' },
+    ],
+    recent: [
+      { emoji: '🍜', title: 'ก๋วยเตี๋ยวเนื้อต้มยำ ชามใหญ่', provider: 'ร้านก๋วยเตี๋ยวนครสวรรค์', price: 65 },
+      { emoji: '🥬', title: 'ผักออร์แกนิค (กล่อง 1 กก.)', provider: 'สวนคุณลุงทอง', price: 120 },
+      { emoji: '🐟', title: 'น้ำพริกปลาทู + ผักต้ม', provider: 'ร้านก๋วยเตี๋ยวนครสวรรค์', price: 80 },
+    ],
+    categories: [
+      { slug: 'FOOD', name: 'อาหาร', icon: '🍜', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 11 },
+      { slug: 'AGRICULTURE', name: 'เกษตร', icon: '🌱', color: 'bg-green-50 border-green-100', bar: 'bg-green-400', count: 6 },
+      { slug: 'HOME_SERVICE', name: 'งานบ้าน', icon: '🏠', color: 'bg-blue-50 border-blue-100', bar: 'bg-blue-400', count: 5 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'นครสวรรค์: เมืองก๋วยเตี๋ยวชื่อดังบน CHM 🐉', createdAt: '2 มี.ค. 2569',
+        body: 'ก๋วยเตี๋ยวเนื้อสไตล์นครสวรรค์เป็นที่รู้จักทั่วประเทศ ตอนนี้สั่งได้ออนไลน์ผ่านแพลตฟอร์ม CHM แล้ว',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณศักดา ปากน้ำโพ', authorBadge: 'Community Admin',
+        title: 'เตรียมตัวรับนักท่องเที่ยวงานตรุษจีน', createdAt: '8 มี.ค. 2569',
+        body: 'งานตรุษจีนนครสวรรค์ปีนี้จะใหญ่กว่าทุกปี ผู้ให้บริการอาหารและที่พักเตรียมรองรับนักท่องเที่ยวจำนวนมากด้วย',
+      },
+    ],
+  },
+
+  '22': {
+    community: {
+      id: '22', name: 'สมุทรปราการ เมือง', area: 'เมือง, สมุทรปราการ', emoji: '🏭',
+      description: 'เมืองอุตสาหกรรมใกล้กรุงเทพฯ บางปู ตลาดอาหารทะเล การเดินทางสะดวก BTS สายสีเขียว',
+      members: 445, providers: 28, rating: 4.5, totalBookings: 876,
+      trial: false, trialEnd: '',
+      admin: 'คุณนภัทร สมุทร', founded: 'พ.ค. 2567',
+      tags: ['งานบ้าน', 'อาหาร', 'ซ่อมแซม', 'บริการ'],
+    },
+    providers: [
+      { id: '4', name: 'Clean Home Pro', service: 'ทำความสะอาดบ้าน คอนโด', rating: 4.9, reviews: 156, emoji: '🧹', verified: true, category: 'HOME_SERVICE' },
+      { id: '12', name: 'ครัวคลีนคลีน', service: 'อาหารคลีน Delivery', rating: 4.7, reviews: 93, emoji: '🥗', verified: true, category: 'FOOD' },
+    ],
+    recent: [
+      { emoji: '🧹', title: 'ทำความสะอาดบ้าน 3 ห้องนอน', provider: 'Clean Home Pro', price: 1200 },
+      { emoji: '🥗', title: 'อาหารคลีน 5 วัน (ส่งทุกวัน)', provider: 'ครัวคลีนคลีน', price: 950 },
+      { emoji: '🪟', title: 'เช็ดกระจกคอนโด ทุกบาน', provider: 'Clean Home Pro', price: 800 },
+    ],
+    categories: [
+      { slug: 'HOME_SERVICE', name: 'งานบ้าน', icon: '🏠', color: 'bg-sky-50 border-sky-100', bar: 'bg-sky-400', count: 12 },
+      { slug: 'FOOD', name: 'อาหาร', icon: '🥗', color: 'bg-green-50 border-green-100', bar: 'bg-green-400', count: 9 },
+      { slug: 'REPAIR', name: 'งานช่าง', icon: '🔧', color: 'bg-slate-50 border-slate-200', bar: 'bg-slate-400', count: 7 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'สมุทรปราการ: เชื่อมต่อกรุงเทพฯ ด้วย CHM 🏭', createdAt: '1 มี.ค. 2569',
+        body: 'สมุทรปราการเป็นเมืองที่มีประชากรหนาแน่นและเชื่อมต่อกับกรุงเทพฯ ได้ดี CHM พร้อมให้บริการผู้ใช้ทุกท่าน',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณนภัทร สมุทร', authorBadge: 'Community Admin',
+        title: 'ต้องการผู้ให้บริการซ่อมแซมเพิ่ม!', createdAt: '6 มี.ค. 2569',
+        body: 'สมาชิกในชุมชนต้องการบริการซ่อมแซมบ้าน แอร์ และประปา อีกมาก ช่างที่สนใจสมัครเพิ่มได้เลยครับ',
+      },
+    ],
+  },
+
+  '23': {
+    community: {
+      id: '23', name: 'นครศรีธรรมราช', area: 'เมือง, นครศรีธรรมราช', emoji: '🕌',
+      description: 'เมืองประวัติศาสตร์ภาคใต้ วัดพระมหาธาตุ หนังตะลุง ผ้าไหมยกดอก อาหารทะเลสดและผลไม้',
+      members: 289, providers: 20, rating: 4.6, totalBookings: 467,
+      trial: true, trialEnd: '30 มิ.ย. 2569',
+      admin: 'คุณอภิชาต นครฯ', founded: 'ม.ค. 2568',
+      tags: ['อาหาร', 'วัฒนธรรม', 'งานช่าง', 'ท่องเที่ยว'],
+    },
+    providers: [
+      { id: '16', name: 'ป้าหนู อาหารทะเล', service: 'อาหารทะเลสด อาหารใต้แท้', rating: 4.8, reviews: 89, emoji: '🦞', verified: true, category: 'FOOD' },
+      { id: '24', name: 'สวนผลไม้สุราษฎร์', service: 'ผลไม้ใต้ สดตรงสวน', rating: 4.8, reviews: 62, emoji: '🍊', verified: true, category: 'FOOD' },
+    ],
+    recent: [
+      { emoji: '🦞', title: 'กุ้งทอดกระเทียม + ปูผัดผงกะหรี่', provider: 'ป้าหนู อาหารทะเล', price: 420 },
+      { emoji: '🍍', title: 'สับปะรดนครฯ กล่องใหญ่', provider: 'สวนผลไม้สุราษฎร์', price: 180 },
+      { emoji: '🎭', title: 'ทัวร์หนังตะลุง วัฒนธรรม', provider: 'ป้าหนู อาหารทะเล', price: 350 },
+    ],
+    categories: [
+      { slug: 'FOOD', name: 'อาหารทะเลใต้', icon: '🦐', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 9 },
+      { slug: 'CRAFT', name: 'หัตถกรรมพื้นบ้าน', icon: '🎭', color: 'bg-amber-50 border-amber-100', bar: 'bg-amber-400', count: 6 },
+      { slug: 'RECREATION', name: 'ท่องเที่ยว', icon: '🕌', color: 'bg-teal-50 border-teal-100', bar: 'bg-teal-400', count: 5 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'นครศรีฯ: มรดกวัฒนธรรมภาคใต้บน CHM 🕌', createdAt: '3 มี.ค. 2569',
+        body: 'นครศรีธรรมราชเป็นเมืองที่มีวัฒนธรรมและประวัติศาสตร์อันยาวนาน เรายินดีต้อนรับชุมชนนี้สู่แพลตฟอร์ม CHM',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณอภิชาต นครฯ', authorBadge: 'Community Admin',
+        title: 'ต้อนรับนักท่องเที่ยวสู่นครศรีฯ ปีการท่องเที่ยว 2569', createdAt: '9 มี.ค. 2569',
+        body: 'ปีนี้นครศรีฯ ตั้งเป้าต้อนรับนักท่องเที่ยว 2 ล้านคน ผู้ให้บริการโฮมสเตย์ อาหาร และไกด์ท้องถิ่น สมัครได้เลย',
+      },
+    ],
+  },
+
+  '24': {
+    community: {
+      id: '24', name: 'กาญจนบุรี ริเวอร์', area: 'เมือง, กาญจนบุรี', emoji: '🛶',
+      description: 'ริมแม่น้ำแคว ล่องแก่ง น้ำตก สะพานข้ามแม่น้ำแคว ประวัติศาสตร์ WWII และธรรมชาติที่สมบูรณ์',
+      members: 234, providers: 16, rating: 4.7, totalBookings: 523,
+      trial: true, trialEnd: '30 มิ.ย. 2569',
+      admin: 'คุณธนภัทร แควน้อย', founded: 'ก.ย. 2567',
+      tags: ['ท่องเที่ยว', 'งานช่าง', 'อาหาร', 'ธรรมชาติ'],
+    },
+    providers: [
+      { id: '23', name: 'ไกด์ล่องแก่งกาญจน์', service: 'ล่องแก่ง ไวท์วอเตอร์ แคมปิ้ง', rating: 4.9, reviews: 87, emoji: '🛶', verified: true, category: 'RECREATION' },
+      { id: '15', name: 'ช่างไม้คุณบุญ', service: 'งานไม้ เฟอร์นิเจอร์ รั้วบ้าน', rating: 4.7, reviews: 41, emoji: '🪚', verified: true, category: 'REPAIR' },
+    ],
+    recent: [
+      { emoji: '🛶', title: 'ล่องแก่งแม่น้ำแควน้อย (ครึ่งวัน)', provider: 'ไกด์ล่องแก่งกาญจน์', price: 850 },
+      { emoji: '🏕️', title: 'แคมปิ้ง Riverside 2 วัน 1 คืน', provider: 'ไกด์ล่องแก่งกาญจน์', price: 1800 },
+      { emoji: '🪚', title: 'ทำโต๊ะไม้สักตามสั่ง', provider: 'ช่างไม้คุณบุญ', price: 3500 },
+    ],
+    categories: [
+      { slug: 'RECREATION', name: 'ท่องเที่ยวธรรมชาติ', icon: '🛶', color: 'bg-teal-50 border-teal-100', bar: 'bg-teal-400', count: 8 },
+      { slug: 'REPAIR', name: 'งานช่าง', icon: '🪚', color: 'bg-amber-50 border-amber-100', bar: 'bg-amber-400', count: 5 },
+      { slug: 'FOOD', name: 'อาหาร', icon: '🍱', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 3 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'กาญจนบุรี: แหล่งท่องเที่ยวธรรมชาติยอดนิยม 🛶', createdAt: '5 มี.ค. 2569',
+        body: 'กาญจนบุรีเป็นแหล่งท่องเที่ยวที่นักท่องเที่ยวชื่นชอบทั่วประเทศ ขณะนี้บริการล่องแก่งสามารถจองผ่าน CHM ได้แล้ว',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณธนภัทร แควน้อย', authorBadge: 'Community Admin',
+        title: 'น้ำป่าฤดูฝน: ระดับน้ำเหมาะล่องแก่งแล้ว! 🌊', createdAt: '8 มี.ค. 2569',
+        body: 'หลังฝนตกหนักช่วงนี้ ระดับน้ำในแก่งกำลังเหมาะสมสำหรับการล่องแก่ง ช่วงนี้ถือเป็น Peak Season ของกิจกรรมนี้',
+      },
+    ],
+  },
+
+  '25': {
+    community: {
+      id: '25', name: 'บึงกาฬ ริมโขง', area: 'เมือง, บึงกาฬ', emoji: '🌲',
+      description: 'จังหวัดน้องใหม่ที่สุดของไทย ริมแม่น้ำโขง เขตรักษาพันธุ์สัตว์ป่าภูวัว ยางพาราและเกษตรออร์แกนิค',
+      members: 124, providers: 8, rating: 4.3, totalBookings: 156,
+      trial: true, trialEnd: '30 ก.ย. 2569',
+      admin: 'คุณวิทยา ริมโขง', founded: 'มิ.ย. 2568',
+      tags: ['เกษตรกรรม', 'ท่องเที่ยว', 'อาหาร', 'งานช่าง'],
+    },
+    providers: [
+      { id: '21', name: 'ร้านก๋วยเตี๋ยวนครสวรรค์', service: 'ก๋วยเตี๋ยวแบบอีสานริมโขง', rating: 4.7, reviews: 45, emoji: '🍜', verified: true, category: 'FOOD' },
+      { id: '13', name: 'ตลาดนัดชุมชนโคราช', service: 'สินค้าชุมชน ของฝาก OTOP', rating: 4.5, reviews: 32, emoji: '🛒', verified: true, category: 'MARKETPLACE' },
+    ],
+    recent: [
+      { emoji: '🌊', title: 'ล่องเรือชมแม่น้ำโขงยามเย็น', provider: 'ตลาดนัดชุมชนโคราช', price: 300 },
+      { emoji: '🍜', title: 'ก๋วยเตี๋ยวอีสานริมโขง', provider: 'ร้านก๋วยเตี๋ยวนครสวรรค์', price: 60 },
+      { emoji: '🌱', title: 'ยางพาราออร์แกนิค (5 กก.)', provider: 'ตลาดนัดชุมชนโคราช', price: 420 },
+    ],
+    categories: [
+      { slug: 'FOOD', name: 'อาหาร', icon: '🍜', color: 'bg-orange-50 border-orange-100', bar: 'bg-orange-400', count: 3 },
+      { slug: 'AGRICULTURE', name: 'เกษตร', icon: '🌱', color: 'bg-green-50 border-green-100', bar: 'bg-green-400', count: 3 },
+      { slug: 'RECREATION', name: 'ท่องเที่ยว', icon: '🌊', color: 'bg-teal-50 border-teal-100', bar: 'bg-teal-400', count: 2 },
+    ],
+    announcements: [
+      {
+        id: 1, fromSA: true, authorName: 'Super Admin', authorBadge: 'Platform',
+        title: 'บึงกาฬ: จังหวัดน้องใหม่บน CHM แล้ว! 🌲', createdAt: '6 มี.ค. 2569',
+        body: 'บึงกาฬเป็นจังหวัดที่อายุน้อยที่สุดของไทย แต่มีทรัพยากรธรรมชาติและวัฒนธรรมที่น่าสนใจมาก ยินดีต้อนรับสู่ CHM',
+      },
+      {
+        id: 2, fromSA: false, authorName: 'คุณวิทยา ริมโขง', authorBadge: 'Community Admin',
+        title: 'ชุมชนเล็กแต่ใจใหญ่ — ต้องการสมาชิกเพิ่ม!', createdAt: '9 มี.ค. 2569',
+        body: 'บึงกาฬยังเป็นชุมชนที่กำลังเติบโต เชิญชวนผู้ให้บริการในพื้นที่มาลงทะเบียน ไม่ว่าจะเป็นเกษตรกร ไกด์ หรืองานช่าง',
+      },
+    ],
+  },
 }
 
 export function getCommunityDetail(id: string): CommunityDetail | undefined {
