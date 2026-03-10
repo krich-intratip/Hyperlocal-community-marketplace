@@ -1,5 +1,5 @@
 # Implementation Plan - Franchise & Community Hyper Marketplace
-> **Version:** v0.4.8 | **Updated:** 2026-03-10
+> **Version:** v0.5.1 | **Updated:** 2026-03-10
 
 ## Phase 1: Completed (v0.3.3)
 - **API: Commission System:** Implemented Ledger tracking, Rate Overrides (specific to community/provider type), and automatic revenue split (60/40) between Platform and CAs.
@@ -113,3 +113,23 @@
 - **MOBILE-1:** React Native / Expo — shared `@chm/api` package, auth hooks, cart store.
 - **REVIEW-2:** `POST /reviews` backend endpoint + aggregate to `Listing.rating` field.
 - **CHAT-1:** In-app messaging (Socket.io rooms per booking, or Supabase Realtime channel).
+
+## Phase 13: Completed (v0.5.0)
+- **Nationwide Community Expansion** — Extended mock data coverage from 15 → 25 communities across all Thai provinces.
+  - **`lib/mock-communities-data.ts`** — Added 10 new community records (IDs 16–25): อุดรธานี🛍️, อุบลราชธานี🏛️, พัทยา🎡, สุราษฎร์ธานี🍊, ลำปาง🏺, นครสวรรค์🐉, สมุทรปราการ🏭, นครศรีธรรมราช🕌, กาญจนบุรี🛶, บึงกาฬ🌲.
+  - **`hooks/useCommunities.ts`** — Expanded `MOCK_COMMUNITIES` to 25 entries with full lat/lng coordinates for map rendering.
+  - **`lib/mock-providers.ts`** — Upgraded `communityId: string` → `communityIds: string[]` for multi-community provider support across all 25 provider records. Added 5 new providers (21–25) for new regions.
+  - **`lib/mock-listings.ts`** — Added 5 new listings (21–25): ก๋วยเตี๋ยวนครสวรรค์, ซ่อมแซมพัทยา, ล่องแก่งกาญจน์, ดุเรียนสุราษฎร์, เซรามิคลำปาง.
+  - **`hooks/useBookings.ts`** — Added 3 new bookings (B240090, B240075, B240060) for new listing areas.
+  - **`communities/[id]/page.tsx`** — Updated `COMMUNITY_NAMES` map + `generateStaticParams` to IDs 1–25.
+  - **`providers/[id]/_provider-profile.tsx`** — Added `COMMUNITY_COORDS` for IDs 16–25; updated `provider.communityId` → `provider.communityIds[0]` for backward compatibility.
+  - **All `generateStaticParams`** — Updated `marketplace/[id]`, `providers/[id]`, `marketplace/[id]/book`, `bookings/[id]` to cover IDs 1–25 and new booking IDs.
+
+## Phase 14: Completed (v0.5.1)
+- **Provider Command Center** — Full self-serve analytics and insight platform for providers across all 10 business categories.
+  - **`lib/mock-provider-analytics.ts`** (new) — Revenue trend (12mo), bookings by day-of-week, rating trend (6mo), booking status pie, mock reviews with sentiment labeling.
+  - **`lib/category-insights.ts`** (new) — 10-category insight engine: `CATEGORY_INSIGHTS` record mapping FOOD/REPAIR/HOME_SERVICES/TUTORING/ELDERLY_CARE/HANDMADE/HEALTH_WELLNESS/AGRICULTURE/FREELANCE/COMMUNITY_SHARING to category-specific KPIs, AI narrative text, and prioritized recommendations. `getCategoryInsight(category)` helper function.
+  - **`/dashboard/provider/analytics/`** (new) — Full recharts analytics page: AreaChart (revenue trend), BarChart (bookings by weekday), LineChart (rating trend), PieChart (booking status). Period selector (7d/30d/1y). CSV export button. Quick stat cards.
+  - **`/dashboard/provider/insights/`** (new) — AI Insight Engine: Performance Score ring badge (0–100), category selector dropdown, AI narrative analysis paragraph, 4 category-specific KPI cards with trend indicators, recommendations panel (high/medium/low priority).
+  - **`/dashboard/provider/reviews/`** (new) — Review Management Centre: overall rating + response rate, 5-star rating distribution bars, sentiment breakdown (positive/neutral/negative), filter tabs (ทั้งหมด/5ดาว/ลบ/ยังไม่ตอบ), review cards with sentiment badge + reply UI.
+  - **`dashboard/provider/page.tsx`** (enhanced) — Added "Command Center" navigation grid (3 cards: Analytics, Insights, Reviews) with mini 7-day sparklines (CSS bars). Performance Score badge added to header. Nav links to all 3 new pages.

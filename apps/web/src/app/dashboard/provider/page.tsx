@@ -8,10 +8,12 @@ import { MarketBackground } from '@/components/market-background'
 import {
   TrendingUp, Star, CalendarCheck, DollarSign, Plus, Clock, CheckCircle, Eye,
   PauseCircle, PlayCircle, LogOut, AlertTriangle, X, MapPin, ShieldCheck,
+  BarChart3, Zap, MessageCircle,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { SPARKLINE_7D, PROVIDER_SUMMARY } from '@/lib/mock-provider-analytics'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -102,11 +104,17 @@ export default function ProviderDashboardPage() {
           <div>
             <p className="text-sm text-slate-500 mb-1">แดชบอร์ดผู้ให้บริการ</p>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">คุณแม่สมใจ 👩‍🍳</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="h-2 w-24 rounded-full bg-slate-200 overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full" style={{ width: '98%' }} />
+            <div className="flex items-center gap-3 mt-1 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-24 rounded-full bg-slate-200 overflow-hidden">
+                  <div className="h-full bg-blue-500 rounded-full" style={{ width: '98%' }} />
+                </div>
+                <span className="text-xs font-semibold text-blue-600">Trust 98</span>
               </div>
-              <span className="text-xs font-semibold text-blue-600">Trust Score 98</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-100 border border-purple-200">
+                <Zap className="h-3 w-3 text-purple-600" />
+                <span className="text-xs font-bold text-purple-700">Score {PROVIDER_SUMMARY.performanceScore}</span>
+              </div>
             </div>
           </div>
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
@@ -209,8 +217,90 @@ export default function ProviderDashboardPage() {
           </motion.div>
         </div>
 
-        {/* Revenue note */}
+        {/* ── Command Center Navigation ── */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
+          className="mt-6 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="h-4 w-4 text-slate-600" />
+            <h2 className="font-bold text-slate-800 text-sm">Command Center</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+            {/* Analytics */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/analytics"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
+                    <BarChart3 className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">Live</span>
+                </div>
+                <p className="font-bold text-blue-900 text-sm mb-0.5">Analytics</p>
+                <p className="text-xs text-blue-600 mb-3">กราฟรายได้ · การจอง · Rating Trend</p>
+                {/* Mini Sparkline */}
+                <div className="flex items-end gap-0.5 h-8">
+                  {SPARKLINE_7D.map((v, i) => {
+                    const maxV = Math.max(...SPARKLINE_7D)
+                    return (
+                      <div key={i} className="flex-1 rounded-t-sm bg-blue-400/60"
+                        style={{ height: `${(v / maxV) * 100}%` }} />
+                    )
+                  })}
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Insights */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/insights"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-purple-600 flex items-center justify-center">
+                    <Zap className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">AI</span>
+                </div>
+                <p className="font-bold text-purple-900 text-sm mb-0.5">AI Insights</p>
+                <p className="text-xs text-purple-600 mb-3">วิเคราะห์เชิงลึก · KPI · คำแนะนำ</p>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 flex-1 rounded-full bg-purple-200 overflow-hidden">
+                    <div className="h-full bg-purple-500 rounded-full"
+                      style={{ width: `${PROVIDER_SUMMARY.performanceScore}%` }} />
+                  </div>
+                  <span className="text-xs font-bold text-purple-700">{PROVIDER_SUMMARY.performanceScore}</span>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Reviews */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/reviews"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center">
+                    <MessageCircle className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                    {thisMonthRevenue > 0 ? '4 ใหม่' : '0 ใหม่'}
+                  </span>
+                </div>
+                <p className="font-bold text-amber-900 text-sm mb-0.5">รีวิว</p>
+                <p className="text-xs text-amber-600 mb-3">Sentiment · ตอบรีวิว · Rating</p>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <Star key={i} className={`h-3.5 w-3.5 ${i <= 5 ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
+                  ))}
+                  <span className="ml-1 text-xs font-bold text-amber-700">4.9</span>
+                </div>
+              </Link>
+            </motion.div>
+
+          </div>
+        </motion.div>
+
+        {/* Revenue note */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
           className="mt-6 p-5 rounded-2xl bg-blue-50 border border-blue-100">
           <div className="flex items-start gap-3">
             <DollarSign className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
@@ -224,7 +314,7 @@ export default function ProviderDashboardPage() {
         </motion.div>
 
         {/* ── Provider Profile & Status Management ── */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={8}
           className="mt-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
 
           {/* Section header */}
