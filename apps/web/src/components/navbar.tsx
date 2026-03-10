@@ -10,6 +10,7 @@ import { useT } from '@/hooks/useT'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
 import { CartDrawer } from '@/components/cart-drawer'
+import { NotificationBell } from '@/components/notification-bell'
 
 const ROLE_LABEL: Record<string, string> = {
   customer: 'ลูกค้า',
@@ -131,11 +132,8 @@ export function Navbar() {
                 )}
               </button>
 
-              {/* Notification bell */}
-              <Link href="/notifications" className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                <Bell className="h-5 w-5 text-slate-600 dark:text-slate-300" />
-                <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-extrabold flex items-center justify-center">3</span>
-              </Link>
+              {/* Notification bell — dynamic badge + dropdown */}
+              <NotificationBell />
 
               {/* Avatar dropdown */}
               <div ref={userMenuRef} className="relative">
@@ -181,10 +179,7 @@ export function Navbar() {
                   <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
                 )}
               </button>
-              <Link href="/notifications" className="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                <Bell className="h-5 w-5 text-slate-600 dark:text-slate-300" />
-                <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-red-500 text-white text-[9px] font-extrabold flex items-center justify-center">3</span>
-              </Link>
+              <NotificationBell />
             </>
           )}
           <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
