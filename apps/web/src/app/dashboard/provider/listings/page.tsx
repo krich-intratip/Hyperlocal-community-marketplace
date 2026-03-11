@@ -116,7 +116,7 @@ export default function ProviderListingsPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
-              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm text-center">
+              className="glass-heavy rounded-3xl shadow-2xl p-6 w-full max-w-sm text-center">
               <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
                 <Trash2 className="h-6 w-6 text-red-500" />
               </div>
@@ -124,7 +124,7 @@ export default function ProviderListingsPage() {
               <p className="text-sm text-slate-500 mb-5">ข้อมูลจะถูกลบถาวร ไม่สามารถกู้คืนได้</p>
               <div className="flex gap-3">
                 <button onClick={() => setDeleteId(null)}
-                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50">
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:glass-sm">
                   ยกเลิก
                 </button>
                 <button onClick={handleDelete}
@@ -143,10 +143,10 @@ export default function ProviderListingsPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-0 sm:px-4 bg-black/50 backdrop-blur-sm">
             <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}
-              className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
+              className="glass-heavy rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-lg font-extrabold text-slate-900">{editId ? 'แก้ไข Listing' : 'เพิ่ม Listing ใหม่'}</h2>
-                <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
+                <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full hover:glass-sm flex items-center justify-center">
                   <X className="h-4 w-4 text-slate-500" />
                 </button>
               </div>
@@ -159,7 +159,7 @@ export default function ProviderListingsPage() {
                     {EMOJI_OPTIONS.map(e => (
                       <button key={e} onClick={() => setForm(f => ({ ...f, image: e }))}
                         className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center border-2 transition-all ${
-                          form.image === e ? 'border-blue-400 bg-blue-50' : 'border-slate-200 hover:border-blue-200'
+                          form.image === e ? 'border-primary/30 glass-sm' : 'border-slate-200 hover:border-primary/30'
                         }`}>{e}</button>
                     ))}
                   </div>
@@ -170,14 +170,14 @@ export default function ProviderListingsPage() {
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">ชื่อบริการ <span className="text-red-500">*</span></label>
                   <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                     placeholder="เช่น ทำอาหารกล่องส่งถึงที่"
-                    className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none" />
+                    className="w-full rounded-xl border border-slate-200 focus:border-primary/30 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none" />
                 </div>
 
                 {/* Category */}
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">หมวดหมู่</label>
                   <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                    className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 outline-none bg-white">
+                    className="w-full rounded-xl glass border-white/20 focus:border-primary/50 px-4 py-3 text-sm text-slate-800 outline-none">
                     {CATEGORIES.map(c => <option key={c} value={c}>{CAT_TH[c]}</option>)}
                   </select>
                 </div>
@@ -188,13 +188,13 @@ export default function ProviderListingsPage() {
                     <label className="block text-xs font-bold text-slate-600 mb-1.5">ราคา (฿) <span className="text-red-500">*</span></label>
                     <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                       placeholder="80"
-                      className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 outline-none" />
+                      className="w-full rounded-xl border border-slate-200 focus:border-primary/30 px-4 py-3 text-sm text-slate-800 outline-none" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-600 mb-1.5">หน่วย</label>
                     <input value={form.unit} onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
                       placeholder="กล่อง / ชั่วโมง / ครั้ง"
-                      className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 outline-none" />
+                      className="w-full rounded-xl border border-slate-200 focus:border-primary/30 px-4 py-3 text-sm text-slate-800 outline-none" />
                   </div>
                 </div>
 
@@ -203,7 +203,7 @@ export default function ProviderListingsPage() {
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">คำอธิบายบริการ</label>
                   <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                     rows={3} placeholder="อธิบายรายละเอียดบริการ วัตถุดิบ ขั้นตอน หรือเงื่อนไขพิเศษ..."
-                    className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 outline-none resize-none" />
+                    className="w-full rounded-xl border border-slate-200 focus:border-primary/30 px-4 py-3 text-sm text-slate-800 outline-none resize-none" />
                 </div>
 
                 {/* Image URL */}
@@ -211,9 +211,9 @@ export default function ProviderListingsPage() {
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">URL รูปภาพ (ถ้ามี)</label>
                   <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
                     placeholder="https://... (เช่น รูปจาก Google Drive, Imgur)"
-                    className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-3 text-sm text-slate-800 outline-none" />
+                    className="w-full rounded-xl border border-slate-200 focus:border-primary/30 px-4 py-3 text-sm text-slate-800 outline-none" />
                   {form.imageUrl && (
-                    <div className="mt-2 rounded-xl overflow-hidden border border-slate-200 h-24 bg-slate-50">
+                    <div className="mt-2 rounded-xl overflow-hidden border border-slate-200 h-24 glass-sm">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover"
                         onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
@@ -225,7 +225,7 @@ export default function ProviderListingsPage() {
                 <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   onClick={handleSave}
                   disabled={!form.title || !form.price}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-base font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-colors">
                   <CheckCircle className="h-4 w-4" /> {editId ? 'บันทึกการแก้ไข' : 'เพิ่ม Listing'}
                 </motion.button>
               </div>
@@ -244,7 +244,7 @@ export default function ProviderListingsPage() {
           {/* Breadcrumb */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
             className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-            <Link href="/dashboard/provider" className="hover:text-blue-600 flex items-center gap-1">
+            <Link href="/dashboard/provider" className="hover:text-primary flex items-center gap-1">
               <ChevronLeft className="h-3.5 w-3.5" /> Provider Dashboard
             </Link>
             <span>/</span>
@@ -256,7 +256,7 @@ export default function ProviderListingsPage() {
             className="flex items-start justify-between mb-6 gap-4 flex-wrap">
             <div>
               <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-                <Package className="h-6 w-6 text-blue-500" /> จัดการ Listings
+                <Package className="h-6 w-6 text-primary" /> จัดการ Listings
               </h1>
               <p className="text-sm text-slate-500 mt-1">
                 {activeCount} รายการกำลังเปิดรับงาน · รวม {listings.length} รายการ
@@ -264,7 +264,7 @@ export default function ProviderListingsPage() {
             </div>
             <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
               onClick={openNew}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors">
+              className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors">
               <Plus className="h-4 w-4" /> เพิ่ม Listing
             </motion.button>
           </motion.div>
@@ -277,7 +277,7 @@ export default function ProviderListingsPage() {
               <p className="font-bold text-slate-500 mb-2">ยังไม่มี Listing</p>
               <p className="text-sm text-slate-400 mb-5">เพิ่ม Listing แรกเพื่อเริ่มรับงาน</p>
               <button onClick={openNew}
-                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-colors">
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary/90 transition-colors">
                 <Plus className="h-4 w-4" /> เพิ่ม Listing แรก
               </button>
             </motion.div>
@@ -285,11 +285,11 @@ export default function ProviderListingsPage() {
             <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-3">
               {listings.map((listing, i) => (
                 <motion.div key={listing.id} variants={fadeUp} custom={i}
-                  className={`bg-white/90 backdrop-blur-sm rounded-2xl border shadow-sm p-5 transition-all ${
-                    listing.active ? 'border-slate-100' : 'border-slate-200 opacity-70'
+                  className={`glass-card rounded-2xl p-5 transition-all ${
+                    listing.active ? 'border-white/20' : 'border-slate-200 opacity-70'
                   }`}>
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
+                    <div className="w-14 h-14 rounded-xl glass-sm flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
                       {listing.imageUrl
                         ? <img src={listing.imageUrl} alt={listing.title} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                         : listing.image}
@@ -298,14 +298,14 @@ export default function ProviderListingsPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-bold text-slate-900 text-sm">{listing.title}</h3>
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          listing.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'
+                          listing.active ? 'bg-green-100 text-green-700' : 'glass-sm text-slate-500'
                         }`}>{listing.active ? 'เปิดรับงาน' : 'ปิดชั่วคราว'}</span>
                       </div>
                       {listing.description && (
                         <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{listing.description}</p>
                       )}
                       <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 flex-wrap">
-                        <span className="font-bold text-blue-600">฿{listing.price}/{listing.unit}</span>
+                        <span className="font-bold text-primary">฿{listing.price}/{listing.unit}</span>
                         <span>{CAT_TH[listing.category]}</span>
                         {listing.rating > 0 && (
                           <span className="flex items-center gap-0.5">
@@ -320,13 +320,13 @@ export default function ProviderListingsPage() {
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       <button onClick={() => toggleActive(listing.id)}
                         title={listing.active ? 'ปิดชั่วคราว' : 'เปิดรับงาน'}
-                        className="w-9 h-9 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 flex items-center justify-center transition-all">
+                        className="w-9 h-9 rounded-xl border border-slate-200 hover:border-primary/30 hover:glass-sm flex items-center justify-center transition-all">
                         {listing.active
                           ? <EyeOff className="h-4 w-4 text-slate-500" />
                           : <Eye className="h-4 w-4 text-slate-500" />}
                       </button>
                       <button onClick={() => openEdit(listing)}
-                        className="w-9 h-9 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 flex items-center justify-center transition-all">
+                        className="w-9 h-9 rounded-xl border border-slate-200 hover:border-primary/30 hover:glass-sm flex items-center justify-center transition-all">
                         <Pencil className="h-4 w-4 text-slate-500" />
                       </button>
                       <button onClick={() => confirmDelete(listing.id)}
@@ -342,7 +342,7 @@ export default function ProviderListingsPage() {
 
           {listings.length > 0 && (
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={listings.length + 2}
-              className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-2xl text-sm text-blue-700 flex items-center gap-2">
+              className="mt-4 p-4 glass border border-primary/20 rounded-2xl text-sm text-blue-700 flex items-center gap-2">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               การเปลี่ยนแปลงจะมีผลทันทีในหน้า Marketplace
             </motion.div>

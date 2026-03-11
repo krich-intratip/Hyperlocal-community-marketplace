@@ -56,7 +56,7 @@ const ALERTS = [
 ]
 
 const QUICK_LINKS = [
-  { href: '/dashboard/superadmin/franchise', icon: Building2, label: 'จัดการ Franchise', desc: 'อนุมัติ / ระงับ / Takeover', color: 'text-blue-600', bg: 'bg-blue-50' },
+  { href: '/dashboard/superadmin/franchise', icon: Building2, label: 'จัดการ Franchise', desc: 'อนุมัติ / ระงับ / Takeover', color: 'text-primary', bg: 'glass-sm' },
   { href: '/dashboard/superadmin/analytics', icon: BarChart3, label: 'Analytics', desc: 'ยอดขาย ออเดอร์ คอมมิชชัน', color: 'text-indigo-600', bg: 'bg-indigo-50' },
   { href: '/dashboard/superadmin/franchise', icon: Megaphone, label: 'ประกาศ Global', desc: 'สร้างและจัดการประกาศ', color: 'text-amber-600', bg: 'bg-amber-50' },
   { href: '/marketplace', icon: Globe, label: 'Marketplace', desc: 'ดูตลาดในฐานะผู้ใช้', color: 'text-purple-600', bg: 'bg-purple-50' },
@@ -80,7 +80,7 @@ export default function SuperAdminDashboardPage() {
   })
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-950">
+    <main className="min-h-screen overflow-x-hidden glass-sm">
       <MarketBackground />
       <Navbar />
 
@@ -92,10 +92,10 @@ export default function SuperAdminDashboardPage() {
             <Crown className="h-5 w-5 text-amber-500" />
             <span className="text-sm font-bold text-amber-600">{t.superadmin.title}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
             Platform Overview
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+          <p className="text-slate-500 text-sm mt-1">
             ภาพรวมระบบ Community Hyper Marketplace ทั้งหมด
           </p>
         </motion.div>
@@ -108,8 +108,8 @@ export default function SuperAdminDashboardPage() {
                 <Link href={alert.link as any}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-opacity hover:opacity-80 ${
                     alert.type === 'warning'
-                      ? 'bg-amber-50 border border-amber-200 text-amber-800 dark:bg-amber-900/20 dark:border-amber-700 dark:text-amber-300'
-                      : 'bg-blue-50 border border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-700 dark:text-blue-300'
+                      ? 'bg-amber-50 border border-amber-200 text-amber-800'
+                      : 'glass border border-primary/20 text-blue-800'
                   }`}>
                   {alert.type === 'warning'
                     ? <AlertTriangle className="h-4 w-4 flex-shrink-0" />
@@ -124,22 +124,22 @@ export default function SuperAdminDashboardPage() {
 
         {/* Platform Stats */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1} className="mb-2">
-          <h2 className="text-base font-bold text-slate-700 dark:text-slate-300">{t.superadmin.platform_stats}</h2>
+          <h2 className="text-base font-bold text-slate-700">{t.superadmin.platform_stats}</h2>
         </motion.div>
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
           {[
-            { label: 'ชุมชนทั้งหมด', value: PLATFORM_STATS.totalCommunities, icon: Building2, color: 'text-slate-600', bg: 'bg-white dark:bg-slate-800', border: 'border-slate-200 dark:border-slate-700' },
-            { label: 'เปิดใช้งาน', value: PLATFORM_STATS.activeCommunities, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/30', border: 'border-green-200 dark:border-green-700' },
-            { label: 'รอ Approve', value: PLATFORM_STATS.pendingApplications, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30', border: 'border-amber-200 dark:border-amber-700' },
-            { label: 'Provider รวม', value: `${PLATFORM_STATS.totalProviders}+`, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/30', border: 'border-blue-200 dark:border-blue-700' },
-            { label: 'Booking/เดือน', value: PLATFORM_STATS.totalBookingsMonth.toLocaleString(), icon: BarChart3, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/30', border: 'border-purple-200 dark:border-purple-700' },
+            { label: 'ชุมชนทั้งหมด', value: PLATFORM_STATS.totalCommunities, icon: Building2, color: 'text-slate-600', bg: 'glass-sm',  },
+            { label: 'เปิดใช้งาน', value: PLATFORM_STATS.activeCommunities, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' },
+            { label: 'รอ Approve', value: PLATFORM_STATS.pendingApplications, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
+            { label: 'Provider รวม', value: `${PLATFORM_STATS.totalProviders}+`, icon: Users, color: 'text-primary', bg: 'glass-sm', border: 'border-primary/30' },
+            { label: 'Booking/เดือน', value: PLATFORM_STATS.totalBookingsMonth.toLocaleString(), icon: BarChart3, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
           ].map((s, i) => (
             <motion.div key={s.label} variants={fadeUp} custom={i}
               className={`${s.bg} rounded-2xl p-4 border ${s.border}`}>
               <s.icon className={`h-5 w-5 ${s.color} mb-2`} />
-              <div className="text-xl font-extrabold text-slate-900 dark:text-white">{s.value}</div>
-              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{s.label}</div>
+              <div className="text-xl font-extrabold text-slate-900">{s.value}</div>
+              <div className="text-xs text-slate-500 mt-0.5">{s.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -171,30 +171,30 @@ export default function SuperAdminDashboardPage() {
 
           {/* Pending Applications */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
-            className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            className="glass-card rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/20">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-amber-500" />
-                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">{t.superadmin.pending_franchise}</h3>
+                <h3 className="font-bold text-slate-800 text-sm">{t.superadmin.pending_franchise}</h3>
                 <span className="bg-amber-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{RECENT_APPLICATIONS.length}</span>
               </div>
               <Link href="/dashboard/superadmin/franchise"
-                className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700">
+                className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-blue-700">
                 ดูทั้งหมด <ChevronRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-700">
+            <div className="divide-y divide-white/10">
               {RECENT_APPLICATIONS.map((app) => (
                 <div key={app.id} className="flex items-start justify-between gap-3 px-5 py-3.5">
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">{app.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="font-semibold text-slate-800 text-sm truncate">{app.name}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">
                       {app.province} · {app.type} · {app.manager}
                     </p>
                     <p className="text-xs text-slate-400 mt-0.5">ยื่น {app.appliedDate}</p>
                   </div>
                   <Link href="/dashboard/superadmin/franchise"
-                    className="flex-shrink-0 flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                    className="flex-shrink-0 flex items-center gap-1 text-xs font-bold text-primary glass border border-primary/20 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
                     {t.superadmin.review}
                   </Link>
                 </div>
@@ -204,30 +204,30 @@ export default function SuperAdminDashboardPage() {
 
           {/* Top Communities */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-            className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+            className="glass-card rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/20">
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-blue-500" />
-                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Top Communities</h3>
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <h3 className="font-bold text-slate-800 text-sm">Top Communities</h3>
               </div>
               <Link href="/communities"
-                className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700">
+                className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-blue-700">
                 ดูทั้งหมด <ChevronRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-700">
+            <div className="divide-y divide-white/10">
               {TOP_COMMUNITIES.map((c, idx) => (
                 <Link key={c.id} href={`/communities/${c.id}` as any}
-                  className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                  <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs font-extrabold text-slate-500">
+                  className="flex items-center gap-4 px-5 py-3.5 hover:glass-sm/50 transition-colors group">
+                  <div className="w-6 h-6 rounded-full glass-sm flex items-center justify-center text-xs font-extrabold text-slate-500">
                     {idx + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{c.name}</p>
+                    <p className="font-semibold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">{c.name}</p>
                     <p className="text-xs text-slate-500 mt-0.5">{c.province} · {c.providers} provider</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-bold text-slate-900 dark:text-white">฿{(c.revenue / 1000).toFixed(0)}K</div>
+                    <div className="text-sm font-bold text-slate-900">฿{(c.revenue / 1000).toFixed(0)}K</div>
                     <div className="text-xs text-slate-400">{c.bookings.toLocaleString()} booking</div>
                   </div>
                   <div className={`text-xs font-bold px-2 py-0.5 rounded-full ${
@@ -235,7 +235,7 @@ export default function SuperAdminDashboardPage() {
                     c.trustScore >= 80 ? 'bg-blue-100 text-blue-700' :
                     'bg-amber-100 text-amber-700'
                   }`}>{c.trustScore}%</div>
-                  <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-blue-500 transition-colors flex-shrink-0" />
+                  <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-primary transition-colors flex-shrink-0" />
                 </Link>
               ))}
             </div>
@@ -244,26 +244,26 @@ export default function SuperAdminDashboardPage() {
 
         {/* Promoted Listings Management */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5} className="mb-8">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+          <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/20">
               <div className="flex items-center gap-2">
                 <Flame className="h-4 w-4 text-orange-500" />
-                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Promoted Listings</h3>
+                <h3 className="font-bold text-slate-800 text-sm">Promoted Listings</h3>
                 <span className="bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{promotedIds.size}</span>
               </div>
               <Link href="/marketplace"
-                className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700">
+                className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-blue-700">
                 ดู Marketplace <ChevronRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-700">
+            <div className="divide-y divide-white/10">
               {MOCK_LISTINGS.slice(0, 12).map((listing) => {
                 const isActive = promotedIds.has(listing.id)
                 return (
                   <div key={listing.id} className="flex items-center gap-4 px-5 py-3">
                     <div className="text-2xl w-9 text-center flex-shrink-0">{listing.image}</div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">{listing.title}</p>
+                      <p className="font-semibold text-slate-800 text-sm truncate">{listing.title}</p>
                       <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                         <span>{listing.provider}</span>
                         <span>·</span>
@@ -277,8 +277,8 @@ export default function SuperAdminDashboardPage() {
                       onClick={() => togglePromote(listing.id)}
                       className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ${
                         isActive
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-400 text-white border-orange-400 shadow-sm shadow-orange-200 dark:shadow-orange-900/30'
-                          : 'bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:border-orange-300 hover:text-orange-600'
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-400 text-white border-orange-400 shadow-sm shadow-orange-200'
+                          : 'glass-sm text-slate-500 hover:border-orange-300 hover:text-orange-600'
                       }`}
                     >
                       <Flame className="h-3.5 w-3.5" />
@@ -293,22 +293,22 @@ export default function SuperAdminDashboardPage() {
 
         {/* Quick Links */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6} className="mb-4">
-          <h2 className="text-base font-bold text-slate-700 dark:text-slate-300">เมนูหลัก</h2>
+          <h2 className="text-base font-bold text-slate-700">เมนูหลัก</h2>
         </motion.div>
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {QUICK_LINKS.map((link, i) => (
             <motion.div key={link.href + link.label} variants={fadeUp} custom={i} whileHover={{ y: -4 }}>
               <Link href={link.href as any}
-                className="flex flex-col gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 hover:border-blue-300 dark:hover:border-blue-600 transition-all group shadow-sm">
+                className="flex flex-col gap-3 glass border-white/20 rounded-2xl p-5 hover:border-primary/30 transition-all group shadow-sm">
                 <div className={`w-10 h-10 rounded-xl ${link.bg} flex items-center justify-center group-hover:scale-110 transition-transform`}>
                   <link.icon className={`h-5 w-5 ${link.color}`} />
                 </div>
                 <div>
-                  <p className="font-bold text-sm text-slate-800 dark:text-slate-100">{link.label}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{link.desc}</p>
+                  <p className="font-bold text-sm text-slate-800">{link.label}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{link.desc}</p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500 transition-colors self-end mt-auto" />
+                <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary transition-colors self-end mt-auto" />
               </Link>
             </motion.div>
           ))}

@@ -37,7 +37,7 @@ const MOCK_LISTINGS = [
 ]
 
 const ORDER_STATUS_CONFIG = {
-  confirmed: { label: 'ยืนยันแล้ว', bg: 'bg-blue-50',  text: 'text-blue-600',  border: 'border-blue-100'  },
+  confirmed: { label: 'ยืนยันแล้ว', bg: 'glass-sm',  text: 'text-primary',  border: 'border-primary/30'  },
   pending:   { label: 'รอยืนยัน',   bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100' },
   completed: { label: 'เสร็จแล้ว',  bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-100' },
 }
@@ -48,7 +48,7 @@ type ProviderStatus = 'ACTIVE' | 'SUSPENDED' | 'INACTIVE' | 'LEFT'
 const PROVIDER_STATUS_CONFIG: Record<ProviderStatus, { label: string; badge: string; dot: string }> = {
   ACTIVE:    { label: 'กำลังให้บริการ',       badge: 'bg-green-100 text-green-700 border-green-200',  dot: 'bg-green-500'  },
   SUSPENDED: { label: 'หยุดชั่วคราว',          badge: 'bg-amber-100 text-amber-700 border-amber-200',  dot: 'bg-amber-400'  },
-  INACTIVE:  { label: 'เลิกกิจการ',            badge: 'bg-slate-100 text-slate-500 border-slate-200',  dot: 'bg-slate-400'  },
+  INACTIVE:  { label: 'เลิกกิจการ',            badge: 'glass-sm text-slate-500 border-slate-200',  dot: 'bg-slate-400'  },
   LEFT:      { label: 'ออกจากชุมชนแล้ว',       badge: 'bg-red-100 text-red-600 border-red-200',        dot: 'bg-red-400'    },
 }
 
@@ -107,11 +107,11 @@ export default function ProviderDashboardPage() {
             <div className="flex items-center gap-3 mt-1 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-24 rounded-full bg-slate-200 overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: '98%' }} />
+                  <div className="h-full glass-sm0 rounded-full" style={{ width: '98%' }} />
                 </div>
-                <span className="text-xs font-semibold text-blue-600">Trust 98</span>
+                <span className="text-xs font-semibold text-primary">Trust 98</span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-100 border border-purple-200">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-100 border">
                 <Zap className="h-3 w-3 text-purple-600" />
                 <span className="text-xs font-bold text-purple-700">Score {PROVIDER_SUMMARY.performanceScore}</span>
               </div>
@@ -130,12 +130,12 @@ export default function ProviderDashboardPage() {
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
             { label: 'รายได้เดือนนี้', value: `฿${thisMonthRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-50' },
-            { label: 'งานทั้งหมด', value: MOCK_ORDERS.length, icon: CalendarCheck, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'งานทั้งหมด', value: MOCK_ORDERS.length, icon: CalendarCheck, color: 'text-primary', bg: 'glass-sm' },
             { label: 'งานเสร็จแล้ว', value: completedOrders, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
             { label: 'คะแนนรีวิว', value: '4.9 ⭐', icon: Star, color: 'text-amber-600', bg: 'bg-amber-50' },
           ].map((stat, i) => (
             <motion.div key={stat.label} variants={fadeUp} custom={i} whileHover={{ y: -3 }}
-              className="p-5 rounded-2xl bg-white/85 backdrop-blur-sm border border-slate-100 shadow-sm">
+              className="p-5 rounded-2xl glass-card">
               <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center mb-3`}>
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
               </div>
@@ -148,18 +148,18 @@ export default function ProviderDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Orders */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-            className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+            className="glass-card rounded-2xl">
+            <div className="flex items-center justify-between p-5 border-b border-white/20">
               <h2 className="font-bold text-slate-900">คำสั่งจอง</h2>
               <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">
                 {MOCK_ORDERS.filter(o => o.status === 'pending').length} รอยืนยัน
               </span>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-white/10">
               {MOCK_ORDERS.map((order, i) => {
                 const cfg = ORDER_STATUS_CONFIG[order.status as keyof typeof ORDER_STATUS_CONFIG]
                 return (
-                  <div key={order.id} className="flex items-center gap-3 p-4 hover:bg-slate-50/50 transition-colors">
+                  <div key={order.id} className="flex items-center gap-3 p-4 hover:glass-sm/50 transition-colors">
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-slate-800 text-sm">{order.customer}</div>
                       <div className="text-xs text-slate-500 mt-0.5">{order.service}</div>
@@ -181,20 +181,20 @@ export default function ProviderDashboardPage() {
 
           {/* My Listings */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
-            className="bg-white/85 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+            className="glass-card rounded-2xl">
+            <div className="flex items-center justify-between p-5 border-b border-white/20">
               <h2 className="font-bold text-slate-900">Listings ของฉัน</h2>
-              <Link href="/dashboard/provider/listings" className="text-sm text-blue-600 font-medium hover:text-blue-700 flex items-center gap-1">
+              <Link href="/dashboard/provider/listings" className="text-sm text-primary font-medium hover:text-blue-700 flex items-center gap-1">
                 <Plus className="h-3.5 w-3.5" /> เพิ่ม
               </Link>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-white/10">
               {MOCK_LISTINGS.map((listing) => (
-                <div key={listing.id} className="p-4 hover:bg-slate-50/50 transition-colors">
+                <div key={listing.id} className="p-4 hover:glass-sm/50 transition-colors">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-slate-800 text-sm">{listing.title}</h3>
                     <div className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-                      listing.active ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-500'
+                      listing.active ? 'bg-green-100 text-green-600' : 'glass-sm text-slate-500'
                     }`}>
                       {listing.active ? 'เผยแพร่' : 'ซ่อน'}
                     </div>
@@ -208,7 +208,7 @@ export default function ProviderDashboardPage() {
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t border-slate-100">
+            <div className="p-4 border-t border-white/20">
               <div className="flex items-center gap-2 text-sm">
                 <TrendingUp className="h-4 w-4 text-green-500" />
                 <span className="text-slate-600">ยอดรวมเดือนนี้: <strong className="text-green-600">฿{thisMonthRevenue.toLocaleString()}</strong></span>
@@ -229,15 +229,15 @@ export default function ProviderDashboardPage() {
             {/* Analytics */}
             <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
               <Link href="/dashboard/provider/analytics"
-                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 shadow-sm hover:shadow-md transition-all">
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-primary/30 shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
                     <BarChart3 className="h-4.5 w-4.5 text-white" />
                   </div>
-                  <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">Live</span>
+                  <span className="text-xs font-bold text-primary bg-blue-100 px-2 py-0.5 rounded-full">Live</span>
                 </div>
                 <p className="font-bold text-blue-900 text-sm mb-0.5">Analytics</p>
-                <p className="text-xs text-blue-600 mb-3">กราฟรายได้ · การจอง · Rating Trend</p>
+                <p className="text-xs text-primary mb-3">กราฟรายได้ · การจอง · Rating Trend</p>
                 {/* Mini Sparkline */}
                 <div className="flex items-end gap-0.5 h-8">
                   {SPARKLINE_7D.map((v, i) => {
@@ -254,7 +254,7 @@ export default function ProviderDashboardPage() {
             {/* Insights */}
             <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
               <Link href="/dashboard/provider/insights"
-                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 shadow-sm hover:shadow-md transition-all">
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-9 h-9 rounded-xl bg-purple-600 flex items-center justify-center">
                     <Zap className="h-4.5 w-4.5 text-white" />
@@ -301,12 +301,12 @@ export default function ProviderDashboardPage() {
 
         {/* Revenue note */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
-          className="mt-6 p-5 rounded-2xl bg-blue-50 border border-blue-100">
+          className="mt-6 p-5 rounded-2xl glass border border-primary/20">
           <div className="flex items-start gap-3">
-            <DollarSign className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <DollarSign className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold text-blue-800 text-sm">ค่า Commission แพลตฟอร์ม</p>
-              <p className="text-xs text-blue-600 mt-0.5">
+              <p className="text-xs text-primary mt-0.5">
                 แพลตฟอร์มเก็บ 10–12% จากยอดบุ๊กกิ้งที่สำเร็จ ในช่วงทดลองใช้งานไม่มีค่าใช้จ่าย
               </p>
             </div>
@@ -315,10 +315,10 @@ export default function ProviderDashboardPage() {
 
         {/* ── Provider Profile & Status Management ── */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={8}
-          className="mt-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          className="mt-6 glass-card rounded-2xl overflow-hidden">
 
           {/* Section header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/20">
             <h2 className="font-bold text-slate-900">สถานะการให้บริการ</h2>
             {/* Current status badge */}
             <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${statusCfg.badge}`}>
@@ -328,7 +328,7 @@ export default function ProviderDashboardPage() {
           </div>
 
           {/* Profile info */}
-          <div className="px-6 py-4 border-b border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <div className="px-6 py-4 border-b border-white/20 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div className="flex items-start gap-2">
               <MapPin className="h-4 w-4 text-slate-400 flex-shrink-0 mt-0.5" />
               <div>
@@ -389,7 +389,7 @@ export default function ProviderDashboardPage() {
                 </motion.button>
                 <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                   onClick={() => setModal('deactivate')}
-                  className="w-full flex items-center gap-3 p-4 rounded-xl border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all text-left">
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border-2 border-slate-200 glass-sm hover:glass-sm transition-all text-left">
                   <X className="h-5 w-5 text-slate-500 flex-shrink-0" />
                   <div>
                     <p className="text-sm font-bold text-slate-700">เลิกกิจการ</p>
@@ -471,12 +471,12 @@ export default function ProviderDashboardPage() {
             className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
             onClick={(e) => e.target === e.currentTarget && setModal(null)}>
             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}
-              className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
+              className="w-full max-w-md glass-heavy rounded-3xl shadow-2xl overflow-hidden">
 
               {/* Modal header */}
               <div className={`p-5 ${
                 modal === 'leave'      ? 'bg-red-50 border-b border-red-100'    :
-                modal === 'deactivate' ? 'bg-slate-50 border-b border-slate-100' :
+                modal === 'deactivate' ? 'glass-sm border-b border-white/20' :
                 modal === 'suspend'   ? 'bg-amber-50 border-b border-amber-100' :
                 'bg-green-50 border-b border-green-100'
               }`}>
@@ -498,7 +498,7 @@ export default function ProviderDashboardPage() {
                 {modal === 'suspend' && (
                   <div className="space-y-3">
                     <p className="text-sm text-slate-600">Listings ของคุณจะถูกซ่อนชั่วคราว ลูกค้าจะไม่สามารถจองได้จนกว่าคุณจะกลับมาเปิดรับงาน</p>
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
+                    <div className="glass-sm border border-amber-200/60 rounded-xl p-3 text-xs text-amber-700">
                       💡 งานที่จองไว้แล้วยังคงต้องดำเนินการตามปกติ
                     </div>
                   </div>
@@ -516,9 +516,9 @@ export default function ProviderDashboardPage() {
                 )}
                 {modal === 'leave' && (
                   <div className="space-y-4">
-                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-3">
+                    <div className="glass border border-primary/20 rounded-xl p-3">
                       <p className="text-xs text-blue-700 font-semibold mb-1">✅ สิ่งที่ยังได้รับ</p>
-                      <ul className="text-xs text-blue-600 space-y-0.5">
+                      <ul className="text-xs text-primary space-y-0.5">
                         <li>• บัญชียังคงอยู่ ไม่ถูกลบ</li>
                         <li>• สมัครเข้าชุมชนใหม่ได้ด้วยบัญชีเดิม</li>
                         <li>• ประวัติ Trust Score ยังอยู่</li>
@@ -539,7 +539,7 @@ export default function ProviderDashboardPage() {
                         rows={2} placeholder="เช่น ย้ายที่อยู่ ขยายธุรกิจ..."
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-300 resize-none transition-all" />
                     </div>
-                    <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
+                    <div className="flex items-start gap-2 glass-sm border border-amber-200/60 rounded-xl px-3 py-2.5">
                       <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
                       <p className="text-xs text-amber-700">
                         หลังออกจากชุมชน คุณสามารถสมัครชุมชนใหม่ได้ทันที โดยไม่ต้องใช้บัญชีใหม่
@@ -550,7 +550,7 @@ export default function ProviderDashboardPage() {
 
                 <div className="flex gap-3 mt-6">
                   <button onClick={() => setModal(null)}
-                    className="flex-1 rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                    className="flex-1 rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:glass-sm transition-colors">
                     ยกเลิก
                   </button>
                   <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}

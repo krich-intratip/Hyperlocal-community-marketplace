@@ -60,7 +60,7 @@ export default function ProviderAnalyticsClient() {
         {/* Breadcrumb */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
           className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/dashboard/provider" className="hover:text-blue-600 flex items-center gap-1">
+          <Link href="/dashboard/provider" className="hover:text-primary flex items-center gap-1">
             <ChevronLeft className="h-3.5 w-3.5" /> Provider Dashboard
           </Link>
           <span>/</span>
@@ -70,7 +70,7 @@ export default function ProviderAnalyticsClient() {
         {/* Header */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1} className="mb-6">
           <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-blue-600" /> วิเคราะห์ธุรกิจ
+            <BarChart3 className="h-6 w-6 text-primary" /> วิเคราะห์ธุรกิจ
           </h1>
           <p className="text-sm text-slate-500 mt-1">ภาพรวมรายได้ การจอง และแนวโน้มธุรกิจของคุณ</p>
         </motion.div>
@@ -83,13 +83,13 @@ export default function ProviderAnalyticsClient() {
             <button key={p} onClick={() => setPeriod(p)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 period === p
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-white/80 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'glass-sm text-slate-600 hover:border-primary/30'
               }`}>
               {p === '7d' ? '7 วัน' : p === '30d' ? '30 วัน' : '12 เดือน'}
             </button>
           ))}
-          <button className="ml-auto flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 transition-all">
+          <button className="ml-auto flex items-center gap-1.5 text-xs font-bold text-primary hover:text-blue-700 px-3 py-1.5 rounded-lg border border-primary/30 glass-sm hover:bg-blue-100 transition-all">
             <Download className="h-3.5 w-3.5" /> ดาวน์โหลด CSV
           </button>
         </motion.div>
@@ -99,12 +99,12 @@ export default function ProviderAnalyticsClient() {
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
             { label: 'รายได้รวม', value: `฿${fmt(totalRevenue)}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-50', change: `+${PROVIDER_SUMMARY.revenueGrowth}%` },
-            { label: 'ออเดอร์รวม', value: totalBookings, icon: CalendarCheck, color: 'text-blue-600', bg: 'bg-blue-50', change: `+${PROVIDER_SUMMARY.bookingsGrowth}%` },
+            { label: 'ออเดอร์รวม', value: totalBookings, icon: CalendarCheck, color: 'text-primary', bg: 'glass-sm', change: `+${PROVIDER_SUMMARY.bookingsGrowth}%` },
             { label: 'คะแนนเฉลี่ย', value: `${PROVIDER_SUMMARY.avgRating} ⭐`, icon: Star, color: 'text-amber-600', bg: 'bg-amber-50', change: '+0.05' },
             { label: 'ลูกค้าซ้ำ', value: `${PROVIDER_SUMMARY.repeatCustomerRate}%`, icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50', change: '+8%' },
           ].map((stat, i) => (
             <motion.div key={stat.label} variants={fadeUp} custom={i} whileHover={{ y: -3 }}
-              className="p-5 rounded-2xl bg-white/85 backdrop-blur-sm border border-slate-100 shadow-sm">
+              className="p-5 rounded-2xl glass-card">
               <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center mb-3`}>
                 <stat.icon className={`h-4.5 w-4.5 ${stat.color}`} />
               </div>
@@ -119,13 +119,13 @@ export default function ProviderAnalyticsClient() {
 
         {/* Revenue Area Chart */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
-          className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+          className="glass-card rounded-2xl p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-extrabold text-slate-900">แนวโน้มรายได้</h2>
               <p className="text-xs text-slate-500 mt-0.5">รายได้รวมและจำนวนการจองรายเดือน</p>
             </div>
-            <Activity className="h-5 w-5 text-blue-500" />
+            <Activity className="h-5 w-5 text-primary" />
           </div>
           <ResponsiveContainer width="100%" height={240}>
             <AreaChart data={chartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -153,7 +153,7 @@ export default function ProviderAnalyticsClient() {
 
           {/* Bookings by Day of Week — BarChart */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6">
+            className="glass-card rounded-2xl p-6">
             <h2 className="font-extrabold text-slate-900 mb-1">การจองตามวัน</h2>
             <p className="text-xs text-slate-500 mb-4">จำนวนออเดอร์เฉลี่ยแต่ละวันในสัปดาห์</p>
             <ResponsiveContainer width="100%" height={200}>
@@ -172,7 +172,7 @@ export default function ProviderAnalyticsClient() {
 
           {/* Rating Trend — LineChart */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6">
+            className="glass-card rounded-2xl p-6">
             <h2 className="font-extrabold text-slate-900 mb-1">แนวโน้มคะแนนรีวิว</h2>
             <p className="text-xs text-slate-500 mb-4">คะแนนเฉลี่ยและจำนวนรีวิว 6 เดือนล่าสุด</p>
             <ResponsiveContainer width="100%" height={200}>
@@ -196,7 +196,7 @@ export default function ProviderAnalyticsClient() {
 
         {/* Booking Status Pie + Summary */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
-          className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6">
+          className="glass-card rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-extrabold text-slate-900">สถานะการจอง</h2>
@@ -224,7 +224,7 @@ export default function ProviderAnalyticsClient() {
                     <span className="text-sm text-slate-700">{item.name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="h-2 rounded-full bg-slate-100 w-24">
+                    <div className="h-2 rounded-full glass-sm w-24">
                       <div className="h-full rounded-full transition-all"
                         style={{ width: `${item.value}%`, backgroundColor: item.color }} />
                     </div>
@@ -245,7 +245,7 @@ export default function ProviderAnalyticsClient() {
           ].map((item, i) => (
             <motion.div key={item.label} variants={fadeUp} custom={i} whileHover={{ y: -2 }}>
               <Link href={item.href}
-                className="flex items-center gap-4 p-5 rounded-2xl bg-white/85 backdrop-blur-sm border border-slate-100 shadow-sm hover:border-slate-200 hover:shadow-md transition-all">
+                className="flex items-center gap-4 p-5 rounded-2xl glass-card hover:border-slate-200 hover:shadow-md transition-all">
                 <div className={`w-12 h-12 rounded-xl ${item.color} flex items-center justify-center text-2xl flex-shrink-0`}>
                   {item.emoji}
                 </div>

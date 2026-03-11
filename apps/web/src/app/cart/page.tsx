@@ -87,7 +87,7 @@ export default function CartPage() {
         <section className="max-w-lg mx-auto px-4 pt-16 pb-24 text-center">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-            className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
+            className="w-24 h-24 rounded-full glass-sm flex items-center justify-center mx-auto mb-5">
             <CheckCircle className="h-12 w-12 text-green-600" />
           </motion.div>
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}>
@@ -96,20 +96,20 @@ export default function CartPage() {
           </motion.div>
           {orderIds.length > 0 && (
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-              className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl p-4 mb-6 text-sm text-left space-y-1">
-              <p className="font-bold text-blue-700 dark:text-blue-300 mb-2">หมายเลขคำสั่งซื้อ</p>
+              className="glass-sm rounded-2xl p-4 mb-6 text-sm text-left space-y-1">
+              <p className="font-bold text-primary mb-2">หมายเลขคำสั่งซื้อ</p>
               {orderIds.map((oid) => (
-                <p key={oid} className="font-mono font-bold text-blue-600">#{oid}</p>
+                <p key={oid} className="font-mono font-bold text-primary">#{oid}</p>
               ))}
             </motion.div>
           )}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="flex flex-col gap-3">
             <Link href="/bookings"
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 font-bold text-white hover:bg-blue-700 transition-colors">
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 font-bold text-white hover:bg-primary/90 transition-colors">
               ดูรายการจองทั้งหมด <ArrowRight className="h-4 w-4" />
             </Link>
             <Link href="/marketplace"
-              className="w-full text-center text-sm text-slate-400 hover:text-blue-600 py-2 transition-colors">
+              className="w-full text-center text-sm text-slate-400 hover:text-primary py-2 transition-colors">
               กลับไป Marketplace
             </Link>
           </motion.div>
@@ -129,7 +129,7 @@ export default function CartPage() {
         {/* Breadcrumb */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
           className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/marketplace" className="hover:text-blue-600 flex items-center gap-1">
+          <Link href="/marketplace" className="hover:text-primary flex items-center gap-1">
             <ChevronLeft className="h-3.5 w-3.5" /> Marketplace
           </Link>
           <span>/</span>
@@ -146,7 +146,7 @@ export default function CartPage() {
             <h2 className="text-xl font-extrabold text-slate-600 dark:text-slate-300 mb-2">ตะกร้าว่างเปล่า</h2>
             <p className="text-sm text-slate-400 mb-6">เพิ่มสินค้าหรือบริการจาก Marketplace ก่อนสั่งซื้อ</p>
             <Link href="/marketplace"
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-700 transition-colors">
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white hover:bg-primary/90 transition-colors">
               ไปที่ Marketplace <ArrowRight className="h-4 w-4" />
             </Link>
           </motion.div>
@@ -177,28 +177,28 @@ export default function CartPage() {
                 const provSubtotal = provItems.reduce((s, i) => s + i.price * i.qty, 0)
                 return (
                   <motion.div key={providerId} variants={fadeUp} initial="hidden" animate="show" exit={{ opacity: 0, x: 40 }} custom={pi + 2}
-                    className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-5 mb-4">
+                    className="glass-card rounded-2xl p-5 mb-4">
 
                     {/* Provider header */}
-                    <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700 mb-4">
+                    <div className="flex items-center gap-3 pb-4 border-b border-white/20 mb-4">
                       <span className="text-2xl">{first.providerAvatar}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{first.provider}</p>
-                          <Shield className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
+                          <Shield className="h-3.5 w-3.5 text-primary flex-shrink-0" />
                         </div>
                         <p className="text-xs text-slate-400 flex items-center gap-1">
                           <MapPin className="h-3 w-3" /> {first.community}
                         </p>
                       </div>
-                      <p className="font-extrabold text-blue-600 text-sm flex-shrink-0">฿{provSubtotal.toLocaleString()}</p>
+                      <p className="font-extrabold text-primary text-sm flex-shrink-0">฿{provSubtotal.toLocaleString()}</p>
                     </div>
 
                     {/* Items */}
                     <div className="space-y-3 mb-4">
                       {provItems.map((item) => (
                         <div key={item.id} className="flex items-start gap-3">
-                          <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-2xl flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl glass-sm flex items-center justify-center text-2xl flex-shrink-0">
                             {item.listingImage}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -208,13 +208,13 @@ export default function CartPage() {
                             {item.menuName && (
                               <p className="text-xs text-slate-400 truncate">{item.listingTitle}</p>
                             )}
-                            <p className="text-xs text-blue-600 font-bold">฿{item.price}/{item.unit}</p>
+                            <p className="text-xs text-primary font-bold">฿{item.price}/{item.unit}</p>
                             {/* Item note */}
                             <input
                               value={noteByItem[item.id] ?? ''}
                               onChange={(e) => setNoteByItem((prev) => ({ ...prev, [item.id]: e.target.value }))}
                               placeholder="หมายเหตุ (เช่น ไม่เผ็ด, แพ้อาหาร...)"
-                              className="mt-1.5 w-full text-xs rounded-lg border border-slate-200 dark:border-slate-600 px-2.5 py-1.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 placeholder-slate-400 outline-none focus:border-blue-300 transition-colors"
+                              className="mt-1.5 w-full text-xs rounded-lg border border-white/20 px-2.5 py-1.5 glass text-slate-700 dark:text-slate-200 placeholder-slate-400 outline-none focus:border-primary/40 transition-colors"
                             />
                           </div>
                           <div className="flex flex-col items-end gap-2 flex-shrink-0">
@@ -223,12 +223,12 @@ export default function CartPage() {
                             </button>
                             <div className="flex items-center gap-1">
                               <button onClick={() => updateQty(item.id, item.qty - 1)}
-                                className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 transition-all">
+                                className="w-7 h-7 rounded-lg glass-sm flex items-center justify-center hover:bg-white/30 transition-all">
                                 <Minus className="h-3 w-3 text-slate-500" />
                               </button>
                               <span className="w-7 text-center text-sm font-extrabold text-slate-800 dark:text-white">{item.qty}</span>
                               <button onClick={() => updateQty(item.id, item.qty + 1)}
-                                className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 transition-all">
+                                className="w-7 h-7 rounded-lg glass-sm flex items-center justify-center hover:bg-white/30 transition-all">
                                 <Plus className="h-3 w-3 text-slate-500" />
                               </button>
                             </div>
@@ -250,7 +250,7 @@ export default function CartPage() {
                         onChange={(e) => setAddressByProvider((prev) => ({ ...prev, [providerId]: e.target.value }))}
                         rows={2}
                         placeholder="บ้านเลขที่, ซอย, ถนน..."
-                        className="w-full rounded-xl border border-slate-200 dark:border-slate-600 focus:border-blue-400 px-3 py-2.5 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 placeholder-slate-400 outline-none resize-none transition-all"
+                        className="w-full rounded-xl border border-white/20 focus:border-primary/50 px-3 py-2.5 text-sm glass text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none resize-none transition-all"
                       />
                     </div>
                   </motion.div>
@@ -260,7 +260,7 @@ export default function CartPage() {
 
             {/* Order summary */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={providerIds.length + 2}
-              className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 p-5 mb-5 space-y-2 text-sm">
+              className="glass rounded-2xl p-5 mb-5 space-y-2 text-sm">
               <div className="flex justify-between text-slate-600 dark:text-slate-300">
                 <span>ยอดรวมสินค้า</span>
                 <span>฿{subtotal.toLocaleString()}</span>
@@ -269,9 +269,9 @@ export default function CartPage() {
                 <span>ค่าบริการแพลตฟอร์ม (5%)</span>
                 <span>฿{platformFee.toLocaleString()}</span>
               </div>
-              <div className="border-t border-blue-200 dark:border-blue-700 pt-2 flex justify-between font-extrabold text-base text-slate-900 dark:text-white">
+              <div className="border-t border-white/20 pt-2 flex justify-between font-extrabold text-base text-slate-900 dark:text-white">
                 <span>รวมทั้งหมด</span>
-                <span className="text-blue-700">฿{grandTotal.toLocaleString()}</span>
+                <span className="text-primary">฿{grandTotal.toLocaleString()}</span>
               </div>
             </motion.div>
 
@@ -282,7 +282,7 @@ export default function CartPage() {
               whileTap={canCheckout() ? { scale: 0.97 } : {}}
               disabled={!canCheckout()}
               onClick={() => setStep('payment')}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-4 text-base font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg shadow-indigo-200/50 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               ไปชำระเงิน ฿{grandTotal.toLocaleString()} <ArrowRight className="h-5 w-5" />
             </motion.button>
             {!canCheckout() && items.length > 0 && (
@@ -296,7 +296,7 @@ export default function CartPage() {
           <>
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="text-center mb-5">
               <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">ชำระเงิน</h1>
-              <p className="text-sm text-slate-500 mt-1">ยอดรวม <span className="font-extrabold text-blue-700">฿{grandTotal.toLocaleString()}</span></p>
+              <p className="text-sm text-slate-500 mt-1">ยอดรวม <span className="font-extrabold text-primary">฿{grandTotal.toLocaleString()}</span></p>
             </motion.div>
 
             {/* Method selector */}
@@ -306,8 +306,8 @@ export default function CartPage() {
                 <button key={id} onClick={() => setPayMethod(id)}
                   className={`p-4 rounded-2xl border-2 text-left transition-all ${
                     payMethod === id
-                      ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/30'
-                      : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-slate-300'
+                      ? 'border-primary/50 glass-sm'
+                      : 'glass hover:border-white/30'
                   }`}>
                   <p className="font-bold text-sm text-slate-900 dark:text-white">{label}</p>
                   <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
@@ -318,7 +318,7 @@ export default function CartPage() {
             {/* PromptPay QR */}
             {payMethod === 'promptpay' && (
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-                className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-6 mb-5 text-center">
+                className="glass-card rounded-2xl p-6 mb-5 text-center">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-4">สแกน QR เพื่อชำระ</p>
                 <div className="mx-auto w-48 h-48 bg-white border-2 border-slate-200 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
                   <svg width="160" height="160" viewBox="0 0 160 160">
@@ -336,8 +336,8 @@ export default function CartPage() {
                     <rect x="18" y="104" width="38" height="38" rx="2" fill="#1e293b"/>
                   </svg>
                 </div>
-                <p className="font-extrabold text-2xl text-blue-700 mb-1">฿{grandTotal.toLocaleString()}</p>
-                <div className="flex items-center justify-center gap-2 bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-200 mt-3">
+                <p className="font-extrabold text-2xl text-primary mb-1">฿{grandTotal.toLocaleString()}</p>
+                <div className="flex items-center justify-center gap-2 glass-sm rounded-xl px-4 py-2.5 mt-3">
                   <Smartphone className="h-4 w-4 text-slate-400 flex-shrink-0" />
                   <span className="font-bold text-slate-700 text-sm tracking-wider">081-234-5678</span>
                   <button onClick={() => copyText('0812345678', setCopied)}
@@ -346,7 +346,7 @@ export default function CartPage() {
                     {copied ? 'คัดลอกแล้ว' : 'คัดลอก'}
                   </button>
                 </div>
-                <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mt-4">
+                <p className="text-xs text-amber-600 glass-sm rounded-xl px-3 py-2 mt-4">
                   ⚠️ QR นี้เป็นตัวอย่าง Demo — อย่าโอนเงินจริง
                 </p>
               </motion.div>
@@ -355,9 +355,9 @@ export default function CartPage() {
             {/* Cash */}
             {payMethod === 'cash' && (
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-                className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-6 mb-5">
+                className="glass-card rounded-2xl p-6 mb-5">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-green-50 border border-green-200 flex items-center justify-center flex-shrink-0 text-xl">💵</div>
+                  <div className="w-10 h-10 rounded-xl glass-sm flex items-center justify-center flex-shrink-0 text-xl">💵</div>
                   <div>
                     <p className="font-bold text-slate-900 dark:text-white mb-1">ชำระเงินสดเมื่อรับสินค้า/บริการ</p>
                     <p className="text-sm text-slate-500">เตรียมเงินสด <span className="font-bold text-slate-800 dark:text-slate-100">฿{grandTotal.toLocaleString()}</span> ให้พร้อม</p>
@@ -379,7 +379,7 @@ export default function CartPage() {
                 ) : <>✅ {payMethod === 'promptpay' ? 'โอนแล้ว ยืนยันคำสั่งซื้อ' : 'ยืนยันคำสั่งซื้อ'} <ArrowRight className="h-4 w-4" /></>}
               </motion.button>
               <button onClick={() => setStep('review')}
-                className="w-full text-center text-sm text-slate-500 hover:text-blue-600 py-2 transition-colors">
+                className="w-full text-center text-sm text-slate-500 hover:text-primary py-2 transition-colors">
                 ← กลับแก้ไขรายการ
               </button>
             </motion.div>

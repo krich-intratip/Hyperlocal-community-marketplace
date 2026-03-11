@@ -77,7 +77,7 @@ export default function ProviderInsightsClient() {
         {/* Breadcrumb */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
           className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/dashboard/provider" className="hover:text-blue-600 flex items-center gap-1">
+          <Link href="/dashboard/provider" className="hover:text-primary flex items-center gap-1">
             <ChevronLeft className="h-3.5 w-3.5" /> Provider Dashboard
           </Link>
           <span>/</span>
@@ -99,7 +99,7 @@ export default function ProviderInsightsClient() {
             <span className="text-xs text-slate-500 font-medium">หมวดธุรกิจ:</span>
             <div className="relative">
               <button onClick={() => setDropdownOpen(v => !v)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/90 border border-slate-200 shadow-sm text-sm font-bold text-slate-800 hover:border-purple-300 hover:bg-purple-50 transition-all">
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card text-sm font-bold text-slate-800hover:border-primary/30 transition-all">
                 <span>{insight.categoryEmoji}</span>
                 <span>{insight.categoryLabel}</span>
                 <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
@@ -109,14 +109,14 @@ export default function ProviderInsightsClient() {
                 {dropdownOpen && (
                   <motion.div initial={{ opacity: 0, y: -8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-30">
+                    className="absolute top-full left-0 mt-2 w-56 glass-heavy rounded-2xl shadow-xl overflow-hidden z-30">
                     {ALL_CATEGORIES.map(cat => {
                       const c = CATEGORY_INSIGHTS[cat]
                       return (
                         <button key={cat}
                           onClick={() => { setSelectedCategory(cat); setDropdownOpen(false) }}
                           className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left transition-colors ${
-                            cat === selectedCategory ? 'bg-purple-50 text-purple-700 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                            cat === selectedCategory ? 'bg-purple-50 text-purple-700 font-bold' : 'text-slate-700 hover:glass-sm'
                           }`}>
                           <span className="text-base">{c.categoryEmoji}</span>
                           <span>{c.categoryLabel}</span>
@@ -158,14 +158,14 @@ export default function ProviderInsightsClient() {
               </div>
 
               {/* Category KPIs */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6">
+              <div className="glass-card rounded-2xl p-6">
                 <h2 className="font-extrabold text-slate-900 text-sm mb-4 flex items-center gap-2">
                   <BarChart3 className="h-4 w-4 text-purple-500" />
                   KPI หลักหมวด{insight.categoryLabel}
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                   {insight.kpis.map((kpi) => (
-                    <div key={kpi.label} className="bg-slate-50 rounded-xl p-3">
+                    <div key={kpi.label} className="glass-sm rounded-xl p-3">
                       <div className="text-lg mb-0.5">{kpi.icon}</div>
                       <div className="font-extrabold text-slate-900 text-base">
                         {kpi.value}
@@ -218,7 +218,7 @@ export default function ProviderInsightsClient() {
                   const pCfg = PRIORITY_CONFIG[rec.priority]
                   return (
                     <motion.div key={rec.title} variants={fadeUp} custom={i} whileHover={{ x: 4 }}
-                      className="flex items-start gap-4 p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-100 shadow-sm">
+                      className="flex items-start gap-4 p-5 rounded-2xl glass-card">
                       <div className="text-2xl flex-shrink-0 mt-0.5">{rec.icon}</div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1.5">
@@ -244,7 +244,7 @@ export default function ProviderInsightsClient() {
                 { label: 'จัดการรีวิว', desc: 'Sentiment & คำตอบรีวิว', href: '/dashboard/provider/reviews', emoji: '⭐' },
               ].map((item) => (
                 <Link key={item.href} href={item.href}
-                  className="flex items-center gap-3 p-4 rounded-xl bg-white/80 border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-all">
+                  className="flex items-center gap-3 p-4 rounded-xl glass border-white/20 hover:border-primary/30 transition-all">
                   <span className="text-xl">{item.emoji}</span>
                   <div>
                     <p className="font-bold text-slate-800 text-sm">{item.label}</p>

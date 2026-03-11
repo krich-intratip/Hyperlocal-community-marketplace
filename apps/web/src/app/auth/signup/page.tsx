@@ -125,7 +125,7 @@ function SignUpPageInner() {
   }, [step, selectedRole, router, redirectTo])
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
+    <main className="min-h-screen overflow-x-hidden">
       <MarketBackground />
       <Navbar />
 
@@ -141,19 +141,19 @@ function SignUpPageInner() {
                 <div key={s.key} className="flex items-center">
                   <div className="flex flex-col items-center">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold border-2 transition-all ${
-                      done ? 'bg-blue-600 border-blue-600 text-white'
-                      : active ? 'bg-white border-blue-600 text-blue-600 shadow-md'
-                      : 'bg-white border-slate-200 text-slate-300'
+                      done ? 'bg-primary border-primary text-white'
+                      : active ? 'glass border-primary text-primary shadow-md'
+                      : 'glass border-white/20 text-slate-300'
                     }`}>
                       {done ? <CheckCircle className="h-4 w-4" /> : i + 1}
                     </div>
                     <span className={`text-[10px] mt-1 font-bold ${
-                      active ? 'text-blue-600' : done ? 'text-blue-400' : 'text-slate-300'
+                      active ? 'text-primary' : done ? 'text-primary/60' : 'text-slate-300'
                     }`}>{s.label}</span>
                   </div>
                   {i < arr.length - 1 && (
                     <div className={`w-12 h-0.5 mx-1 mb-4 transition-all ${
-                      STEP_IDX[step] > i ? 'bg-blue-500' : 'bg-slate-200'
+                      STEP_IDX[step] > i ? 'bg-primary' : 'bg-white/20'
                     }`} />
                   )}
                 </div>
@@ -182,7 +182,7 @@ function SignUpPageInner() {
                   className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
                     selectedRole === r.id
                       ? `${r.border} ${r.bg} shadow-sm`
-                      : 'border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-600'
+                      : 'glass hover:border-white/50'
                   }`}>
                   <span className="text-2xl flex-shrink-0">{r.emoji}</span>
                   <div className="flex-1 min-w-0">
@@ -198,7 +198,7 @@ function SignUpPageInner() {
 
             {/* Benefits */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-              className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 mb-5 border border-slate-100 dark:border-slate-700">
+              className="glass rounded-2xl p-4 mb-5">
               <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">สิทธิ์ที่ได้รับ</p>
               <ul className="space-y-1.5">
                 {BENEFITS[selectedRole].map((b) => (
@@ -221,7 +221,7 @@ function SignUpPageInner() {
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 onClick={handleMockGoogleSignup}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-blue-300 hover:shadow-md transition-all disabled:opacity-60">
+                className="w-full flex items-center justify-center gap-3 rounded-xl glass border-2 px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-white/30 hover:shadow-md transition-all disabled:opacity-60">
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -233,7 +233,7 @@ function SignUpPageInner() {
 
               <p className="text-center text-sm text-slate-500 dark:text-slate-400">
                 มีบัญชีแล้ว?{' '}
-                <Link href="/auth/signin" className="font-bold text-blue-600 dark:text-blue-400 hover:underline">เข้าสู่ระบบ</Link>
+                <Link href="/auth/signin" className="font-bold text-primary hover:underline">เข้าสู่ระบบ</Link>
               </p>
             </motion.div>
           </>
@@ -245,10 +245,10 @@ function SignUpPageInner() {
             <div className="flex items-center justify-between mb-6">
               <motion.button variants={fadeUp} initial="hidden" animate="show" custom={0}
                 onClick={() => setStep('role')}
-                className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600">
+                className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-primary">
                 <ChevronLeft className="h-4 w-4" /> เปลี่ยนบทบาท
               </motion.button>
-              <Link href="/auth/signin" className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600">
+              <Link href="/auth/signin" className="text-sm text-slate-500 dark:text-slate-400 hover:text-primary">
                 มีบัญชีแล้ว? เข้าสู่ระบบ
               </Link>
             </div>
@@ -262,7 +262,7 @@ function SignUpPageInner() {
 
             <motion.form variants={fadeUp} initial="hidden" animate="show" custom={2}
               onSubmit={handleSubmit}
-              className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl p-6 space-y-4">
+              className="glass-card rounded-3xl p-6 space-y-4">
 
               {/* Name */}
               <div>
@@ -271,8 +271,8 @@ function SignUpPageInner() {
                 </label>
                 <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="เช่น สมใจ ใจดี"
-                  className={`w-full rounded-xl border px-4 py-3 text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 outline-none transition-all ${
-                    errors.name ? 'border-red-400 focus:border-red-500' : 'border-slate-200 dark:border-slate-600 focus:border-blue-400'
+                  className={`w-full rounded-xl border px-4 py-3 text-sm glass text-slate-900 dark:text-white placeholder-slate-400 outline-none transition-all ${
+                    errors.name ? 'border-red-400 focus:border-red-500' : 'border-white/20 focus:border-primary/50'
                   }`} />
                 {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
               </div>
@@ -284,8 +284,8 @@ function SignUpPageInner() {
                 </label>
                 <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                   placeholder="you@example.com"
-                  className={`w-full rounded-xl border px-4 py-3 text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 outline-none transition-all ${
-                    errors.email ? 'border-red-400 focus:border-red-500' : 'border-slate-200 dark:border-slate-600 focus:border-blue-400'
+                  className={`w-full rounded-xl border px-4 py-3 text-sm glass text-slate-900 dark:text-white placeholder-slate-400 outline-none transition-all ${
+                    errors.email ? 'border-red-400 focus:border-red-500' : 'border-white/20 focus:border-primary/50'
                   }`} />
                 {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
               </div>
@@ -300,7 +300,7 @@ function SignUpPageInner() {
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                     placeholder="อย่างน้อย 8 ตัวอักษร"
                     className={`w-full rounded-xl border px-4 py-3 pr-11 text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 outline-none transition-all ${
-                      errors.password ? 'border-red-400 focus:border-red-500' : 'border-slate-200 dark:border-slate-600 focus:border-blue-400'
+                      errors.password ? 'border-red-400 focus:border-red-500' : 'border-white/20 focus:border-primary/50'
                     }`} />
                   <button type="button" onClick={() => setShowPass(v => !v)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -317,7 +317,7 @@ function SignUpPageInner() {
                 </label>
                 <input type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                   placeholder="08X-XXX-XXXX"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-600 focus:border-blue-400 px-4 py-3 text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 outline-none transition-all" />
+                  className="w-full rounded-xl border border-white/20 focus:border-primary/50 px-4 py-3 text-sm glass text-slate-900 dark:text-white placeholder-slate-400 outline-none transition-all" />
               </div>
 
               {/* Submit */}

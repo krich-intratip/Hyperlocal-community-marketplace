@@ -118,34 +118,34 @@ function CreateMarketPanel({ location, onCreated }: { location: string; onCreate
   }
   return (
     <div className="space-y-4">
-      <div className="flex items-start gap-3 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-2xl p-4">
+      <div className="flex items-start gap-3 bg-green-50 border border-green-100 rounded-2xl p-4">
         <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
         <div>
-          <p className="font-bold text-green-800 dark:text-green-300 text-sm">Super Admin อนุมัติพื้นที่แล้ว!</p>
-          <p className="text-xs text-green-600 dark:text-green-500 mt-0.5">พื้นที่: <strong>{location}</strong></p>
+          <p className="font-bold text-green-800 text-sm">Super Admin อนุมัติพื้นที่แล้ว!</p>
+          <p className="text-xs text-green-600 mt-0.5">พื้นที่: <strong>{location}</strong></p>
         </div>
       </div>
       <div>
-        <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">ชื่อตลาดชุมชน *</label>
+        <label className="block text-sm font-bold text-slate-700 mb-1.5">ชื่อตลาดชุมชน *</label>
         <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
           placeholder="เช่น ตลาดชุมชนเมืองทองธานี"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
       </div>
       <div>
-        <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">จุดนัดพบ / Zone</label>
+        <label className="block text-sm font-bold text-slate-700 mb-1.5">จุดนัดพบ / Zone</label>
         <input value={form.zone} onChange={e => setForm(f => ({ ...f, zone: e.target.value }))}
           placeholder="เช่น ลานจอดรถ, สวนสาธารณะ"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
       </div>
       <div>
-        <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">วันเปิดทำการ</label>
+        <label className="block text-sm font-bold text-slate-700 mb-2">วันเปิดทำการ</label>
         <div className="flex gap-2 flex-wrap">
           {DAY_SHORT.map((d, i) => (
             <button key={d} type="button" onClick={() => toggleDay(d)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
                 form.openDays.includes(d)
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400'
+                  ? 'bg-primary text-white border-primary/30'
+                  : 'glass-sm text-slate-600 hover:border-primary/30'
               }`}>
               {DAY_FULL[i]}
             </button>
@@ -154,7 +154,7 @@ function CreateMarketPanel({ location, onCreated }: { location: string; onCreate
       </div>
       <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
         onClick={onCreated} disabled={!form.name}
-        className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors">
+        className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors">
         <Store className="h-4 w-4" /> เปิดตลาดชุมชน
       </motion.button>
     </div>
@@ -213,7 +213,7 @@ export default function CommunityAdminDashboardPage() {
     .reduce((sum, c) => sum + c.revenueShare, 0)
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
+    <main className="min-h-screen overflow-x-hidden">
       <MarketBackground />
       <Navbar />
 
@@ -224,22 +224,22 @@ export default function CommunityAdminDashboardPage() {
           <div className="flex items-start justify-between flex-wrap gap-3">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Layers className="h-5 w-5 text-blue-500" />
-                <span className="text-sm font-bold text-blue-600">Community Admin Dashboard</span>
-                <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-semibold border border-blue-200 dark:border-blue-700">
+                <Layers className="h-5 w-5 text-primary" />
+                <span className="text-sm font-bold text-primary">Community Admin Dashboard</span>
+                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold border border-primary/30">
                   {approvedCommunities.filter(c => c.marketCreated).length} ตลาด
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                 {MOCK_ADMIN.name}
               </h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-sm text-slate-500 mt-0.5">
                 Revenue Share รวมทุกตลาด:{' '}
                 <strong className="text-green-600">฿{totalRevenueShare.toLocaleString()}</strong> / เดือน
               </p>
             </div>
             <a href={`/communities/${activeCommunityId}`}
-              className="flex items-center gap-2 rounded-xl border-2 border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:border-blue-300 transition-colors">
+              className="flex items-center gap-2 rounded-xl border-2 border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-primary/30 transition-colors">
               <Eye className="h-4 w-4" /> หน้าตลาด
             </a>
           </div>
@@ -248,15 +248,15 @@ export default function CommunityAdminDashboardPage() {
           <div className="mt-4 relative">
             <button
               onClick={() => setShowCommSwitcher(v => !v)}
-              className="w-full sm:w-auto flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/90 dark:bg-slate-800 border-2 border-blue-200 dark:border-blue-700 shadow-sm hover:border-blue-400 transition-all text-left">
+              className="w-full sm:w-auto flex items-center gap-3 px-4 py-3 rounded-2xl glass-card border-2 border-primary/30 shadow-sm hover:border-primary/30 transition-all text-left">
               <span className="text-xl">🏘️</span>
               <div className="flex-1">
-                <p className="text-xs text-slate-400 dark:text-slate-500">กำลังดูตลาด</p>
-                <p className="font-bold text-slate-900 dark:text-white text-sm">{activeCommunity.name}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                <p className="text-xs text-slate-400">กำลังดูตลาด</p>
+                <p className="font-bold text-slate-900 text-sm">{activeCommunity.name}</p>
+                <p className="text-xs text-slate-500 flex items-center gap-1">
                   <MapPin className="h-3 w-3" />{activeCommunity.location}
                   {activeCommunity.isPrimary && (
-                    <span className="ml-1 text-blue-600 dark:text-blue-400 font-semibold">• หลัก</span>
+                    <span className="ml-1 text-primary font-semibold">• หลัก</span>
                   )}
                 </p>
               </div>
@@ -266,43 +266,43 @@ export default function CommunityAdminDashboardPage() {
             <AnimatePresence>
               {showCommSwitcher && (
                 <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                  className="absolute top-full left-0 mt-2 w-full sm:w-96 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl z-20 overflow-hidden">
-                  <div className="p-3 border-b border-slate-100 dark:border-slate-700">
-                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">ตลาดที่บริหารอยู่</p>
+                  className="absolute top-full left-0 mt-2 w-full sm:w-96 glass-heavy rounded-2xl shadow-xl z-20 overflow-hidden">
+                  <div className="p-3 border-b border-white/20">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">ตลาดที่บริหารอยู่</p>
                   </div>
-                  <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                  <div className="divide-y divide-white/10">
                     {communities.map(comm => (
                       <button key={comm.id}
                         onClick={() => { setActiveCommunityId(comm.id); setShowCommSwitcher(false) }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${
-                          comm.id === activeCommunityId ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:glass-sm/50 transition-colors ${
+                          comm.id === activeCommunityId ? 'glass-sm' : ''
                         }`}>
                         <span className="text-lg">🏘️</span>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm text-slate-800 dark:text-slate-100 truncate">{comm.name}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{comm.location}</p>
+                          <p className="font-semibold text-sm text-slate-800 truncate">{comm.name}</p>
+                          <p className="text-xs text-slate-500">{comm.location}</p>
                         </div>
                         <div className="flex-shrink-0 text-right">
                           {comm.grantStatus === 'PENDING' ? (
-                            <span className="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-semibold">รออนุมัติ</span>
+                            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">รออนุมัติ</span>
                           ) : !comm.marketCreated ? (
-                            <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full font-semibold">รอสร้างตลาด</span>
+                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">รอสร้างตลาด</span>
                           ) : (
-                            <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full font-semibold">
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
                               {comm.providers} Provider
                             </span>
                           )}
                           {comm.id === activeCommunityId && (
-                            <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 ml-auto" />
+                            <CheckCircle className="h-4 w-4 text-primary mt-0.5 ml-auto" />
                           )}
                         </div>
                       </button>
                     ))}
                   </div>
-                  <div className="p-3 border-t border-slate-100 dark:border-slate-700">
+                  <div className="p-3 border-t border-white/20">
                     <button
                       onClick={() => { setShowRequestPanel(true); setShowCommSwitcher(false) }}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-blue-600 dark:text-blue-400 border-2 border-dashed border-blue-300 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-primary border-2 border-dashed border-primary/30 hover:glass-sm transition-colors">
                       <Plus className="h-4 w-4" /> ขอเพิ่มตลาดชุมชนใหม่
                     </button>
                   </div>
@@ -315,11 +315,11 @@ export default function CommunityAdminDashboardPage() {
         {/* ── Pending Super Admin Approval Banner ── */}
         {requestSent && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-            className="mb-5 flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-4">
+            className="mb-5 flex items-start gap-3 glass-sm border border-amber-200/60 rounded-2xl p-4">
             <Clock className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-bold text-amber-800 dark:text-amber-300 text-sm">รอ Super Admin อนุมัติ</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+              <p className="font-bold text-amber-800 text-sm">รอ Super Admin อนุมัติ</p>
+              <p className="text-xs text-amber-600 mt-0.5">
                 คำขอเพิ่มตลาดชุมชนใหม่ถูกส่งแล้ว — ปกติใช้เวลา 1–3 วันทำการ
               </p>
             </div>
@@ -329,26 +329,26 @@ export default function CommunityAdminDashboardPage() {
         {/* Existing pending request */}
         {!requestSent && (
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0.5}
-            className="mb-5 flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl p-4">
+            className="mb-5 flex items-start gap-3 glass-sm border border-amber-200/60 rounded-2xl p-4">
             <Clock className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="font-bold text-amber-800 dark:text-amber-300 text-sm">มีคำขอรอ Super Admin อนุมัติ</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+              <p className="font-bold text-amber-800 text-sm">มีคำขอรอ Super Admin อนุมัติ</p>
+              <p className="text-xs text-amber-600 mt-0.5">
                 พื้นที่: <strong>{MOCK_PENDING_REQUEST.location}</strong> · ส่งเมื่อ {MOCK_PENDING_REQUEST.submittedAt}
               </p>
             </div>
-            <span className="text-xs bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full font-bold">รออนุมัติ</span>
+            <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-bold">รออนุมัติ</span>
           </motion.div>
         )}
 
         {/* ── SCENARIO: ยังไม่สร้างตลาด ── */}
         {!activeCommunity.marketCreated && activeCommunity.grantStatus === 'APPROVED' && (
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
-            className="bg-white/90 dark:bg-slate-800 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm p-6 mb-6">
+            className="glass-card rounded-2xl shadow-sm p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <Plus className="h-5 w-5 text-blue-600" />
-              <h2 className="text-lg font-extrabold text-slate-800 dark:text-white">สร้างตลาดชุมชน</h2>
-              <span className="text-xs text-slate-500 dark:text-slate-400">สำหรับ {activeCommunity.location}</span>
+              <Plus className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-extrabold text-slate-800">สร้างตลาดชุมชน</h2>
+              <span className="text-xs text-slate-500">สำหรับ {activeCommunity.location}</span>
             </div>
             <CreateMarketPanel
               location={activeCommunity.location}
@@ -364,81 +364,81 @@ export default function CommunityAdminDashboardPage() {
             <motion.div variants={stagger} initial="hidden" animate="show"
               className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
               {[
-                { label: 'สมาชิก',          value: activeCommunity.members,                           icon: Users,     color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/30' },
-                { label: 'Provider',         value: activeCommunity.providers,                         icon: Shield,    color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/30' },
-                { label: 'Booking/เดือน',    value: activeCommunity.monthBookings,                     icon: BarChart3, color: 'text-green-600',  bg: 'bg-green-50 dark:bg-green-900/30' },
-                { label: 'Rev.Share เดือนนี้', value: `฿${activeCommunity.revenueShare.toLocaleString()}`, icon: DollarSign, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30' },
+                { label: 'สมาชิก',          value: activeCommunity.members,                           icon: Users,     color: 'text-primary',   bg: 'glass-sm' },
+                { label: 'Provider',         value: activeCommunity.providers,                         icon: Shield,    color: 'text-purple-600', bg: 'bg-purple-50' },
+                { label: 'Booking/เดือน',    value: activeCommunity.monthBookings,                     icon: BarChart3, color: 'text-green-600',  bg: 'bg-green-50' },
+                { label: 'Rev.Share เดือนนี้', value: `฿${activeCommunity.revenueShare.toLocaleString()}`, icon: DollarSign, color: 'text-amber-600', bg: 'bg-amber-50' },
               ].map((stat, i) => (
                 <motion.div key={stat.label} variants={fadeUp} custom={i} whileHover={{ y: -2 }}
-                  className="p-5 rounded-2xl bg-white/85 dark:bg-slate-800 backdrop-blur-sm border border-slate-100 dark:border-slate-700 shadow-sm">
+                  className="p-5 rounded-2xl glass-card">
                   <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center mb-3`}>
                     <stat.icon className={`h-5 w-5 ${stat.color}`} />
                   </div>
-                  <div className="text-xl font-extrabold text-slate-900 dark:text-white">{stat.value}</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{stat.label}</div>
+                  <div className="text-xl font-extrabold text-slate-900">{stat.value}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
 
             {/* ── Provider Overview (primary drillable view) ── */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-              className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm mb-6">
-              <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
+              className="glass-card rounded-2xl mb-6">
+              <div className="flex items-center justify-between p-5 border-b border-white/20">
                 <div>
-                  <h2 className="font-bold text-slate-900 dark:text-white">ภาพรวม Provider</h2>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                  <h2 className="font-bold text-slate-900">ภาพรวม Provider</h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
                     {activeCommunity.name} · {activeCommunity.providers} Provider ทั้งหมด
                   </p>
                 </div>
                 <Link href="/dashboard/admin/providers"
-                  className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-xl transition-colors">
+                  className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-blue-700 glass-sm px-3 py-1.5 rounded-xl transition-colors">
                   ดูทั้งหมด <ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
               {currentApprovedProviders.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 dark:text-slate-500">
+                <div className="p-8 text-center text-slate-400">
                   <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
                   <p className="text-sm">ยังไม่มี Provider ที่ Approve แล้ว</p>
                   <p className="text-xs mt-1">อนุมัติ Provider ในแผง "อนุมัติ Provider" ด้านล่าง</p>
                 </div>
               ) : (
                 <>
-                  <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                  <div className="divide-y divide-white/10">
                     {currentApprovedProviders.slice(0, 5).map((p) => (
                       <Link key={p.id} href={`/providers/${p.id}` as string}
-                        className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-50 dark:from-purple-900/40 dark:to-indigo-900/20 flex items-center justify-center font-bold text-purple-700 dark:text-purple-300 flex-shrink-0 text-sm">
+                        className="flex items-center gap-4 px-5 py-3.5 hover:glass-sm/50 transition-colors group">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-50 flex items-center justify-center font-bold text-purple-700 flex-shrink-0 text-sm">
                           {p.name.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">{p.name}</p>
-                          <p className="text-xs text-slate-400 dark:text-slate-500">{p.category} · เข้าร่วม {p.joined}</p>
+                          <p className="font-semibold text-slate-800 text-sm group-hover:text-primary transition-colors truncate">{p.name}</p>
+                          <p className="text-xs text-slate-400">{p.category} · เข้าร่วม {p.joined}</p>
                         </div>
                         <div className="flex items-center gap-3 flex-shrink-0">
                           <div className="hidden sm:block text-right">
-                            <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{p.bookings} บุ๊ก</p>
-                            <p className="text-xs text-green-600 dark:text-green-400">฿{p.revenue.toLocaleString()}</p>
+                            <p className="text-xs font-bold text-slate-700">{p.bookings} บุ๊ก</p>
+                            <p className="text-xs text-green-600">฿{p.revenue.toLocaleString()}</p>
                           </div>
                           <div className="flex items-center gap-0.5">
                             <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-                            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{p.rating}</span>
+                            <span className="text-xs font-bold text-slate-700">{p.rating}</span>
                           </div>
                           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                             p.status === 'active'
-                              ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400'
-                              : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500'
+                              ? 'bg-green-100 text-green-700'
+                              : 'glass-sm text-slate-400'
                           }`}>
                             {p.status === 'active' ? 'Active' : 'Inactive'}
                           </span>
-                          <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 transition-colors" />
+                          <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary transition-colors" />
                         </div>
                       </Link>
                     ))}
                   </div>
                   {currentApprovedProviders.length > 5 && (
-                    <div className="p-4 border-t border-slate-100 dark:border-slate-700 text-center">
+                    <div className="p-4 border-t border-white/20 text-center">
                       <Link href="/dashboard/admin/providers"
-                        className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors">
+                        className="text-xs font-semibold text-primary hover:text-blue-700 transition-colors">
                         ดู Provider อีก {currentApprovedProviders.length - 5} ราย →
                       </Link>
                     </div>
@@ -451,61 +451,61 @@ export default function CommunityAdminDashboardPage() {
 
               {/* ── Provider Approval ── */}
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
-                className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
+                className="glass-card rounded-2xl">
+                <div className="flex items-center justify-between p-5 border-b border-white/20">
                   <div>
-                    <h2 className="font-bold text-slate-900 dark:text-white">อนุมัติ Provider</h2>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{activeCommunity.name}</p>
+                    <h2 className="font-bold text-slate-900">อนุมัติ Provider</h2>
+                    <p className="text-xs text-slate-400 mt-0.5">{activeCommunity.name}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {currentProviders.length > 0 && (
-                      <span className="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-semibold border border-amber-200 dark:border-amber-700">
+                      <span className="text-xs glass-sm text-amber-700 px-2 py-0.5 rounded-full font-semibold">
                         {currentProviders.length} รอ
                       </span>
                     )}
                     <Link href="/dashboard/admin/providers"
-                      className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors flex items-center gap-1">
+                      className="text-xs font-semibold text-primary hover:text-blue-700 transition-colors flex items-center gap-1">
                       ทั้งหมด <ChevronRight className="h-3 w-3" />
                     </Link>
                   </div>
                 </div>
                 {currentProviders.length === 0 ? (
-                  <div className="p-8 text-center text-slate-400 dark:text-slate-500">
+                  <div className="p-8 text-center text-slate-400">
                     <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-400" />
                     <p className="text-sm">ไม่มี Provider รออนุมัติ</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                  <div className="divide-y divide-white/10">
                     {currentProviders.map((provider) => (
                       <AnimatePresence key={provider.id}>
                         <motion.div
                           initial={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: approvedIds.includes(provider.id) ? 40 : -40 }}
                           className="flex items-center gap-3 p-4">
-                          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 flex-shrink-0 text-sm">
+                          <div className="w-10 h-10 rounded-xl glass-sm flex items-center justify-center font-bold text-slate-600 flex-shrink-0 text-sm">
                             {provider.name.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-slate-800 dark:text-slate-100 text-sm">{provider.name}</div>
-                            <div className="text-xs text-slate-500 dark:text-slate-400">{provider.category} · {provider.experience}</div>
-                            <div className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1 mt-0.5">
+                            <div className="font-semibold text-slate-800 text-sm">{provider.name}</div>
+                            <div className="text-xs text-slate-500">{provider.category} · {provider.experience}</div>
+                            <div className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
                               <Clock className="h-3 w-3" /> {provider.applied}
                             </div>
                           </div>
                           <div className="flex gap-1.5 flex-shrink-0">
                             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                               onClick={() => setSelectedProvider(provider)}
-                              className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
-                              <FileText className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                              className="w-8 h-8 rounded-lg glass-sm flex items-center justify-center hover:bg-blue-100 transition-colors">
+                              <FileText className="h-3.5 w-3.5 text-slate-500" />
                             </motion.button>
                             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                               onClick={() => approveProvider(provider.id)}
-                              className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/40 flex items-center justify-center hover:bg-green-200 transition-colors">
+                              className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center hover:bg-green-200 transition-colors">
                               <CheckCircle className="h-4 w-4 text-green-600" />
                             </motion.button>
                             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                               onClick={() => rejectProvider(provider.id)}
-                              className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center hover:bg-red-200 transition-colors">
+                              className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center hover:bg-red-200 transition-colors">
                               <XCircle className="h-4 w-4 text-red-500" />
                             </motion.button>
                           </div>
@@ -514,33 +514,33 @@ export default function CommunityAdminDashboardPage() {
                     ))}
                   </div>
                 )}
-                <div className="p-4 border-t border-slate-100 dark:border-slate-700">
-                  <div className="flex items-start gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl px-3 py-2">
-                    <Info className="h-3.5 w-3.5 text-blue-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-blue-600 dark:text-blue-400">Provider ที่ Approve จะลงรายการบริการใน {activeCommunity.name} ได้ทันที</p>
+                <div className="p-4 border-t border-white/20">
+                  <div className="flex items-start gap-2 glass-sm rounded-xl px-3 py-2">
+                    <Info className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-primary">Provider ที่ Approve จะลงรายการบริการใน {activeCommunity.name} ได้ทันที</p>
                   </div>
                 </div>
               </motion.div>
 
               {/* ── Revenue Share ── */}
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
-                className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <div className="p-5 border-b border-slate-100 dark:border-slate-700">
-                  <h2 className="font-bold text-slate-900 dark:text-white">Revenue Share เดือนนี้</h2>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{activeCommunity.name}</p>
+                className="glass-card rounded-2xl">
+                <div className="p-5 border-b border-white/20">
+                  <h2 className="font-bold text-slate-900">Revenue Share เดือนนี้</h2>
+                  <p className="text-xs text-slate-400 mt-0.5">{activeCommunity.name}</p>
                 </div>
                 <div className="p-5 space-y-3">
                   {[
-                    { label: 'ยอดบุ๊กกิ้งรวม',            value: `฿${activeCommunity.revenue.toLocaleString()}`,                           color: 'text-slate-900 dark:text-white' },
+                    { label: 'ยอดบุ๊กกิ้งรวม',            value: `฿${activeCommunity.revenue.toLocaleString()}`,                           color: 'text-slate-900' },
                     { label: 'Commission แพลตฟอร์ม (10%)', value: `-฿${(activeCommunity.revenue * 0.1).toLocaleString()}`,                  color: 'text-red-500' },
                     { label: 'Revenue Share ของคุณ (10%)', value: `+฿${activeCommunity.revenueShare.toLocaleString()}`,                     color: 'text-green-600 font-extrabold text-base' },
                   ].map((row) => (
-                    <div key={row.label} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                      <span className="text-sm text-slate-600 dark:text-slate-300">{row.label}</span>
+                    <div key={row.label} className="flex items-center justify-between py-2 border-b border-white/20 last:border-0">
+                      <span className="text-sm text-slate-600">{row.label}</span>
                       <span className={`font-bold text-sm ${row.color}`}>{row.value}</span>
                     </div>
                   ))}
-                  <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-xl px-4 py-3 border border-green-100 dark:border-green-800">
+                  <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 rounded-xl px-4 py-3 border border-green-100">
                     <TrendingUp className="h-4 w-4" />
                     <span>รายได้รวมทุกตลาด: <strong>฿{totalRevenueShare.toLocaleString()}</strong> / เดือน</span>
                   </div>
@@ -549,17 +549,17 @@ export default function CommunityAdminDashboardPage() {
 
               {/* ── All Communities Summary ── */}
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
-                className="lg:col-span-2 bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <div className="p-5 border-b border-slate-100 dark:border-slate-700">
-                  <h2 className="font-bold text-slate-900 dark:text-white">สรุปทุกตลาดที่บริหาร</h2>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                className="lg:col-span-2 glass-card rounded-2xl">
+                <div className="p-5 border-b border-white/20">
+                  <h2 className="font-bold text-slate-900">สรุปทุกตลาดที่บริหาร</h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
                     คลิกที่แถวเพื่อสลับ dashboard
                   </p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-slate-50 dark:bg-slate-700/50">
-                      <tr className="text-left text-xs text-slate-500 dark:text-slate-400">
+                    <thead className="glass-sm/50">
+                      <tr className="text-left text-xs text-slate-500">
                         <th className="px-5 py-3 font-semibold">ตลาด</th>
                         <th className="px-4 py-3 font-semibold text-center">Provider</th>
                         <th className="px-4 py-3 font-semibold text-center">Booking/เดือน</th>
@@ -567,29 +567,29 @@ export default function CommunityAdminDashboardPage() {
                         <th className="px-4 py-3 font-semibold text-center">สถานะ</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tbody className="divide-y divide-white/10">
                       {communities.map(comm => (
                         <tr key={comm.id}
                           onClick={() => comm.grantStatus === 'APPROVED' && setActiveCommunityId(comm.id)}
-                          className={`hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors ${
-                            comm.id === activeCommunityId ? 'bg-blue-50/60 dark:bg-blue-900/10' : ''
+                          className={`hover:glass-sm/30 transition-colors ${
+                            comm.id === activeCommunityId ? 'glass-sm/60' : ''
                           } ${comm.grantStatus === 'APPROVED' ? 'cursor-pointer' : 'opacity-60'}`}>
                           <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2">
                               <span className="text-base">🏘️</span>
                               <div>
-                                <p className="font-semibold text-slate-800 dark:text-slate-100">{comm.name}</p>
-                                <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                <p className="font-semibold text-slate-800">{comm.name}</p>
+                                <p className="text-xs text-slate-400 flex items-center gap-1">
                                   <MapPin className="h-3 w-3" />{comm.location}
-                                  {comm.isPrimary && <span className="text-blue-500 font-semibold ml-1">• หลัก</span>}
+                                  {comm.isPrimary && <span className="text-primary font-semibold ml-1">• หลัก</span>}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3.5 text-center font-semibold text-slate-700 dark:text-slate-300">
+                          <td className="px-4 py-3.5 text-center font-semibold text-slate-700">
                             {comm.marketCreated ? comm.providers : '—'}
                           </td>
-                          <td className="px-4 py-3.5 text-center font-semibold text-slate-700 dark:text-slate-300">
+                          <td className="px-4 py-3.5 text-center font-semibold text-slate-700">
                             {comm.marketCreated ? comm.monthBookings : '—'}
                           </td>
                           <td className="px-4 py-3.5 text-right font-bold text-green-600">
@@ -597,11 +597,11 @@ export default function CommunityAdminDashboardPage() {
                           </td>
                           <td className="px-4 py-3.5 text-center">
                             {comm.grantStatus === 'PENDING' ? (
-                              <span className="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-semibold">รออนุมัติ</span>
+                              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">รออนุมัติ</span>
                             ) : !comm.marketCreated ? (
-                              <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full font-semibold">รอสร้างตลาด</span>
+                              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">รอสร้างตลาด</span>
                             ) : (
-                              <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full font-semibold">Active</span>
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">Active</span>
                             )}
                           </td>
                         </tr>
@@ -609,16 +609,16 @@ export default function CommunityAdminDashboardPage() {
                     </tbody>
                   </table>
                 </div>
-                <div className="p-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                <div className="p-4 border-t border-white/20 flex items-center justify-between">
                   <div className="flex items-start gap-2">
                     <Info className="h-3.5 w-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-slate-400 dark:text-slate-500">
+                    <p className="text-xs text-slate-400">
                       การเพิ่มตลาดใหม่ต้องได้รับอนุมัติจาก Super Admin ก่อนทุกครั้ง
                     </p>
                   </div>
                   <button
                     onClick={() => setShowRequestPanel(true)}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors whitespace-nowrap ml-4">
+                    className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-blue-700 transition-colors whitespace-nowrap ml-4">
                     <Plus className="h-3.5 w-3.5" /> ขอเพิ่มตลาด
                   </button>
                 </div>
@@ -626,24 +626,24 @@ export default function CommunityAdminDashboardPage() {
 
               {/* ── Trial Period for active community ── */}
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={8}
-                className="bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <div className="p-5 border-b border-slate-100 dark:border-slate-700">
-                  <h2 className="font-bold text-slate-900 dark:text-white">ช่วงทดลองฟรี</h2>
+                className="glass-card rounded-2xl">
+                <div className="p-5 border-b border-white/20">
+                  <h2 className="font-bold text-slate-900">ช่วงทดลองฟรี</h2>
                   <p className="text-xs text-slate-400 mt-0.5">{activeCommunity.name}</p>
                 </div>
                 <div className="p-5 space-y-3">
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl p-4">
+                  <div className="bg-green-50 border border-green-100 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-bold text-green-800 dark:text-green-300">กำลังดำเนินอยู่</span>
+                      <span className="text-sm font-bold text-green-800">กำลังดำเนินอยู่</span>
                     </div>
-                    <div className="w-full bg-green-200 dark:bg-green-800 rounded-full h-2">
+                    <div className="w-full bg-green-200/60 rounded-full h-2">
                       <div className="bg-green-500 h-2 rounded-full" style={{ width: '40%' }} />
                     </div>
-                    <p className="text-xs text-green-600 dark:text-green-500 mt-2">สิ้นสุด: <strong>{activeCommunity.trialEnd}</strong></p>
+                    <p className="text-xs text-green-600 mt-2">สิ้นสุด: <strong>{activeCommunity.trialEnd}</strong></p>
                   </div>
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500">
                       หลังช่วงทดลอง Commission จะถูกหักตามปกติ และ Revenue Share ของคุณจะเริ่มคำนวณ
                     </p>
                   </div>
@@ -652,14 +652,14 @@ export default function CommunityAdminDashboardPage() {
 
               {/* ── Announcements (CA) ── */}
               <motion.div variants={fadeUp} initial="hidden" animate="show" custom={9}
-                className="lg:col-span-2 bg-white/85 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
+                className="lg:col-span-2 glass-card rounded-2xl">
+                <div className="flex items-center justify-between p-5 border-b border-white/20">
                   <div>
                     <div className="flex items-center gap-2">
                       <Megaphone className="h-4.5 w-4.5 text-amber-500" />
-                      <h2 className="font-bold text-slate-900 dark:text-white">ประกาศชุมชน</h2>
+                      <h2 className="font-bold text-slate-900">ประกาศชุมชน</h2>
                     </div>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">ประกาศของคุณจะกู้ไปให้ Super Admin อนุมัติก่อนเผยแพร่</p>
+                    <p className="text-xs text-slate-400 mt-0.5">ประกาศของคุณจะกู้ไปให้ Super Admin อนุมัติก่อนเผยแพร่</p>
                   </div>
                   <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     onClick={() => { setEditingAnn(null); setAnnForm({ title: '', body: '', type: 'info' }); setShowAnnForm(v => !v) }}
@@ -672,28 +672,28 @@ export default function CommunityAdminDashboardPage() {
                 <AnimatePresence>
                   {showAnnForm && (
                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                      className="border-b border-slate-100 dark:border-slate-700 overflow-hidden">
-                      <div className="p-5 space-y-3 bg-amber-50/60 dark:bg-amber-900/10">
-                        <p className="text-xs font-bold text-amber-700 dark:text-amber-400">
+                      className="border-b border-white/20 overflow-hidden">
+                      <div className="p-5 space-y-3 bg-amber-50/60">
+                        <p className="text-xs font-bold text-amber-700">
                           {editingAnn ? '✏️ แก้ไขประกาศ' : '➕ สร้างประกาศใหม่'} — จะส่งรอ Super Admin อนุมัติ
                         </p>
                         <div className="flex gap-3">
                           <select value={annForm.type} onChange={e => setAnnForm(f => ({ ...f, type: e.target.value as CAnnType }))}
-                            className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-300">
+                            className="px-3 py-2 rounded-xl border glass border-white/20 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-300">
                             <option value="info">ℹ️ ข้อมูล</option>
                             <option value="warning">⚠️ คำเตือน</option>
                             <option value="success">✅ ข่าวดี</option>
                           </select>
                           <input value={annForm.title} onChange={e => setAnnForm(f => ({ ...f, title: e.target.value }))}
                             placeholder="หัวข้อ..."
-                            className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+                            className="flex-1 px-3 py-2 rounded-xl border glass border-white/20 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-300" />
                         </div>
                         <textarea value={annForm.body} onChange={e => setAnnForm(f => ({ ...f, body: e.target.value }))}
                           rows={2} placeholder="เนื้อหาประกาศ..."
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none" />
+                          className="w-full px-3 py-2 rounded-xl border glass border-white/20 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none" />
                         <div className="flex gap-2 justify-end">
                           <button onClick={() => { setShowAnnForm(false); setEditingAnn(null) }}
-                            className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 border border-slate-200 hover:bg-slate-100 transition-colors">ยกเลิก</button>
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 border border-slate-200 hover:glass-sm transition-colors">ยกเลิก</button>
                           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                             disabled={!annForm.title.trim() || !annForm.body.trim()}
                             onClick={() => {
@@ -715,20 +715,20 @@ export default function CommunityAdminDashboardPage() {
                 </AnimatePresence>
 
                 {/* Announcement list for this community */}
-                <div className="divide-y divide-slate-100 dark:divide-slate-700">
+                <div className="divide-y divide-white/10">
                   {caAnnouncements
                     .filter(a => a.communityId === activeCommunityId)
                     .map((ann) => (
                       <div key={ann.id} className="flex items-start gap-3 p-4">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          ann.type === 'warning' ? 'bg-amber-100 dark:bg-amber-900/40' :
-                          ann.type === 'success' ? 'bg-green-100 dark:bg-green-900/40' :
-                          'bg-blue-100 dark:bg-blue-900/40'
+                          ann.type === 'warning' ? 'bg-amber-100' :
+                          ann.type === 'success' ? 'bg-green-100' :
+                          'bg-blue-100'
                         }`}>
                           <Megaphone className={`h-4 w-4 ${
                             ann.type === 'warning' ? 'text-amber-500' :
                             ann.type === 'success' ? 'text-green-500' :
-                            'text-blue-500'
+                            'text-primary'
                           }`} />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -742,35 +742,35 @@ export default function CommunityAdminDashboardPage() {
                             </span>
                             <span className="text-xs text-slate-400 ml-auto">{ann.createdAt}</span>
                           </div>
-                          <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm">{ann.title}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{ann.body}</p>
+                          <p className="font-semibold text-slate-800 text-sm">{ann.title}</p>
+                          <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{ann.body}</p>
                         </div>
                         <div className="flex gap-1 flex-shrink-0">
                           <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                             onClick={() => { setEditingAnn(ann); setAnnForm({ title: ann.title, body: ann.body, type: ann.type }); setShowAnnForm(true) }}
-                            className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                            className="w-7 h-7 rounded-lg glass-sm flex items-center justify-center hover:bg-blue-100 transition-colors">
                             <Pencil className="h-3.5 w-3.5 text-slate-500" />
                           </motion.button>
                           <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                             onClick={() => setCaAnnouncements(prev => prev.filter(a => a.id !== ann.id))}
-                            className="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center hover:bg-red-100 transition-colors">
+                            className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors">
                             <Trash2 className="h-3.5 w-3.5 text-red-500" />
                           </motion.button>
                         </div>
                       </div>
                     ))}
                   {caAnnouncements.filter(a => a.communityId === activeCommunityId).length === 0 && (
-                    <div className="p-8 text-center text-slate-400 dark:text-slate-500">
+                    <div className="p-8 text-center text-slate-400">
                       <Megaphone className="h-8 w-8 mx-auto mb-2 opacity-30" />
                       <p className="text-sm">ยังไม่มีประกาศ — ดัน “สร้างประกาศ” เพื่อส่งลูกค้าชุมชน</p>
                     </div>
                   )}
                 </div>
 
-                <div className="p-4 border-t border-slate-100 dark:border-slate-700">
-                  <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl px-3 py-2">
+                <div className="p-4 border-t border-white/20">
+                  <div className="flex items-start gap-2 bg-amber-50 rounded-xl px-3 py-2">
                     <Info className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-amber-700 dark:text-amber-400">ประกาศจาก CA จะถูกแสดงหลังจาก Super Admin อนุมัติแล้วเท่านั้น</p>
+                    <p className="text-xs text-amber-700">ประกาศจาก CA จะถูกแสดงหลังจาก Super Admin อนุมัติแล้วเท่านั้น</p>
                   </div>
                 </div>
               </motion.div>
@@ -786,57 +786,57 @@ export default function CommunityAdminDashboardPage() {
               className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
               onClick={e => e.target === e.currentTarget && setShowRequestPanel(false)}>
               <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}
-                className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden">
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-5 border-b border-blue-100 dark:border-blue-800">
-                  <h3 className="font-extrabold text-slate-900 dark:text-white text-lg">ขอเพิ่มตลาดชุมชนใหม่</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                className="w-full max-w-lg glass-heavy rounded-3xl shadow-2xl overflow-hidden">
+                <div className="glass-sm p-5 border-b border-primary/30">
+                  <h3 className="font-extrabold text-slate-900 text-lg">ขอเพิ่มตลาดชุมชนใหม่</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
                     คำขอจะถูกส่งให้ Super Admin พิจารณา — โดยปกติใช้เวลา 1–3 วันทำการ
                   </p>
                 </div>
                 <div className="p-6 space-y-5">
-                  <div className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-4">
-                    <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-blue-700 dark:text-blue-400">
+                  <div className="flex items-start gap-3 glass border border-primary/20 rounded-xl p-4">
+                    <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-blue-700">
                       Community Admin 1 บัญชีสามารถบริหารได้หลายตลาด
                       แต่ละตลาดมี dashboard, Provider pool และ Revenue Share แยกกันอิสระ
                       ทุกตลาดใหม่ต้องผ่านการอนุมัติจาก Super Admin
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200 block mb-1.5">
-                      <MapPin className="h-4 w-4 inline mr-1 text-blue-500" />
+                    <label className="text-sm font-bold text-slate-700 block mb-1.5">
+                      <MapPin className="h-4 w-4 inline mr-1 text-primary" />
                       พื้นที่เป้าหมาย *
                     </label>
                     <input value={requestForm.location}
                       onChange={e => setRequestForm(f => ({ ...f, location: e.target.value }))}
                       placeholder="เช่น หมู่บ้านกรีนวิลล์ สมุทรปราการ"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all" />
+                      className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
                   </div>
                   <div>
-                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200 block mb-1.5">
+                    <label className="text-sm font-bold text-slate-700 block mb-1.5">
                       เหตุผลในการขยาย *
                     </label>
                     <textarea value={requestForm.reason}
                       onChange={e => setRequestForm(f => ({ ...f, reason: e.target.value }))}
                       rows={3}
                       placeholder="อธิบายแผนการขยายและศักยภาพพื้นที่..."
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none transition-all" />
+                      className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none transition-all" />
                   </div>
-                  <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl px-4 py-3">
+                  <div className="flex items-start gap-2 glass-sm border border-amber-200/60 rounded-xl px-4 py-3">
                     <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-amber-700 dark:text-amber-400">
+                    <p className="text-xs text-amber-700">
                       แต่ละตลาดใหม่จะเริ่มต้นด้วยช่วงทดลองฟรีตามที่ Super Admin กำหนด
                     </p>
                   </div>
                   <div className="flex gap-3">
                     <button onClick={() => setShowRequestPanel(false)}
-                      className="flex-1 rounded-xl border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                      className="flex-1 rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:glass-sm transition-colors">
                       ยกเลิก
                     </button>
                     <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                       onClick={handleSendRequest}
                       disabled={!requestForm.location || !requestForm.reason}
-                      className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                      className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                       <Send className="h-4 w-4" /> ส่งคำขอ
                     </motion.button>
                   </div>
@@ -858,10 +858,10 @@ export default function CommunityAdminDashboardPage() {
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', duration: 0.4 }}
-              className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-5 border-b border-slate-100 dark:border-slate-700">
-                <h3 className="font-extrabold text-lg text-slate-900 dark:text-white">{selectedProvider.name}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{selectedProvider.category}</p>
+              className="w-full max-w-md glass-heavy rounded-2xl shadow-2xl overflow-hidden">
+              <div className="glass-sm p-5 border-b border-white/20">
+                <h3 className="font-extrabold text-lg text-slate-900">{selectedProvider.name}</h3>
+                <p className="text-sm text-slate-500">{selectedProvider.category}</p>
               </div>
               <div className="p-5 space-y-3">
                 {[
@@ -870,15 +870,15 @@ export default function CommunityAdminDashboardPage() {
                   ['โทรศัพท์', selectedProvider.phone],
                   ['หมายเหตุ', selectedProvider.note],
                 ].map(([k, v]) => (
-                  <div key={k} className="flex gap-3 text-sm py-1.5 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                  <div key={k} className="flex gap-3 text-sm py-1.5 border-b border-white/20 last:border-0">
                     <span className="text-slate-400 min-w-[100px]">{k}:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">{v}</span>
+                    <span className="font-semibold text-slate-800">{v}</span>
                   </div>
                 ))}
               </div>
-              <div className="flex gap-3 px-5 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+              <div className="flex gap-3 px-5 py-4 border-t border-white/20 glass-sm/50">
                 <button onClick={() => setSelectedProvider(null)}
-                  className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:glass-sm transition-colors">
                   ปิด
                 </button>
                 <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}

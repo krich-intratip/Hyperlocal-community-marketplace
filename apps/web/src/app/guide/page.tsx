@@ -29,21 +29,21 @@ export default function GuidePage() {
         initial={{ y: -64, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="border-b border-blue-100/60 bg-white/70 backdrop-blur-md sticky top-0 z-50 shadow-sm"
+        className="glass-nav sticky top-0 z-50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <MapPin className="h-4 w-4 text-white" />
             </div>
             <span className="font-bold text-lg tracking-tight">
-              Community<span className="text-blue-600"> Hyper</span>
+              Community<span className="text-primary"> Hyper</span>
             </span>
           </Link>
           <div className="flex items-center gap-5">
-            <Link href="/guide" className="text-sm font-semibold text-blue-600">คู่มือ</Link>
-            <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">เกี่ยวกับ</Link>
-            <Link href="/auth/signin" className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-blue-200 hover:bg-blue-700 transition-colors">
+            <Link href="/guide" className="text-sm font-semibold text-primary">คู่มือ</Link>
+            <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">เกี่ยวกับ</Link>
+            <Link href="/auth/signin" className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-md shadow-primary/20 hover:bg-primary/90 transition-colors">
               สมัครฟรี
             </Link>
           </div>
@@ -53,14 +53,14 @@ export default function GuidePage() {
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 text-center">
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
-          className="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-sm font-medium text-blue-700 mb-6">
+          className="inline-flex items-center gap-2 rounded-full glass-sm border border-primary/20 px-4 py-1.5 text-sm font-medium text-primary mb-6">
           <HelpCircle className="h-4 w-4" />
           คู่มือการใช้งาน
         </motion.div>
         <motion.h1 variants={fadeUp} initial="hidden" animate="show" custom={1}
           className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">
           เริ่มต้นใช้งาน
-          <span className="text-blue-600"> ง่ายมาก</span>
+          <span className="text-primary"> ง่ายมาก</span>
         </motion.h1>
         <motion.p variants={fadeUp} initial="hidden" animate="show" custom={2}
           className="text-lg text-slate-500 max-w-2xl mx-auto">
@@ -76,11 +76,11 @@ export default function GuidePage() {
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} custom={0}
           className="mb-16">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-              <Users className="h-5 w-5 text-blue-600" />
+            <div className="w-10 h-10 rounded-xl glass-sm flex items-center justify-center">
+              <Users className="h-5 w-5 text-primary" />
             </div>
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">สำหรับลูกค้า</h2>
-            <span className="text-sm bg-blue-50 text-blue-600 font-semibold px-3 py-1 rounded-full border border-blue-200">ผู้ใช้บริการ</span>
+            <span className="text-sm glass-sm text-primary font-semibold px-3 py-1 rounded-full border border-primary/20">ผู้ใช้บริการ</span>
           </div>
 
           <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}
@@ -88,8 +88,8 @@ export default function GuidePage() {
             {CUSTOMER_STEPS.map((step, i) => (
               <motion.div key={step.title} variants={fadeUp} custom={i}
                 whileHover={{ y: -4 }}
-                className="relative p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm">
-                <div className="absolute -top-3 -left-3 w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shadow-md">
+                className="relative p-6 rounded-2xl glass-card">
+                <div className="absolute -top-3 -left-3 w-7 h-7 rounded-full bg-primary text-white text-xs font-black flex items-center justify-center shadow-md">
                   {i + 1}
                 </div>
                 <div className={`w-12 h-12 rounded-xl ${step.bg} flex items-center justify-center mb-4`}>
@@ -118,7 +118,7 @@ export default function GuidePage() {
             {PROVIDER_STEPS.map((step, i) => (
               <motion.div key={step.title} variants={fadeUp} custom={i}
                 whileHover={{ y: -4 }}
-                className="relative p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm">
+                className="relative p-6 rounded-2xl glass-card">
                 <div className="absolute -top-3 -left-3 w-7 h-7 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center shadow-md">
                   {i + 1}
                 </div>
@@ -148,7 +148,7 @@ export default function GuidePage() {
             {ADMIN_STEPS.map((step, i) => (
               <motion.div key={step.title} variants={fadeUp} custom={i}
                 whileHover={{ y: -4 }}
-                className="relative p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm">
+                className="relative p-6 rounded-2xl glass-card">
                 <div className="absolute -top-3 -left-3 w-7 h-7 rounded-full bg-purple-500 text-white text-xs font-black flex items-center justify-center shadow-md">
                   {i + 1}
                 </div>
@@ -170,10 +170,10 @@ export default function GuidePage() {
             {FAQS.map((faq, i) => (
               <motion.div key={faq.q} variants={fadeUp} custom={i}
                 whileHover={{ scale: 1.01 }}
-                className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm">
+                className="p-6 rounded-2xl glass-card">
                 <div className="flex items-start gap-3">
-                  <div className="mt-0.5 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <ChevronRight className="h-3.5 w-3.5 text-blue-600" />
+                  <div className="mt-0.5 w-6 h-6 rounded-full glass-sm flex items-center justify-center flex-shrink-0">
+                    <ChevronRight className="h-3.5 w-3.5 text-primary" />
                   </div>
                   <div>
                     <p className="font-semibold text-slate-800 mb-1">{faq.q}</p>
@@ -195,7 +195,7 @@ export default function GuidePage() {
           <p className="text-slate-500 mb-6">พร้อมแล้ว? เริ่มต้นได้เลยวันนี้</p>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
             <Link href="/auth/signin"
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors">
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors">
               สมัครสมาชิกฟรี <ChevronRight className="h-4 w-4" />
             </Link>
           </motion.div>
@@ -207,7 +207,7 @@ export default function GuidePage() {
 }
 
 const CUSTOMER_STEPS = [
-  { Icon: UserPlus, title: 'สมัครสมาชิก', desc: 'ลงทะเบียนด้วย Google Account ในไม่กี่วินาที ไม่ต้องจำรหัสผ่าน', bg: 'bg-blue-50', color: 'text-blue-600' },
+  { Icon: UserPlus, title: 'สมัครสมาชิก', desc: 'ลงทะเบียนด้วย Google Account ในไม่กี่วินาที ไม่ต้องจำรหัสผ่าน', bg: 'bg-blue-50', color: 'text-primary' },
   { Icon: MapPin, title: 'เลือกชุมชน', desc: 'เข้าร่วมชุมชนในพื้นที่ของคุณ เพื่อดูบริการที่อยู่ใกล้บ้าน', bg: 'bg-green-50', color: 'text-green-600' },
   { Icon: Search, title: 'ค้นหาบริการ', desc: 'เลือกหมวดหมู่ที่ต้องการ หรือค้นหาด้วยชื่อบริการ/ผู้ให้บริการ', bg: 'bg-amber-50', color: 'text-amber-600' },
   { Icon: CalendarCheck, title: 'จองและรับบริการ', desc: 'เลือกวันเวลา ยืนยันการจอง และรอรับบริการถึงบ้าน', bg: 'bg-purple-50', color: 'text-purple-600' },
@@ -216,13 +216,13 @@ const CUSTOMER_STEPS = [
 const PROVIDER_STEPS = [
   { Icon: UserPlus, title: 'สมัครเป็นผู้ให้บริการ', desc: 'กรอกข้อมูลโปรไฟล์ ทักษะ และประสบการณ์ของคุณ', bg: 'bg-amber-50', color: 'text-amber-600' },
   { Icon: Shield, title: 'ผ่านการยืนยันตัวตน', desc: 'ทีมงานตรวจสอบและอนุมัติโปรไฟล์ภายใน 24-48 ชั่วโมง', bg: 'bg-green-50', color: 'text-green-600' },
-  { Icon: Briefcase, title: 'สร้าง Listings', desc: 'เพิ่มบริการที่ให้ ราคา รูปภาพ และรายละเอียดให้ครบถ้วน', bg: 'bg-blue-50', color: 'text-blue-600' },
+  { Icon: Briefcase, title: 'สร้าง Listings', desc: 'เพิ่มบริการที่ให้ ราคา รูปภาพ และรายละเอียดให้ครบถ้วน', bg: 'bg-blue-50', color: 'text-primary' },
   { Icon: Star, title: 'รับงานและสะสมรีวิว', desc: 'รับการจอง ให้บริการ และสะสมคะแนน Trust Score เพื่อดึงดูดลูกค้า', bg: 'bg-purple-50', color: 'text-purple-600' },
 ]
 
 const ADMIN_STEPS = [
   { Icon: MapPin, title: 'สร้างชุมชนของคุณ', desc: 'ติดต่อทีมงานเพื่อเปิดชุมชนในพื้นที่ของคุณ ในฐานะ Community Franchise Operator', bg: 'bg-purple-50', color: 'text-purple-600' },
-  { Icon: Users, title: 'จัดการผู้ให้บริการ', desc: 'อนุมัติผู้ให้บริการในชุมชน ตั้งค่า trial period และดูแล ecosystem', bg: 'bg-blue-50', color: 'text-blue-600' },
+  { Icon: Users, title: 'จัดการผู้ให้บริการ', desc: 'อนุมัติผู้ให้บริการในชุมชน ตั้งค่า trial period และดูแล ecosystem', bg: 'bg-blue-50', color: 'text-primary' },
   { Icon: Settings, title: 'ดู Dashboard รายได้', desc: 'ติดตาม commission และ revenue share ที่ได้รับจากบุ๊กกิ้งในชุมชน', bg: 'bg-green-50', color: 'text-green-600' },
 ]
 

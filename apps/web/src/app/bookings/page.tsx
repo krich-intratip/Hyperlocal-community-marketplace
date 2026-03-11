@@ -63,7 +63,7 @@ export default function BookingsPage() {
         {/* Header */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-6">
           <div className="flex items-center gap-3 mb-1">
-            <Package className="h-6 w-6 text-blue-500" />
+            <Package className="h-6 w-6 text-primary" />
             <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">การจองของฉัน</h1>
           </div>
           <p className="text-sm text-slate-500">ติดตามสถานะการจองบริการทั้งหมด</p>
@@ -78,7 +78,7 @@ export default function BookingsPage() {
               <motion.button key={s} variants={fadeUp} custom={i}
                 onClick={() => setActiveFilter(s)}
                 className={`rounded-2xl p-3 text-center border transition-all ${
-                  activeFilter === s ? `${cfg.bg} ${cfg.border}` : 'bg-white/80 dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-slate-200'
+                  activeFilter === s ? `${cfg.bg} ${cfg.border}` : 'glass hover:border-white/30'
                 }`}>
                 <div className={`text-xl font-extrabold ${cfg.color}`}>{counts[s] ?? 0}</div>
                 <div className={`text-xs mt-0.5 font-medium ${activeFilter === s ? cfg.color : 'text-slate-500'}`}>{cfg.label}</div>
@@ -93,15 +93,15 @@ export default function BookingsPage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="ค้นหาบริการ, ผู้ให้บริการ, หมายเลขจอง..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/90 dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-blue-400 outline-none" />
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/20 glass text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-primary/50 outline-none" />
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {FILTER_TABS.map(t => (
               <button key={t.key} onClick={() => setActiveFilter(t.key)}
                 className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-sm font-bold transition-all ${
                   activeFilter === t.key
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-white/80 text-slate-600 border border-slate-200 hover:border-blue-200'
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'glass text-slate-600 border border-white/20 hover:border-primary/30'
                 }`}>{t.label}</button>
             ))}
           </div>
@@ -123,7 +123,7 @@ export default function BookingsPage() {
               <p className="font-bold text-slate-500">ไม่พบการจอง</p>
               <p className="text-sm text-slate-400 mt-1 mb-5">ลองเปลี่ยนตัวกรองหรือค้นหาใหม่</p>
               <Link href="/marketplace"
-                className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700">
+                className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-blue-700">
                 ไปที่ Marketplace <ArrowRight className="h-4 w-4" />
               </Link>
             </motion.div>
@@ -136,7 +136,7 @@ export default function BookingsPage() {
                 return (
                   <motion.div key={booking.id} variants={fadeUp} custom={i} whileHover={{ y: -2 }}>
                     <Link href={`/bookings/${booking.id}` as any}
-                      className="block bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-blue-200 shadow-sm hover:shadow-md transition-all p-5 group">
+                      className="block glass-card rounded-2xl hover:border-primary/30 shadow-sm hover:shadow-md transition-all p-5 group">
                       <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
                           {booking.listingImage}
@@ -170,11 +170,11 @@ export default function BookingsPage() {
                             </div>
                             <div className="flex items-center gap-2">
                               {booking.reviewLeft === false && booking.status === 'completed' && (
-                                <span className="text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                                <span className="text-xs font-bold text-emerald-600 glass-sm px-2 py-0.5 rounded-full">
                                   รอรีวิว
                                 </span>
                               )}
-                              <span className="font-extrabold text-blue-600">฿{booking.total.toLocaleString()}</span>
+                              <span className="font-extrabold text-primary">฿{booking.total.toLocaleString()}</span>
                               <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
                             </div>
                           </div>
@@ -196,7 +196,7 @@ export default function BookingsPage() {
             <h2 className="text-lg font-bold text-slate-600 mb-2">ยังไม่มีการจอง</h2>
             <p className="text-sm text-slate-400 mb-6">เริ่มหาบริการในชุมชนของคุณได้เลย</p>
             <Link href="/marketplace"
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-colors">
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary/90 transition-colors">
               🛍️ ไปที่ Marketplace <ArrowRight className="h-4 w-4" />
             </Link>
           </motion.div>

@@ -60,20 +60,20 @@ function DetailModal({ provider, onClose, onAction }: {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-0 sm:px-4 bg-black/50 backdrop-blur-sm">
       <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}
-        className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
+        className="glass-heavy rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
 
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-extrabold text-slate-900">รายละเอียด Provider</h2>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">✕</button>
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:glass-sm flex items-center justify-center text-slate-500">✕</button>
         </div>
 
         {/* Profile */}
-        <div className="flex items-center gap-4 mb-4 p-4 bg-slate-50 rounded-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-3xl shadow-sm">{provider.avatar}</div>
+        <div className="flex items-center gap-4 mb-4 p-4 glass-sm rounded-2xl">
+          <div className="w-14 h-14 rounded-2xl glass border-white/20 flex items-center justify-center text-3xl shadow-sm">{provider.avatar}</div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-extrabold text-slate-900">{provider.name}</h3>
-              {provider.status === 'approved' && <Shield className="h-4 w-4 text-blue-500" />}
+              {provider.status === 'approved' && <Shield className="h-4 w-4 text-primary" />}
             </div>
             <p className="text-sm text-slate-500">{provider.category} · {provider.community}</p>
             <span className={`mt-1 inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full border ${cfg.color} ${cfg.bg} ${cfg.border}`}>
@@ -132,7 +132,7 @@ function DetailModal({ provider, onClose, onAction }: {
             </motion.button>
           )}
           <Link href={`/providers/${provider.id}` as any}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-700 hover:bg-slate-200 transition-colors">
+            className="w-full flex items-center justify-center gap-2 rounded-xl glass-sm py-3 text-sm font-bold text-slate-700 hover:bg-slate-200 transition-colors">
             <Eye className="h-4 w-4" /> ดู Public Profile
           </Link>
         </div>
@@ -189,7 +189,7 @@ export default function AdminProvidersPage() {
           {/* Breadcrumb */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
             className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-            <Link href="/dashboard/admin" className="hover:text-blue-600 flex items-center gap-1">
+            <Link href="/dashboard/admin" className="hover:text-primary flex items-center gap-1">
               <ChevronLeft className="h-3.5 w-3.5" /> Admin Dashboard
             </Link>
             <span>/</span>
@@ -199,7 +199,7 @@ export default function AdminProvidersPage() {
           {/* Header */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1} className="mb-6">
             <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-              <Users className="h-6 w-6 text-blue-500" /> จัดการ Providers
+              <Users className="h-6 w-6 text-primary" /> จัดการ Providers
             </h1>
             <p className="text-sm text-slate-500 mt-1">อนุมัติ ระงับ และดูแล Providers ในชุมชน</p>
           </motion.div>
@@ -213,7 +213,7 @@ export default function AdminProvidersPage() {
                 <motion.button key={s} variants={fadeUp} custom={i}
                   onClick={() => setActiveFilter(s)}
                   className={`rounded-2xl p-4 border text-center transition-all ${
-                    activeFilter === s ? `${cfg.bg} ${cfg.border}` : 'bg-white/80 border-slate-100 hover:border-slate-200'
+                    activeFilter === s ? `${cfg.bg} ${cfg.border}` : 'glass-sm hover:border-white/30'
                   }`}>
                   <div className={`text-2xl font-extrabold ${cfg.color}`}>{counts[s] ?? 0}</div>
                   <div className={`text-xs font-medium mt-0.5 ${activeFilter === s ? cfg.color : 'text-slate-500'}`}>{cfg.label}</div>
@@ -228,13 +228,13 @@ export default function AdminProvidersPage() {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="ค้นหาชื่อ, หมวดหมู่..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white/90 text-sm text-slate-800 placeholder-slate-400 focus:border-blue-400 outline-none" />
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border glass border-white/20/90 text-sm text-slate-800 placeholder-slate-400 focus:border-primary/30 outline-none" />
             </div>
             <div className="flex gap-2 overflow-x-auto pb-1">
               {FILTER_TABS.map(t => (
                 <button key={t.key} onClick={() => setActiveFilter(t.key)}
                   className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-sm font-bold transition-all ${
-                    activeFilter === t.key ? 'bg-blue-600 text-white shadow-sm' : 'bg-white/80 text-slate-600 border border-slate-200 hover:border-blue-200'
+                    activeFilter === t.key ? 'bg-primary text-white shadow-sm' : 'glass-sm text-slate-600 hover:border-primary/30'
                   }`}>{t.label}</button>
               ))}
             </div>
@@ -256,9 +256,9 @@ export default function AdminProvidersPage() {
                   const StatusIcon = cfg.icon
                   return (
                     <motion.div key={provider.id} variants={fadeUp} custom={i} whileHover={{ y: -2 }}>
-                      <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5">
+                      <div className="glass-card rounded-2xl p-5">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
+                          <div className="w-12 h-12 rounded-xl glass-sm flex items-center justify-center text-2xl flex-shrink-0">
                             {provider.avatar}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -296,7 +296,7 @@ export default function AdminProvidersPage() {
                             )}
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                               onClick={() => setSelectedProvider(provider)}
-                              className="w-9 h-9 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 flex items-center justify-center transition-all">
+                              className="w-9 h-9 rounded-xl border border-slate-200 hover:border-primary/30 hover:glass-sm flex items-center justify-center transition-all">
                               <ChevronRight className="h-4 w-4 text-slate-400" />
                             </motion.button>
                           </div>

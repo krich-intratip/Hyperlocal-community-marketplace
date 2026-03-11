@@ -89,7 +89,7 @@ export default function ProfilePage() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
           className="text-center mb-6">
           <div className="relative inline-block">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-5xl mx-auto shadow-lg border-4 border-white overflow-hidden">
+            <div className="w-24 h-24 rounded-3xl glass-sm flex items-center justify-center text-5xl mx-auto shadow-lg border-4 border-white/30 overflow-hidden">
               {(preview || user?.avatarUrl) ? (
                 <img src={preview ?? user!.avatarUrl!} alt="รูปโปรไฟล์" className="w-full h-full object-cover" />
               ) : (
@@ -100,7 +100,7 @@ export default function ProfilePage() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center shadow-md hover:bg-blue-700 transition-colors disabled:opacity-60">
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary border-2 border-white flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors disabled:opacity-60">
               <Camera className="h-3.5 w-3.5 text-white" />
             </button>
           </div>
@@ -111,7 +111,7 @@ export default function ProfilePage() {
           <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
             <span>สมาชิก Community Hyper</span>
           </div>
-          <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
+          <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-primary glass-sm border border-primary/20 px-3 py-1 rounded-full">
             {user?.avatar} {ROLE_LABEL[user?.role ?? 'customer']} · {user?.verified ? 'ยืนยันแล้ว' : 'รอยืนยัน'}
           </div>
         </motion.div>
@@ -120,7 +120,7 @@ export default function ProfilePage() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-3 gap-3 mb-6">
           {[
-            { label: 'จองทั้งหมด', value: 12, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'จองทั้งหมด', value: 12, color: 'text-primary', bg: 'glass-sm' },
             { label: 'เสร็จสิ้น', value: 10, color: 'text-green-600', bg: 'bg-green-50' },
             { label: 'ใช้จ่ายรวม', value: '฿8,640', color: 'text-amber-600', bg: 'bg-amber-50' },
           ].map((s, i) => (
@@ -134,12 +134,12 @@ export default function ProfilePage() {
 
         {/* Profile info card */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5">
+          className="glass-card rounded-2xl p-6 mb-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-extrabold text-slate-900">ข้อมูลส่วนตัว</h2>
             <button onClick={() => setEditing(v => !v)}
               className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ${
-                editing ? 'border-red-200 text-red-500 hover:bg-red-50' : 'border-slate-200 text-slate-600 hover:border-blue-200 hover:text-blue-600'
+                editing ? 'border-red-200 text-red-500 hover:bg-red-50/30' : 'border-white/20 glass-sm text-slate-600 hover:border-primary/30 hover:text-primary'
               }`}>
               {editing ? <><X className="h-3.5 w-3.5" /> ยกเลิก</> : <><Pencil className="h-3.5 w-3.5" /> แก้ไข</>}
             </button>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
               </label>
               {editing ? (
                 <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-2.5 text-sm text-slate-800 outline-none" />
+                  className="w-full rounded-xl border border-white/20 focus:border-primary/50 glass px-4 py-2.5 text-sm text-slate-800 outline-none" />
               ) : (
                 <p className="text-sm font-medium text-slate-800 px-1">{form.name}</p>
               )}
@@ -166,7 +166,7 @@ export default function ProfilePage() {
               </label>
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium text-slate-800 px-1">{user?.email ?? '-'}</p>
-                <span className="text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                <span className="text-xs font-bold text-emerald-600 glass-sm border border-emerald-200/50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
                   <CheckCircle className="h-3 w-3" /> ยืนยันแล้ว
                 </span>
               </div>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
               </label>
               {editing ? (
                 <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                  className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-2.5 text-sm text-slate-800 outline-none" />
+                  className="w-full rounded-xl border border-white/20 focus:border-primary/50 glass px-4 py-2.5 text-sm text-slate-800 outline-none" />
               ) : (
                 <p className="text-sm font-medium text-slate-800 px-1">{form.phone}</p>
               )}
@@ -194,7 +194,7 @@ export default function ProfilePage() {
               {editing ? (
                 <textarea value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
                   rows={2}
-                  className="w-full rounded-xl border border-slate-200 focus:border-blue-400 px-4 py-2.5 text-sm text-slate-800 outline-none resize-none" />
+                  className="w-full rounded-xl border border-white/20 focus:border-primary/50 glass px-4 py-2.5 text-sm text-slate-800 outline-none resize-none" />
               ) : (
                 <p className="text-sm font-medium text-slate-800 px-1">{form.address}</p>
               )}
@@ -203,7 +203,7 @@ export default function ProfilePage() {
             {editing && (
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 onClick={handleSave}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors">
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors">
                 <Save className="h-4 w-4" /> บันทึกการเปลี่ยนแปลง
               </motion.button>
             )}
@@ -215,20 +215,20 @@ export default function ProfilePage() {
           {MENU_ITEMS.map((item, i) => (
             <motion.div key={item.href} variants={fadeUp} custom={i} whileHover={{ y: -2 }}>
               <Link href={item.href as any}
-                className="flex items-center gap-4 p-4 bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 hover:border-blue-200 shadow-sm hover:shadow-md transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-blue-50 flex items-center justify-center flex-shrink-0 transition-colors">
-                  <item.icon className="h-5 w-5 text-slate-500 group-hover:text-blue-500 transition-colors" />
+                className="flex items-center gap-4 p-4 glass-card rounded-2xl hover:border-primary/30 hover:shadow-md transition-all group">
+                <div className="w-10 h-10 rounded-xl glass-sm group-hover:bg-white/40 flex items-center justify-center flex-shrink-0 transition-colors">
+                  <item.icon className="h-5 w-5 text-slate-500 group-hover:text-primary transition-colors" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition-colors">{item.label}</p>
+                  <p className="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">{item.label}</p>
                   <p className="text-xs text-slate-500">{item.desc}</p>
                 </div>
                 {item.badge && (
-                  <span className="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full flex-shrink-0">
+                  <span className="text-xs font-bold text-primary glass-sm border border-primary/20 px-2 py-0.5 rounded-full flex-shrink-0">
                     {item.badge}
                   </span>
                 )}
-                <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary/60 group-hover:translate-x-1 transition-all flex-shrink-0" />
               </Link>
             </motion.div>
           ))}

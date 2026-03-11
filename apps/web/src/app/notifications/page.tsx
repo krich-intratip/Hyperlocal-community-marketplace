@@ -33,7 +33,7 @@ interface Notification {
 }
 
 const TYPE_CONFIG: Record<NotifType, { icon: React.ElementType; color: string; bg: string }> = {
-  booking:      { icon: Package,     color: 'text-blue-600',  bg: 'bg-blue-100'   },
+  booking:      { icon: Package,     color: 'text-primary',  bg: 'bg-blue-100'   },
   review:       { icon: Star,        color: 'text-amber-600', bg: 'bg-amber-100'  },
   announcement: { icon: Megaphone,   color: 'text-purple-600',bg: 'bg-purple-100' },
   system:       { icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-100'  },
@@ -101,7 +101,7 @@ export default function NotificationsPage() {
           className="flex items-center justify-between mb-6">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <Bell className="h-6 w-6 text-blue-500" />
+              <Bell className="h-6 w-6 text-primary" />
               <h1 className="text-2xl font-extrabold text-slate-900">การแจ้งเตือน</h1>
               {unreadCount > 0 && (
                 <span className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white text-xs font-extrabold">
@@ -114,7 +114,7 @@ export default function NotificationsPage() {
           {unreadCount > 0 && (
             <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
               onClick={markAllRead}
-              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 border border-blue-200 bg-blue-50 px-3 py-1.5 rounded-xl hover:bg-blue-100 transition-colors">
+              className="flex items-center gap-1.5 text-xs font-bold text-primary glass-sm border border-primary/20 px-3 py-1.5 rounded-xl hover:bg-white/30 transition-colors">
               <Check className="h-3.5 w-3.5" /> อ่านทั้งหมด
             </motion.button>
           )}
@@ -126,7 +126,7 @@ export default function NotificationsPage() {
           {FILTER_TABS.map(t => (
             <button key={t.key} onClick={() => setActiveTab(t.key)}
               className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-sm font-bold transition-all ${
-                activeTab === t.key ? 'bg-blue-600 text-white shadow-sm' : 'bg-white/80 text-slate-600 border border-slate-200 hover:border-blue-200'
+                activeTab === t.key ? 'bg-primary text-white shadow-sm' : 'glass text-slate-600 border border-white/20 hover:border-primary/30'
               }`}>{t.label}</button>
           ))}
         </motion.div>
@@ -153,12 +153,12 @@ export default function NotificationsPage() {
                     exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
                     className={`relative rounded-2xl border p-4 transition-all ${
                       notif.read
-                        ? 'bg-white/70 border-slate-100'
-                        : 'bg-white/95 border-blue-100 shadow-sm shadow-blue-50'
+                        ? 'glass-sm border-white/20'
+                        : 'glass border-primary/20 shadow-sm'
                     }`}>
                     {/* Unread dot */}
                     {!notif.read && (
-                      <div className="absolute top-4 right-11 w-2 h-2 rounded-full bg-blue-500" />
+                      <div className="absolute top-4 right-11 w-2 h-2 rounded-full bg-primary" />
                     )}
 
                     {/* Dismiss */}
@@ -184,7 +184,7 @@ export default function NotificationsPage() {
                           </span>
                           {notif.href && (
                             <Link href={notif.href as any}
-                              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-0.5">
+                              className="text-xs font-bold text-primary hover:text-blue-700 flex items-center gap-0.5">
                               ดูรายละเอียด <ChevronRight className="h-3 w-3" />
                             </Link>
                           )}

@@ -85,7 +85,7 @@ function SignInPageInner() {
   }
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
+    <main className="min-h-screen overflow-x-hidden">
       <MarketBackground />
       <Navbar />
 
@@ -113,7 +113,7 @@ function SignInPageInner() {
               className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
                 selectedRole === role.id
                   ? `${role.border} ${role.bg} shadow-sm`
-                  : 'border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 hover:border-slate-300'
+                  : 'glass hover:border-white/50'
               }`}>
               <span className="text-2xl flex-shrink-0">{role.emoji}</span>
               <div className="flex-1 min-w-0">
@@ -131,26 +131,26 @@ function SignInPageInner() {
 
         {/* Sign-in card */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-          className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl p-6 space-y-4">
+          className="glass-card rounded-3xl p-6 space-y-4">
 
           {/* Context message */}
           {selectedRole === 'customer' && (
-            <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-xl px-4 py-3">
-              <p className="text-sm text-blue-700 dark:text-blue-300 font-semibold">🛍️ สมัครเป็นลูกค้า — ฟรีตลอดกาล</p>
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">เข้าร่วมชุมชน ค้นหาบริการ และจองได้ทันทีหลังสมัคร</p>
+            <div className="glass-sm rounded-xl px-4 py-3">
+              <p className="text-sm text-primary font-semibold">🛍️ สมัครเป็นลูกค้า — ฟรีตลอดกาล</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">เข้าร่วมชุมชน ค้นหาบริการ และจองได้ทันทีหลังสมัคร</p>
             </div>
           )}
           {selectedRole === 'provider' && (
-            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-xl px-4 py-3">
-              <p className="text-sm text-amber-700 dark:text-amber-300 font-semibold">⭐ สมัครเป็น Provider</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">หลังสมัคร รอ Community Admin อนุมัติ แล้วเริ่มรับงานได้เลย</p>
+            <div className="glass-sm rounded-xl px-4 py-3">
+              <p className="text-sm text-amber-600 dark:text-amber-400 font-semibold">⭐ สมัครเป็น Provider</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">หลังสมัคร รอ Community Admin อนุมัติ แล้วเริ่มรับงานได้เลย</p>
             </div>
           )}
           {selectedRole === 'admin' && (
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl px-4 py-3">
-              <p className="text-sm text-green-700 dark:text-green-300 font-semibold">🏘️ สมัครเป็น Community Admin</p>
-              <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">
-                สมัครแล้ว → <a href="/franchise/apply" className="underline font-bold">กรอกใบขอพื้นที่</a> → รอ Super Admin อนุมัติ → สร้างตลาดได้เลย
+            <div className="glass-sm rounded-xl px-4 py-3">
+              <p className="text-sm text-emerald-600 dark:text-emerald-400 font-semibold">🏘️ สมัครเป็น Community Admin</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                สมัครแล้ว → <a href="/franchise/apply" className="underline font-bold text-primary">กรอกใบขอพื้นที่</a> → รอ Super Admin อนุมัติ → สร้างตลาดได้เลย
               </p>
             </div>
           )}
@@ -161,7 +161,7 @@ function SignInPageInner() {
             whileTap={{ scale: 0.97 }}
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-6 py-3.5 text-base font-semibold text-slate-700 dark:text-slate-200 hover:border-blue-300 hover:shadow-md transition-all disabled:opacity-60">
+            className="w-full flex items-center justify-center gap-3 rounded-xl glass border-2 px-6 py-3.5 text-base font-semibold text-slate-700 dark:text-slate-200 hover:bg-white/30 hover:shadow-md transition-all disabled:opacity-60">
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -176,7 +176,7 @@ function SignInPageInner() {
             whileTap={{ scale: 0.97 }}
             onClick={handleMockLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/30 hover:bg-blue-700 transition-colors disabled:opacity-60">
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-base font-bold text-white shadow-lg shadow-indigo-200/50 dark:shadow-indigo-900/30 hover:bg-primary/90 transition-colors disabled:opacity-60">
             {selectedRole === 'customer' ? '🛍️ เข้าสู่ระบบ (Demo)' : selectedRole === 'provider' ? '⭐ เข้าสู่ระบบ Provider (Demo)' : '🏘️ เข้าสู่ระบบ Admin (Demo)'}
             <ArrowRight className="h-4 w-4" />
           </motion.button>
@@ -197,7 +197,7 @@ function SignInPageInner() {
             { icon: '🛡️', label: 'ไม่เก็บรหัสผ่าน' },
             { icon: '✅', label: 'Google Verified' },
           ].map((t) => (
-            <div key={t.label} className="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-100 dark:border-slate-700">
+            <div key={t.label} className="glass-sm p-3 rounded-xl">
               <div className="text-xl mb-1">{t.icon}</div>
               <div className="text-xs font-medium text-slate-600 dark:text-slate-400">{t.label}</div>
             </div>
@@ -208,7 +208,7 @@ function SignInPageInner() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
           className="mt-5 text-center">
           <a href="/communities"
-            className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            className="text-sm text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">
             ดูตลาดชุมชนก่อนสมัครก็ได้ →
           </a>
         </motion.div>

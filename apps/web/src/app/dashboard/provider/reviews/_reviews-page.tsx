@@ -29,7 +29,7 @@ type FilterTab = 'all' | 'positive' | 'negative' | 'unanswered'
 
 const SENTIMENT_CONFIG: Record<ReviewSentiment, { label: string; icon: typeof ThumbsUp; color: string; bg: string; border: string }> = {
   positive: { label: 'เชิงบวก',   icon: ThumbsUp,   color: 'text-green-700', bg: 'bg-green-50',  border: 'border-green-200' },
-  neutral:  { label: 'กลางๆ',     icon: Minus,      color: 'text-slate-600', bg: 'bg-slate-50',  border: 'border-slate-200' },
+  neutral:  { label: 'กลางๆ',     icon: Minus,      color: 'text-slate-600', bg: 'glass-sm',   border: 'border-white/20' },
   negative: { label: 'เชิงลบ',   icon: ThumbsDown,  color: 'text-red-700',   bg: 'bg-red-50',    border: 'border-red-200'   },
 }
 
@@ -66,7 +66,7 @@ function ReviewCard({ review }: { review: MockReview }) {
 
   return (
     <motion.div variants={fadeUp} whileHover={{ y: -1 }}
-      className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5">
+      className="glass-card rounded-2xl p-5">
 
       {/* Review header */}
       <div className="flex items-start justify-between mb-3">
@@ -94,11 +94,11 @@ function ReviewCard({ review }: { review: MockReview }) {
 
       {/* Existing reply */}
       {replied && savedReply && !replyMode && (
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-3 flex items-start gap-2">
-          <Reply className="h-3.5 w-3.5 text-blue-500 flex-shrink-0 mt-0.5" />
+        <div className="glass border border-primary/20 rounded-xl p-3 mb-3 flex items-start gap-2">
+          <Reply className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-xs font-bold text-blue-700 mb-0.5">คุณตอบแล้ว</p>
-            <p className="text-xs text-blue-600">{savedReply}</p>
+            <p className="text-xs text-primary">{savedReply}</p>
           </div>
         </div>
       )}
@@ -107,7 +107,7 @@ function ReviewCard({ review }: { review: MockReview }) {
       {!replyMode && (
         <button onClick={() => setReplyMode(true)}
           className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${
-            replied ? 'text-slate-400 hover:text-blue-600' : 'text-blue-600 hover:text-blue-700'
+            replied ? 'text-slate-400 hover:text-primary' : 'text-primary hover:text-blue-700'
           }`}>
           <MessageCircle className="h-3.5 w-3.5" />
           {replied ? 'แก้ไขการตอบ' : 'ตอบรีวิวนี้'}
@@ -120,15 +120,15 @@ function ReviewCard({ review }: { review: MockReview }) {
             exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
             <textarea value={replyText} onChange={e => setReplyText(e.target.value)}
               rows={3} placeholder="พิมพ์คำตอบสำหรับลูกค้า..."
-              className="w-full mt-3 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none transition-all" />
+              className="w-full mt-3 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none transition-all" />
             <div className="flex gap-2 mt-2">
               <button onClick={() => setReplyMode(false)}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:glass-sm transition-colors">
                 ยกเลิก
               </button>
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 onClick={handleSendReply}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-sm hover:bg-blue-700 transition-colors">
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm hover:bg-primary/90 transition-colors">
                 <CheckCircle className="h-3.5 w-3.5" /> ส่งคำตอบ
               </motion.button>
             </div>
@@ -171,7 +171,7 @@ export default function ProviderReviewsClient() {
         {/* Breadcrumb */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
           className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/dashboard/provider" className="hover:text-blue-600 flex items-center gap-1">
+          <Link href="/dashboard/provider" className="hover:text-primary flex items-center gap-1">
             <ChevronLeft className="h-3.5 w-3.5" /> Provider Dashboard
           </Link>
           <span>/</span>
@@ -190,7 +190,7 @@ export default function ProviderReviewsClient() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'รีวิวทั้งหมด',  value: MOCK_REVIEWS.length, icon: '📝', color: 'bg-blue-50'   },
+            { label: 'รีวิวทั้งหมด',  value: MOCK_REVIEWS.length, icon: '📝', color: 'glass-sm'   },
             { label: 'คะแนนเฉลี่ย',   value: `${PROVIDER_SUMMARY.avgRating} ⭐`, icon: '⭐', color: 'bg-amber-50' },
             { label: 'อัตราตอบ',      value: `${responseRate}%`,  icon: '💬', color: 'bg-green-50'  },
             { label: 'ยังไม่ตอบ',     value: unansweredCount,     icon: '⏰', color: 'bg-red-50'    },
@@ -209,7 +209,7 @@ export default function ProviderReviewsClient() {
 
           {/* Rating Distribution */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5">
+            className="glass-card rounded-2xl p-5">
             <h2 className="font-extrabold text-slate-900 text-sm mb-4">การกระจายคะแนน</h2>
             <div className="space-y-2.5">
               {RATING_DISTRIBUTION.map(item => (
@@ -222,7 +222,7 @@ export default function ProviderReviewsClient() {
                     <span className="text-xs font-bold text-slate-600 w-3">{item.star}</span>
                     <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                   </div>
-                  <div className="flex-1 h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="flex-1 h-2.5 rounded-full glass-sm overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }} animate={{ width: `${item.pct}%` }}
                       transition={{ duration: 0.6, delay: item.star * 0.05 }}
@@ -236,7 +236,7 @@ export default function ProviderReviewsClient() {
             </div>
             {starFilter !== null && (
               <button onClick={() => setStarFilter(null)}
-                className="mt-3 text-xs text-blue-600 font-bold hover:underline">
+                className="mt-3 text-xs text-primary font-bold hover:underline">
                 ดูทั้งหมด ×
               </button>
             )}
@@ -244,7 +244,7 @@ export default function ProviderReviewsClient() {
 
           {/* Sentiment Breakdown */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-5">
+            className="glass-card rounded-2xl p-5">
             <h2 className="font-extrabold text-slate-900 text-sm mb-4">Sentiment Analysis</h2>
             <div className="space-y-4">
               {[
@@ -263,7 +263,7 @@ export default function ProviderReviewsClient() {
                       </div>
                       <span className="text-xs text-slate-500">{count} รีวิว ({pct}%)</span>
                     </div>
-                    <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-2.5 rounded-full glass-sm overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }} animate={{ width: `${pct}%` }}
                         transition={{ duration: 0.6, delay: 0.2 }}
@@ -303,11 +303,11 @@ export default function ProviderReviewsClient() {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 activeFilter === tab.key
                   ? 'bg-amber-500 text-white shadow-sm'
-                  : 'bg-white/80 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  : 'glass-sm text-slate-600 hover:border-primary/30'
               }`}>
               {tab.label}
               <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                activeFilter === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                activeFilter === tab.key ? 'bg-white/20 text-white' : 'glass-sm text-slate-500'
               }`}>
                 {tab.count}
               </span>
@@ -337,7 +337,7 @@ export default function ProviderReviewsClient() {
             { label: 'AI Insights', desc: 'คำแนะนำปรับปรุงธุรกิจ', href: '/dashboard/provider/insights', emoji: '🤖' },
           ].map(item => (
             <Link key={item.href} href={item.href}
-              className="flex items-center gap-3 p-4 rounded-xl bg-white/80 border border-slate-200 hover:border-amber-300 hover:bg-amber-50 transition-all">
+              className="flex items-center gap-3 p-4 rounded-xl glass border-white/20 hover:border-amber-300 transition-all">
               <span className="text-xl">{item.emoji}</span>
               <div>
                 <p className="font-bold text-slate-800 text-sm">{item.label}</p>

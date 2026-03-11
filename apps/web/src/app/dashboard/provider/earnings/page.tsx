@@ -67,7 +67,7 @@ export default function ProviderEarningsPage() {
         {/* Breadcrumb */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}
           className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/dashboard/provider" className="hover:text-blue-600 flex items-center gap-1">
+          <Link href="/dashboard/provider" className="hover:text-primary flex items-center gap-1">
             <ChevronLeft className="h-3.5 w-3.5" /> Provider Dashboard
           </Link>
           <span>/</span>
@@ -86,10 +86,10 @@ export default function ProviderEarningsPage() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
-            { label: 'รายได้รวม/เดือน', value: `฿${totalGross.toLocaleString()}`, icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100', change: '+12%' },
+            { label: 'รายได้รวม/เดือน', value: `฿${totalGross.toLocaleString()}`, icon: TrendingUp, color: 'text-primary', bg: 'glass-sm', border: 'border-primary/30', change: '+12%' },
             { label: 'รายได้สุทธิ', value: `฿${totalNet.toLocaleString()}`, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100', change: '+12%' },
             { label: 'รอโอน', value: `฿${pendingPayout.toLocaleString()}`, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100', change: null },
-            { label: 'ค่าธรรมเนียม (5%)', value: `฿${totalFees.toLocaleString()}`, icon: DollarSign, color: 'text-slate-500', bg: 'bg-slate-50', border: 'border-slate-200', change: null },
+            { label: 'ค่าธรรมเนียม (5%)', value: `฿${totalFees.toLocaleString()}`, icon: DollarSign, color: 'text-slate-500', bg: 'glass-sm', border: '', change: null },
           ].map((s, i) => (
             <motion.div key={s.label} variants={fadeUp} custom={i}
               className={`${s.bg} ${s.border} border rounded-2xl p-4`}>
@@ -109,14 +109,14 @@ export default function ProviderEarningsPage() {
 
         {/* Chart */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-          className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6 mb-5">
+          className="glass-card rounded-2xl p-6 mb-5">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-extrabold text-slate-900">กราฟรายได้</h2>
             <div className="flex gap-1.5">
               {(['7d', '30d', '90d'] as Period[]).map(p => (
                 <button key={p} onClick={() => setPeriod(p)}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    period === p ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    period === p ? 'bg-primary text-white' : 'glass-sm text-slate-600 hover:bg-slate-200'
                   }`}>{p === '7d' ? '7 วัน' : p === '30d' ? '30 วัน' : '3 เดือน'}</button>
               ))}
             </div>
@@ -139,14 +139,14 @@ export default function ProviderEarningsPage() {
 
         {/* Recent transactions */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
-          className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-5">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          className="glass-card rounded-2xl overflow-hidden mb-5">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-white/20">
             <h2 className="font-extrabold text-slate-900">รายการล่าสุด</h2>
-            <button className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700">
+            <button className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-blue-700">
               <Download className="h-3.5 w-3.5" /> ดาวน์โหลด CSV
             </button>
           </div>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-white/10">
             {RECENT_TRANSACTIONS.map((tx) => (
               <div key={tx.id} className="flex items-center gap-4 px-5 py-3.5">
                 <div className="flex-1 min-w-0">
@@ -165,12 +165,12 @@ export default function ProviderEarningsPage() {
 
         {/* Payout history */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
-          className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100">
+          className="glass-card rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/20">
             <h2 className="font-extrabold text-slate-900">ประวัติการโอนเงิน</h2>
             <p className="text-xs text-slate-500 mt-0.5">โอนทุกวันที่ 1 และ 15 ของเดือน</p>
           </div>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-white/10">
             {PAYOUTS.map((p) => (
               <div key={p.id} className="flex items-center gap-4 px-5 py-3.5">
                 <div className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">

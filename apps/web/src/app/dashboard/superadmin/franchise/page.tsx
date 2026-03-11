@@ -92,10 +92,10 @@ const MOCK_COMMUNITIES: CommunityManager[] = [
 ]
 
 const STATUS_CFG: Record<CommunityStatus, { label: string; bg: string; text: string; border: string; icon: React.ElementType }> = {
-  pending: { label: 'รอ Approve', bg: 'bg-amber-50 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-400', border: 'border-amber-200 dark:border-amber-700', icon: Clock },
-  active: { label: 'เปิดใช้งาน', bg: 'bg-green-50 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-400', border: 'border-green-200 dark:border-green-700', icon: CheckCircle },
-  suspended: { label: 'ระงับการใช้งาน', bg: 'bg-red-50 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', border: 'border-red-200 dark:border-red-700', icon: Pause },
-  takeover: { label: 'Takeover แล้ว', bg: 'bg-purple-50 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-400', border: 'border-purple-200 dark:border-purple-700', icon: ArrowRightLeft },
+  pending: { label: 'รอ Approve', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', icon: Clock },
+  active: { label: 'เปิดใช้งาน', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', icon: CheckCircle },
+  suspended: { label: 'ระงับการใช้งาน', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', icon: Pause },
+  takeover: { label: 'Takeover แล้ว', bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200', icon: ArrowRightLeft },
 }
 
 type ModalType = 'approve' | 'reject' | 'suspend' | 'resume' | 'takeover' | 'transfer' | 'contact' | 'detail' | null
@@ -184,7 +184,7 @@ export default function SuperAdminFranchisePage() {
   }
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
+    <main className="min-h-screen overflow-x-hidden">
       <MarketBackground />
       <Navbar />
 
@@ -197,25 +197,25 @@ export default function SuperAdminFranchisePage() {
               <Crown className="h-5 w-5 text-amber-500" />
               <span className="text-sm font-bold text-amber-600">Super Admin</span>
             </div>
-            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">จัดการ Franchise ชุมชน</h1>
-            <p className="text-base text-slate-500 dark:text-slate-400 mt-1">
+            <h1 className="text-3xl font-extrabold text-slate-900">จัดการ Franchise ชุมชน</h1>
+            <p className="text-base text-slate-500 mt-1">
               อนุมัติผู้จัดการ + กำหนดโลเคชั่น → ผู้จัดการสร้างตลาด → Approve Provider → ลูกค้าใช้งาน
             </p>
           </div>
           <motion.a href="/franchise" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-2 rounded-xl border-2 border-amber-400 px-4 py-2.5 text-sm font-bold text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors">
+            className="flex items-center gap-2 rounded-xl border-2 border-amber-400 px-4 py-2.5 text-sm font-bold text-amber-600 hover:bg-amber-50 transition-colors">
             <Building2 className="h-4 w-4" /> หน้า Franchise
           </motion.a>
         </motion.div>
 
         {/* Tabs */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
-          className="flex gap-0 bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 mb-6 w-fit">
+          className="flex gap-0 glass-sm rounded-2xl p-1 mb-6 w-fit">
           <button onClick={() => setActiveTab('applications')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
               activeTab === 'applications'
-                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+                ? 'glass-sm text-primary'
+                : 'text-slate-500 hover:text-slate-700'
             }`}>
             <Clock className="h-4 w-4" />
             ใบสมัครรอ Approve
@@ -226,18 +226,18 @@ export default function SuperAdminFranchisePage() {
           <button onClick={() => setActiveTab('communities')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
               activeTab === 'communities'
-                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+                ? 'glass-sm text-primary'
+                : 'text-slate-500 hover:text-slate-700'
             }`}>
             <Building2 className="h-4 w-4" />
             จัดการชุมชน
-            <span className="bg-blue-500 text-white text-xs font-extrabold px-1.5 py-0.5 rounded-full">{activeCommunities.length}</span>
+            <span className="glass-sm0 text-white text-xs font-extrabold px-1.5 py-0.5 rounded-full">{activeCommunities.length}</span>
           </button>
           <button onClick={() => setActiveTab('announcements')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
               activeTab === 'announcements'
-                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+                ? 'glass-sm text-primary'
+                : 'text-slate-500 hover:text-slate-700'
             }`}>
             <Megaphone className="h-4 w-4" />
             ประกาศ
@@ -251,18 +251,18 @@ export default function SuperAdminFranchisePage() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
           {[
-            { label: 'ทั้งหมด', value: stats.total, icon: Building2, color: 'text-slate-600', bg: 'bg-slate-100 dark:bg-slate-800' },
-            { label: 'เปิดใช้งาน', value: stats.active, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/30' },
-            { label: 'รอ Approve', value: stats.pending, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30' },
-            { label: 'ระงับแล้ว', value: stats.suspended, icon: Pause, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/30' },
-            { label: 'รายได้/เดือน', value: `฿${(stats.totalRevenue / 1000).toFixed(0)}K`, icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/30' },
-            { label: 'Rev.Share จ่าย', value: `฿${(stats.totalRevenueShare / 1000).toFixed(0)}K`, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/30' },
+            { label: 'ทั้งหมด', value: stats.total, icon: Building2, color: 'text-slate-600', bg: 'bg-slate-100' },
+            { label: 'เปิดใช้งาน', value: stats.active, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
+            { label: 'รอ Approve', value: stats.pending, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
+            { label: 'ระงับแล้ว', value: stats.suspended, icon: Pause, color: 'text-red-600', bg: 'bg-red-50' },
+            { label: 'รายได้/เดือน', value: `฿${(stats.totalRevenue / 1000).toFixed(0)}K`, icon: TrendingUp, color: 'text-primary', bg: 'glass-sm' },
+            { label: 'Rev.Share จ่าย', value: `฿${(stats.totalRevenueShare / 1000).toFixed(0)}K`, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           ].map((s, i) => (
             <motion.div key={s.label} variants={fadeUp} custom={i}
-              className={`${s.bg} rounded-2xl p-4 border border-slate-100 dark:border-slate-700`}>
+              className={`${s.bg} rounded-2xl p-4 border border-white/20`}>
               <s.icon className={`h-5 w-5 ${s.color} mb-2`} />
-              <div className="text-xl font-extrabold text-slate-900 dark:text-white">{s.value}</div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">{s.label}</div>
+              <div className="text-xl font-extrabold text-slate-900">{s.value}</div>
+              <div className="text-xs text-slate-500">{s.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -273,22 +273,22 @@ export default function SuperAdminFranchisePage() {
             {/* Header + Create button */}
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">จัดการประกาศ</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">ประกาศจาก Super Admin เผยแพร่ได้ทันที · ประกาศจาก CA ต้องอนุมัติก่อน</p>
+                <h2 className="text-xl font-extrabold text-slate-900">จัดการประกาศ</h2>
+                <p className="text-sm text-slate-500 mt-0.5">ประกาศจาก Super Admin เผยแพร่ได้ทันที · ประกาศจาก CA ต้องอนุมัติก่อน</p>
               </div>
               <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                 onClick={() => { setEditingAnn(null); setAnnForm({ title: '', body: '', type: 'info', scope: 'GLOBAL' }); setShowAnnForm(true) }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 shadow-md shadow-blue-100 transition-colors">
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 shadow-md shadow-blue-100 transition-colors">
                 <Plus className="h-4 w-4" /> สร้างประกาศใหม่
               </motion.button>
             </div>
 
             {/* Filter tabs */}
-            <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 w-fit">
+            <div className="flex gap-1 glass-sm rounded-xl p-1 w-fit">
               {(['ALL', 'PUBLISHED', 'PENDING', 'REJECTED'] as const).map(s => (
                 <button key={s} onClick={() => setAnnFilter(s)}
                   className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-colors ${
-                    annFilter === s ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                    annFilter === s ? 'glass-sm text-primary' : 'text-slate-500 hover:text-slate-700'
                   }`}>
                   {s === 'ALL' ? 'ทั้งหมด' : s === 'PUBLISHED' ? 'เผยแพร่แล้ว' : s === 'PENDING' ? `รออนุมัติ (${announcements.filter(a => a.status === 'PENDING').length})` : 'ถูกปฏิเสธ'}
                 </button>
@@ -299,44 +299,44 @@ export default function SuperAdminFranchisePage() {
             <AnimatePresence>
               {showAnnForm && (
                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                  className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-5 space-y-4">
-                  <h3 className="font-extrabold text-blue-900 dark:text-blue-200 text-base">
+                  className="glass border border-primary/20 rounded-2xl p-5 space-y-4">
+                  <h3 className="font-extrabold text-blue-900 text-base">
                     {editingAnn ? '✏️ แก้ไขประกาศ' : '➕ สร้างประกาศใหม่ (Super Admin)'}
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">ประเภท</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">ประเภท</label>
                       <select value={annForm.type} onChange={e => setAnnForm(f => ({ ...f, type: e.target.value as AnnType }))}
-                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        className="w-full px-3 py-2.5 rounded-xl border glass border-white/20 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30">
                         <option value="info">ℹ️ ข้อมูลทั่วไป</option>
                         <option value="warning">⚠️ คำเตือน</option>
                         <option value="success">✅ ข่าวดี</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">ขอบเขต</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">ขอบเขต</label>
                       <select value={annForm.scope} onChange={e => setAnnForm(f => ({ ...f, scope: e.target.value as AnnScope }))}
-                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        className="w-full px-3 py-2.5 rounded-xl border glass border-white/20 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30">
                         <option value="GLOBAL">🌐 ทุกชุมชน (Homepage)</option>
                         <option value="COMMUNITY">🏘️ ชุมชนเฉพาะ</option>
                       </select>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">หัวข้อประกาศ</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-1">หัวข้อประกาศ</label>
                     <input value={annForm.title} onChange={e => setAnnForm(f => ({ ...f, title: e.target.value }))}
                       placeholder="หัวข้อประกาศ..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                      className="w-full px-4 py-2.5 rounded-xl border glass border-white/20 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">เนื้อหา</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-1">เนื้อหา</label>
                     <textarea value={annForm.body} onChange={e => setAnnForm(f => ({ ...f, body: e.target.value }))}
                       rows={3} placeholder="เนื้อหาประกาศ..."
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
+                      className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
                   </div>
                   <div className="flex gap-3 justify-end">
                     <button onClick={() => { setShowAnnForm(false); setEditingAnn(null) }}
-                      className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:bg-slate-100 transition-colors">ยกเลิก</button>
+                      className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:glass-sm transition-colors">ยกเลิก</button>
                     <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                       disabled={!annForm.title.trim() || !annForm.body.trim()}
                       onClick={() => {
@@ -348,7 +348,7 @@ export default function SuperAdminFranchisePage() {
                         }
                         setShowAnnForm(false); setEditingAnn(null)
                       }}
-                      className="px-5 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                      className="px-5 py-2 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                       {editingAnn ? 'บันทึกการแก้ไข' : '📢 เผยแพร่ทันที'}
                     </motion.button>
                   </div>
@@ -362,25 +362,25 @@ export default function SuperAdminFranchisePage() {
                 .filter(a => annFilter === 'ALL' || a.status === annFilter)
                 .map((ann, i) => (
                   <motion.div key={ann.id} variants={fadeUp} custom={i}
-                    className={`bg-white/90 dark:bg-slate-800 rounded-2xl border shadow-sm p-5 ${
-                      ann.status === 'PENDING' ? 'border-amber-200 dark:border-amber-700' :
-                      ann.status === 'REJECTED' ? 'border-red-100 dark:border-red-800 opacity-70' :
-                      'border-slate-100 dark:border-slate-700'
+                    className={`glass-card rounded-2xl p-5 ${
+                      ann.status === 'PENDING' ? 'border-amber-200' :
+                      ann.status === 'REJECTED' ? 'border-red-100 opacity-70' :
+                      'border-white/20'
                     }`}>
                     <div className="flex items-start gap-4">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        ann.fromSA ? 'bg-blue-600' : 'bg-amber-500'
+                        ann.fromSA ? 'bg-primary' : 'bg-amber-500'
                       }`}>
                         {ann.fromSA ? <Crown className="h-4.5 w-4.5 text-white" /> : <Bell className="h-4 w-4 text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            ann.fromSA ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+                            ann.fromSA ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'
                           }`}>{ann.fromSA ? 'Super Admin' : 'CA'}</span>
                           {ann.scope === 'GLOBAL'
-                            ? <span className="flex items-center gap-1 text-xs text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full"><Globe className="h-3 w-3" />ทุกชุมชน</span>
-                            : <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">🏘️ {ann.communityName}</span>}
+                            ? <span className="flex items-center gap-1 text-xs text-slate-500 glass-sm px-2 py-0.5 rounded-full"><Globe className="h-3 w-3" />ทุกชุมชน</span>
+                            : <span className="text-xs text-slate-500 glass-sm px-2 py-0.5 rounded-full">🏘️ {ann.communityName}</span>}
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                             ann.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' :
                             ann.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
@@ -388,8 +388,8 @@ export default function SuperAdminFranchisePage() {
                           }`}>{ann.status === 'PUBLISHED' ? '✅ เผยแพร่แล้ว' : ann.status === 'PENDING' ? '⏳ รออนุมัติ' : '❌ ถูกปฏิเสธ'}</span>
                           <span className="text-xs text-slate-400 ml-auto">{ann.createdAt}</span>
                         </div>
-                        <p className="font-bold text-slate-900 dark:text-slate-100 text-sm mb-1">{ann.title}</p>
-                        <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">{ann.body}</p>
+                        <p className="font-bold text-slate-900 text-sm mb-1">{ann.title}</p>
+                        <p className="text-slate-500 text-xs leading-relaxed">{ann.body}</p>
                         {!ann.fromSA && <p className="text-xs text-slate-400 mt-1">โดย: {ann.authorName}</p>}
                       </div>
                       {/* Actions */}
@@ -410,7 +410,7 @@ export default function SuperAdminFranchisePage() {
                         )}
                         <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                           onClick={() => { setEditingAnn(ann); setAnnForm({ title: ann.title, body: ann.body, type: ann.type, scope: ann.scope }); setShowAnnForm(true) }}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 border border-slate-200 hover:border-blue-300 transition-colors">
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 border border-slate-200 hover:border-primary/30 transition-colors">
                           <Pencil className="h-3.5 w-3.5" /> แก้ไข
                         </motion.button>
                         <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
@@ -435,12 +435,12 @@ export default function SuperAdminFranchisePage() {
         {/* Tab: Applications — info banner */}
         {activeTab === 'applications' && (
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
-            className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl p-4 mb-5">
+            className="glass border border-primary/20 rounded-2xl p-4 mb-5">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+              <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-blue-800 dark:text-blue-300 text-base mb-1">ขั้นตอน Super Admin</p>
-                <p className="text-sm text-blue-700 dark:text-blue-400">
+                <p className="font-bold text-blue-800 text-base mb-1">ขั้นตอน Super Admin</p>
+                <p className="text-sm text-blue-700">
                   1. ตรวจใบสมัคร → 2. <strong>กำหนดโลเคชั่น/ชุมชนที่อนุมัติ</strong> → 3. Approve →
                   4. ผู้จัดการได้รับ Dashboard → 5. สร้างตลาด + Approve Provider เอง
                 </p>
@@ -456,13 +456,13 @@ export default function SuperAdminFranchisePage() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input type="text" placeholder="ค้นหาชุมชน ผู้จัดการ จังหวัด..."
               value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30" />
           </div>
           {activeTab === 'communities' && (
-            <div className="flex gap-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 overflow-hidden">
+            <div className="flex gap-1 rounded-xl border glass border-white/20/80 overflow-hidden">
               {(['ALL', 'active', 'suspended', 'takeover'] as const).map(s => (
                 <button key={s} onClick={() => setFilterStatus(s)}
-                  className={`px-3 py-2 text-sm font-bold transition-colors ${filterStatus === s ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-blue-600'}`}>
+                  className={`px-3 py-2 text-sm font-bold transition-colors ${filterStatus === s ? 'bg-primary text-white' : 'text-slate-500 hover:text-primary'}`}>
                   {s === 'ALL' ? 'ทั้งหมด' : STATUS_CFG[s].label}
                 </button>
               ))}
@@ -477,26 +477,26 @@ export default function SuperAdminFranchisePage() {
             const isPending = community.status === 'pending'
             return (
               <motion.div key={community.id} variants={fadeUp} custom={i}
-                className={`bg-white/90 dark:bg-slate-800 rounded-2xl border shadow-sm overflow-hidden ${
-                  isPending ? 'border-amber-200 dark:border-amber-700' : 'border-slate-100 dark:border-slate-700'
+                className={`glass-card rounded-2xl overflow-hidden ${
+                  isPending ? 'border-amber-200' : 'border-white/20'
                 }`}>
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     {/* Left */}
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <h3 className="font-extrabold text-lg text-slate-800 dark:text-slate-100">{community.communityName}</h3>
+                        <h3 className="font-extrabold text-lg text-slate-800">{community.communityName}</h3>
                         <span className={`inline-flex items-center gap-1 text-sm px-2.5 py-0.5 rounded-full border font-bold ${cfg.bg} ${cfg.text} ${cfg.border}`}>
                           <cfg.icon className="h-3.5 w-3.5" /> {cfg.label}
                         </span>
                         {community.violations > 0 && (
-                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 border border-red-200 font-bold">
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-200 font-bold">
                             <AlertTriangle className="h-3 w-3" /> {community.violations} violations
                           </span>
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-2">
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-2">
                         <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{community.province} · {community.type}</span>
                         <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{community.managerName}</span>
                         <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" />{community.managerPhone}</span>
@@ -504,8 +504,8 @@ export default function SuperAdminFranchisePage() {
                       </div>
 
                       {isPending && (
-                        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-xl px-3 py-2 mt-2">
-                          <p className="text-sm text-amber-800 dark:text-amber-300">
+                        <div className="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 mt-2">
+                          <p className="text-sm text-amber-800">
                             ยื่นใบสมัครเมื่อ <strong>{formatDate(community.appliedDate)}</strong>
                             {' — '}รอ Super Admin <strong>กำหนดโลเคชั่น + Approve</strong>
                           </p>
@@ -522,19 +522,19 @@ export default function SuperAdminFranchisePage() {
                           ].map(s => (
                             <div key={s.label} className="flex items-center gap-1.5">
                               <s.icon className="h-3.5 w-3.5 text-slate-400" />
-                              <span className="text-slate-500 dark:text-slate-400">{s.label}:</span>
-                              <span className="font-bold text-slate-800 dark:text-slate-200">{s.value}</span>
+                              <span className="text-slate-500">{s.label}:</span>
+                              <span className="font-bold text-slate-800">{s.value}</span>
                             </div>
                           ))}
                           {community.trialEnd && (
-                            <span className="text-xs font-bold text-green-600 bg-green-100 dark:bg-green-900/40 px-2 py-0.5 rounded-full">ทดลองถึง {community.trialEnd}</span>
+                            <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">ทดลองถึง {community.trialEnd}</span>
                           )}
                         </div>
                       )}
 
                       {community.notes && (
-                        <div className="mt-2 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl px-3 py-2">
-                          <p className="text-sm text-red-700 dark:text-red-400">{community.notes}</p>
+                        <div className="mt-2 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+                          <p className="text-sm text-red-700">{community.notes}</p>
                         </div>
                       )}
                     </div>
@@ -543,12 +543,12 @@ export default function SuperAdminFranchisePage() {
                     <div className="flex flex-col gap-2 flex-shrink-0">
                       <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                         onClick={() => openModal(community, 'detail')}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-300 transition-colors">
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-600 border border-slate-200 hover:border-primary/30 transition-colors">
                         <Eye className="h-4 w-4" /> รายละเอียด
                       </motion.button>
                       <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                         onClick={() => openModal(community, 'contact')}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-600 border border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-primary border border-primary/30 hover:glass-sm transition-colors">
                         <MessageCircle className="h-4 w-4" /> ติดต่อ
                       </motion.button>
 
@@ -556,12 +556,12 @@ export default function SuperAdminFranchisePage() {
                         <>
                           <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                             onClick={() => openModal(community, 'approve')}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-green-700 bg-green-100 dark:bg-green-900/40 hover:bg-green-200 transition-colors">
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-green-700 bg-green-100 hover:bg-green-200 transition-colors">
                             <CheckCircle className="h-4 w-4" /> Approve + กำหนดพื้นที่
                           </motion.button>
                           <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                             onClick={() => openModal(community, 'reject')}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-red-600 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 transition-colors">
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors">
                             <XCircle className="h-4 w-4" /> ปฏิเสธ
                           </motion.button>
                         </>
@@ -571,17 +571,17 @@ export default function SuperAdminFranchisePage() {
                         <>
                           <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                             onClick={() => openModal(community, 'suspend')}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100 transition-colors">
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
                             <Pause className="h-4 w-4" /> Suspend
                           </motion.button>
                           <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                             onClick={() => openModal(community, 'takeover')}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-700 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 transition-colors">
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 transition-colors">
                             <Shield className="h-4 w-4" /> Takeover
                           </motion.button>
                           <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                             onClick={() => openModal(community, 'transfer')}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 transition-colors">
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors">
                             <ArrowRightLeft className="h-4 w-4" /> โอนย้าย
                           </motion.button>
                         </>
@@ -590,7 +590,7 @@ export default function SuperAdminFranchisePage() {
                       {(community.status === 'suspended' || community.status === 'takeover') && (
                         <motion.button whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
                           onClick={() => openModal(community, 'resume')}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-green-700 bg-green-100 dark:bg-green-900/40 hover:bg-green-200 transition-colors">
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-green-700 bg-green-100 hover:bg-green-200 transition-colors">
                           <Play className="h-4 w-4" /> เปิดใหม่
                         </motion.button>
                       )}
@@ -602,7 +602,7 @@ export default function SuperAdminFranchisePage() {
           })}
 
           {filtered.length === 0 && (
-            <div className="text-center py-16 text-slate-400 dark:text-slate-500">
+            <div className="text-center py-16 text-slate-400">
               <Building2 className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="text-base">
                 {activeTab === 'applications' ? 'ไม่มีใบสมัครที่รอ Approve' : 'ไม่พบชุมชนที่ตรงกัน'}
@@ -622,17 +622,17 @@ export default function SuperAdminFranchisePage() {
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', duration: 0.4 }}
-              className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+              className="w-full max-w-lg glass-heavy rounded-2xl shadow-2xl overflow-hidden">
 
               {/* Modal header */}
-              <div className={`p-5 border-b border-slate-100 dark:border-slate-700 ${
-                modalType === 'approve' ? 'bg-green-50 dark:bg-green-900/20' :
-                modalType === 'suspend' || modalType === 'reject' ? 'bg-red-50 dark:bg-red-900/20' :
-                modalType === 'takeover' ? 'bg-purple-50 dark:bg-purple-900/20' :
-                modalType === 'transfer' ? 'bg-indigo-50 dark:bg-indigo-900/20' :
-                'bg-slate-50 dark:bg-slate-800'
+              <div className={`p-5 border-b border-white/20 ${
+                modalType === 'approve' ? 'bg-green-50' :
+                modalType === 'suspend' || modalType === 'reject' ? 'bg-red-50' :
+                modalType === 'takeover' ? 'bg-purple-50' :
+                modalType === 'transfer' ? 'bg-indigo-50' :
+                'glass-sm'
               }`}>
-                <h3 className="font-extrabold text-lg text-slate-900 dark:text-white">
+                <h3 className="font-extrabold text-lg text-slate-900">
                   {modalType === 'approve' && '✅ Approve ชุมชน'}
                   {modalType === 'reject' && '❌ ปฏิเสธใบสมัคร'}
                   {modalType === 'suspend' && '⏸️ Suspend ชุมชน'}
@@ -642,7 +642,7 @@ export default function SuperAdminFranchisePage() {
                   {modalType === 'contact' && '💬 ติดต่อผู้จัดการ'}
                   {modalType === 'detail' && '📋 รายละเอียดชุมชน'}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{selectedCommunity.communityName}</p>
+                <p className="text-sm text-slate-500 mt-0.5">{selectedCommunity.communityName}</p>
               </div>
 
               <div className="p-5 space-y-4">
@@ -661,14 +661,14 @@ export default function SuperAdminFranchisePage() {
                       ['วันที่เปิดใช้งาน', selectedCommunity.activeDate ? formatDate(selectedCommunity.activeDate) : '-'],
                       ['Violations', String(selectedCommunity.violations)],
                     ].map(([k, v]) => (
-                      <div key={k} className="flex gap-2 py-1.5 border-b border-slate-100 dark:border-slate-800 last:border-0">
+                      <div key={k} className="flex gap-2 py-1.5 border-b border-white/20 last:border-0">
                         <span className="text-sm text-slate-400 min-w-[140px]">{k}</span>
-                        <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{v}</span>
+                        <span className="text-sm font-semibold text-slate-800">{v}</span>
                       </div>
                     ))}
                     {selectedCommunity.notes && (
-                      <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3">
-                        <p className="text-sm text-red-700 dark:text-red-400">{selectedCommunity.notes}</p>
+                      <div className="bg-red-50 rounded-xl p-3">
+                        <p className="text-sm text-red-700">{selectedCommunity.notes}</p>
                       </div>
                     )}
                   </div>
@@ -677,16 +677,16 @@ export default function SuperAdminFranchisePage() {
                 {/* Contact modal */}
                 {modalType === 'contact' && (
                   <div className="space-y-3">
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 space-y-2">
-                      <p className="font-bold text-blue-800 dark:text-blue-300 text-base">{selectedCommunity.managerName}</p>
-                      <p className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-400"><Phone className="h-4 w-4" />{selectedCommunity.managerPhone}</p>
-                      <p className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-400"><Mail className="h-4 w-4" />{selectedCommunity.managerEmail}</p>
+                    <div className="glass-sm rounded-xl p-4 space-y-2">
+                      <p className="font-bold text-blue-800 text-base">{selectedCommunity.managerName}</p>
+                      <p className="flex items-center gap-2 text-sm text-blue-700"><Phone className="h-4 w-4" />{selectedCommunity.managerPhone}</p>
+                      <p className="flex items-center gap-2 text-sm text-blue-700"><Mail className="h-4 w-4" />{selectedCommunity.managerEmail}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">ส่งข้อความ (บันทึก Log)</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1.5">ส่งข้อความ (บันทึก Log)</label>
                       <textarea value={actionNote} onChange={e => setActionNote(e.target.value)}
                         rows={3} placeholder="พิมพ์ข้อความที่ต้องการส่ง..."
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
+                        className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
                     </div>
                   </div>
                 )}
@@ -694,31 +694,31 @@ export default function SuperAdminFranchisePage() {
                 {/* Approve modal — with location assignment */}
                 {modalType === 'approve' && (
                   <div className="space-y-4">
-                    <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4">
-                      <p className="text-base text-green-800 dark:text-green-300 font-bold mb-1">
+                    <div className="bg-green-50 rounded-xl p-4">
+                      <p className="text-base text-green-800 font-bold mb-1">
                         Approve ผู้จัดการ: <span className="font-extrabold">{selectedCommunity.managerName}</span>
                       </p>
-                      <p className="text-sm text-green-700 dark:text-green-400">
+                      <p className="text-sm text-green-700">
                         หลัง Approve ผู้จัดการจะได้รับ Community Admin Dashboard
                         เพื่อ<strong>สร้างตลาดชุมชน</strong>ในพื้นที่ที่กำหนดด้านล่าง และ<strong>Approve Provider</strong>เอง
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                      <label className="block text-sm font-bold text-slate-700 mb-1.5">
                         📍 กำหนดโลเคชั่นที่อนุมัติ *
                       </label>
                       <input value={assignedLocation} onChange={e => setAssignedLocation(e.target.value)}
                         placeholder="เช่น หมู่บ้านศรีนคร บางแค กรุงเทพฯ / รอบหมู่บ้าน รัศมี 500m"
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                        className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30" />
                       <p className="text-xs text-slate-400 mt-1">ผู้จัดการจะสร้างตลาดในพื้นที่นี้เท่านั้น</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">ช่วงทดลองฟรี (เดือน)</label>
+                        <label className="block text-sm font-bold text-slate-700 mb-1.5">ช่วงทดลองฟรี (เดือน)</label>
                         <select value={trialMonths} onChange={e => setTrialMonths(e.target.value)}
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                          className="w-full px-3 py-2.5 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30">
                           <option value="1">1 เดือน</option>
                           <option value="2">2 เดือน</option>
                           <option value="3">3 เดือน (แนะนำ)</option>
@@ -727,10 +727,10 @@ export default function SuperAdminFranchisePage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">หมายเหตุ</label>
+                        <label className="block text-sm font-bold text-slate-700 mb-1.5">หมายเหตุ</label>
                         <input value={actionNote} onChange={e => setActionNote(e.target.value)}
                           placeholder="เพิ่มเติม (optional)"
-                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                          className="w-full px-3 py-2.5 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30" />
                       </div>
                     </div>
                   </div>
@@ -739,16 +739,16 @@ export default function SuperAdminFranchisePage() {
                 {/* Suspend / Reject modal */}
                 {(modalType === 'suspend' || modalType === 'reject') && (
                   <div className="space-y-3">
-                    <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4">
-                      <p className="text-base text-red-800 dark:text-red-300 font-semibold">
+                    <div className="bg-red-50 rounded-xl p-4">
+                      <p className="text-base text-red-800 font-semibold">
                         {modalType === 'suspend' ? 'ระงับการดำเนินงาน' : 'ปฏิเสธใบสมัคร'} — {selectedCommunity.communityName}
                       </p>
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">เหตุผล *</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1.5">เหตุผล *</label>
                       <textarea value={actionNote} onChange={e => setActionNote(e.target.value)}
                         rows={3} placeholder="ระบุเหตุผลให้ชัดเจน เพื่อบันทึกประวัติและแจ้งผู้จัดการ..."
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
+                        className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
                     </div>
                   </div>
                 )}
@@ -756,9 +756,9 @@ export default function SuperAdminFranchisePage() {
                 {/* Takeover modal */}
                 {modalType === 'takeover' && (
                   <div className="space-y-3">
-                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
-                      <p className="text-base font-bold text-purple-800 dark:text-purple-300 mb-1">⚠️ การ Takeover จะ:</p>
-                      <ul className="text-sm text-purple-700 dark:text-purple-400 space-y-1 list-disc list-inside">
+                    <div className="bg-purple-50 border rounded-xl p-4">
+                      <p className="text-base font-bold text-purple-800 mb-1">⚠️ การ Takeover จะ:</p>
+                      <ul className="text-sm text-purple-700 space-y-1 list-disc list-inside">
                         <li>ถอดสิทธิ์ผู้จัดการคนปัจจุบันทันที</li>
                         <li>Super Admin เข้ามาดูแลแทนชั่วคราว</li>
                         <li>ตลาดชุมชนยังเปิดให้ลูกค้าใช้งานได้ปกติ</li>
@@ -766,10 +766,10 @@ export default function SuperAdminFranchisePage() {
                       </ul>
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">เหตุผล Takeover *</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1.5">เหตุผล Takeover *</label>
                       <textarea value={actionNote} onChange={e => setActionNote(e.target.value)}
                         rows={3} placeholder="ละเอียดเหตุผล เช่น ละเมิดกฎข้อ 3.2 เรื่องการโกง Commission..."
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
+                        className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
                     </div>
                   </div>
                 )}
@@ -777,41 +777,41 @@ export default function SuperAdminFranchisePage() {
                 {/* Transfer modal */}
                 {modalType === 'transfer' && (
                   <div className="space-y-3">
-                    <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-4">
-                      <p className="text-base text-indigo-800 dark:text-indigo-300 font-semibold">
+                    <div className="bg-indigo-50 rounded-xl p-4">
+                      <p className="text-base text-indigo-800 font-semibold">
                         โอนย้ายชุมชน <strong>{selectedCommunity.communityName}</strong> ให้ผู้จัดการคนใหม่
                       </p>
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">อีเมลหรือรหัสผู้จัดการคนใหม่ *</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1.5">อีเมลหรือรหัสผู้จัดการคนใหม่ *</label>
                       <input value={transferTo} onChange={e => setTransferTo(e.target.value)}
                         placeholder="email@domain.com หรือ User ID"
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+                        className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30" />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">เหตุผลการโอน *</label>
+                      <label className="block text-sm font-bold text-slate-700 mb-1.5">เหตุผลการโอน *</label>
                       <textarea value={actionNote} onChange={e => setActionNote(e.target.value)}
                         rows={2} placeholder="เช่น ผู้จัดการเดิมขอลาออก ส่งมอบให้รองผู้จัดการ..."
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none" />
+                        className="w-full px-4 py-3 rounded-xl border glass border-white/20 text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
                     </div>
                   </div>
                 )}
 
                 {/* Resume modal */}
                 {modalType === 'resume' && (
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4">
-                    <p className="text-base text-green-800 dark:text-green-300 font-semibold">
+                  <div className="bg-green-50 rounded-xl p-4">
+                    <p className="text-base text-green-800 font-semibold">
                       เปิดใช้งาน <strong>{selectedCommunity.communityName}</strong> อีกครั้ง
                     </p>
-                    <p className="text-sm text-green-600 dark:text-green-400 mt-1">ตลาดชุมชนจะกลับมาใช้งานได้ทันที</p>
+                    <p className="text-sm text-green-600 mt-1">ตลาดชุมชนจะกลับมาใช้งานได้ทันที</p>
                   </div>
                 )}
               </div>
 
               {/* Modal footer */}
-              <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+              <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-white/20 glass-sm/50">
                 <button onClick={() => setModalType(null)}
-                  className="px-5 py-2.5 rounded-xl text-base font-semibold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  className="px-5 py-2.5 rounded-xl text-base font-semibold text-slate-600 border border-slate-200 hover:glass-sm transition-colors">
                   ยกเลิก
                 </button>
                 {modalType !== 'detail' && (
@@ -823,7 +823,7 @@ export default function SuperAdminFranchisePage() {
                       modalType === 'suspend' || modalType === 'reject' ? 'bg-red-600 hover:bg-red-700' :
                       modalType === 'takeover' ? 'bg-purple-600 hover:bg-purple-700' :
                       modalType === 'transfer' ? 'bg-indigo-600 hover:bg-indigo-700' :
-                      'bg-blue-600 hover:bg-blue-700'
+                      'bg-primary hover:bg-primary/90'
                     }`}>
                     {modalType === 'approve' && '✅ Approve'}
                     {modalType === 'reject' && '❌ ปฏิเสธ'}
