@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { MapPin, Star, Shield, Clock, Phone, Calendar, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart } from 'lucide-react'
+import { MapPin, Star, Shield, Clock, Phone, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart, Minus, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useState, lazy, Suspense } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
@@ -96,11 +96,12 @@ export default function ListingDetailClient({ id }: { id: string }) {
   const t = useT()
   const { user } = useAuthStore()
   const addItem = useCartStore((s) => s.addItem)
-  const [selectedDate, setSelectedDate] = useState('')
   const [qty, setQty] = useState(1)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
   const [wishlisted, setWishlisted] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
+  const [menuQty, setMenuQty] = useState<Record<string, number>>({})
+  const [menuAddedToCart, setMenuAddedToCart] = useState<Record<string, boolean>>({})
   const listing = getListingById(id)
 
   if (!listing) {
@@ -214,38 +215,101 @@ export default function ListingDetailClient({ id }: { id: string }) {
               <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">{listing.description}</p>
             </motion.div>
 
-            {/* Food stock / menu selector — only show if listing has menuStock */}
+            {/* Menu / Service items — with image, stock, per-item cart */}
             {listing.menuStock && listing.menuStock.length > 0 && (
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
               className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <Package className="h-5 w-5 text-blue-500" />
-                <h2 className="font-extrabold text-lg text-slate-900 dark:text-white">เมนูและสต็อกคงเหลือ</h2>
+                <h2 className="font-extrabold text-lg text-slate-900 dark:text-white">เมนู / รายการบริการ</h2>
+                <span className="text-xs text-slate-400 ml-1">({listing.menuStock.length} รายการ)</span>
               </div>
-              <div className="space-y-3">
-                {listing.menuStock.map(m => (
-                  <div key={m.name}
-                    onClick={() => m.stock > 0 && setSelectedMenu(m.name === selectedMenu ? null : m.name)}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      m.stock === 0 ? 'opacity-50 cursor-not-allowed border-slate-100 dark:border-slate-700' :
-                      selectedMenu === m.name
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 cursor-pointer'
-                        : 'border-slate-200 dark:border-slate-700 hover:border-blue-300 cursor-pointer'
-                    }`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-base text-slate-800 dark:text-slate-100">{m.name}</span>
-                      <span className="font-extrabold text-base text-blue-600">฿{m.price}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {listing.menuStock.map(m => {
+                  const mQty = menuQty[m.name] ?? 1
+                  const isAdded = menuAddedToCart[m.name]
+                  return (
+                    <div key={m.name}
+                      className={`rounded-xl border-2 transition-all overflow-hidden ${
+                        m.stock === 0
+                          ? 'opacity-60 border-slate-100 dark:border-slate-700'
+                          : selectedMenu === m.name
+                            ? 'border-blue-500 dark:border-blue-400'
+                            : 'border-slate-200 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-700'
+                      }`}>
+                      {/* Item image */}
+                      <div
+                        onClick={() => m.stock > 0 && setSelectedMenu(m.name === selectedMenu ? null : m.name)}
+                        className={`w-full h-28 flex items-center justify-center text-6xl select-none ${
+                          m.stock === 0
+                            ? 'cursor-not-allowed bg-slate-50 dark:bg-slate-800'
+                            : 'cursor-pointer bg-gradient-to-br from-blue-50 to-amber-50 dark:from-slate-800 dark:to-slate-700 hover:from-blue-100'
+                        }`}>
+                        {listing.image}
+                      </div>
+                      {/* Info + cart */}
+                      <div className="p-3">
+                        <div className="flex items-start justify-between gap-1 mb-2">
+                          <span className="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight">{m.name}</span>
+                          <span className="font-extrabold text-sm text-blue-600 whitespace-nowrap">฿{m.price}</span>
+                        </div>
+                        <StockBar stock={m.stock} max={m.max} />
+                        {m.stock === 0 ? (
+                          <p className="text-xs text-red-500 font-bold mt-2">หมดแล้ว</p>
+                        ) : (
+                          <div className="flex items-center justify-between mt-3 gap-2">
+                            {/* Qty */}
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => setMenuQty(prev => ({ ...prev, [m.name]: Math.max(1, (prev[m.name] ?? 1) - 1) }))}
+                                className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                <Minus className="h-3 w-3 text-slate-600 dark:text-slate-300" />
+                              </button>
+                              <span className="text-sm font-bold w-5 text-center text-slate-800 dark:text-slate-100">{mQty}</span>
+                              <button
+                                onClick={() => setMenuQty(prev => ({ ...prev, [m.name]: Math.min(m.stock, (prev[m.name] ?? 1) + 1) }))}
+                                className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                <Plus className="h-3 w-3 text-slate-600 dark:text-slate-300" />
+                              </button>
+                            </div>
+                            {/* Add to cart */}
+                            <button
+                              onClick={() => {
+                                addItem({
+                                  listingId: listing.id,
+                                  listingTitle: listing.title,
+                                  listingImage: listing.image,
+                                  provider: listing.provider,
+                                  providerId: listing.id,
+                                  providerAvatar: listing.providerAvatar,
+                                  community: listing.community,
+                                  menuName: m.name,
+                                  price: m.price,
+                                  unit: listing.unit,
+                                  qty: mQty,
+                                })
+                                setMenuAddedToCart(prev => ({ ...prev, [m.name]: true }))
+                                setTimeout(() => setMenuAddedToCart(prev => ({ ...prev, [m.name]: false })), 2000)
+                              }}
+                              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                isAdded
+                                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-700'
+                                  : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-600 hover:bg-amber-100 dark:hover:bg-amber-900/40'
+                              }`}>
+                              {isAdded
+                                ? <><CheckCircle className="h-3.5 w-3.5" /> เพิ่มแล้ว</>
+                                : <><ShoppingCart className="h-3.5 w-3.5" /> ใส่ตะกร้า</>}
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <StockBar stock={m.stock} max={m.max} />
-                    {m.stock === 0 && (
-                      <p className="text-sm text-red-500 font-bold mt-1">หมดแล้ว</p>
-                    )}
-                  </div>
-                ))}
+                  )
+                })}
               </div>
               {selectedMenu && (
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-semibold mt-3">
-                  ✓ เลือก: {selectedMenu} — ราคา ฿{effectivePrice}/{listing.unit}
+                <p className="text-sm text-blue-600 dark:text-blue-400 font-semibold mt-4 flex items-center gap-1.5">
+                  <CheckCircle className="h-4 w-4" /> เลือก: {selectedMenu} — ฿{effectivePrice}/{listing.unit}
                 </p>
               )}
             </motion.div>
@@ -336,18 +400,10 @@ export default function ListingDetailClient({ id }: { id: string }) {
                 <ProviderStatusBadge status={listing.status} />
               </div>
 
-              <div className="space-y-4 mb-5">
-                <div>
-                  <label className="text-sm font-bold text-slate-600 dark:text-slate-300 block mb-1.5">
-                    <Calendar className="h-4 w-4 inline mr-1" />{t.booking.date}
-                  </label>
-                  <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-base bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-                </div>
-
+              <div className="space-y-3 mb-5">
                 {selectedMenu && (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl px-3 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300">
-                    เมนู: {selectedMenu}
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl px-3 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+                    <CheckCircle className="h-3.5 w-3.5" /> เมนู: {selectedMenu}
                   </div>
                 )}
 

@@ -8,6 +8,7 @@ import { MapPin, Users, Calendar, ChevronRight, Search, Star, Navigation, Loader
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { useCommunities, type MockCommunity } from '@/hooks/useCommunities'
 
 const CommunityMap = dynamic(
   () => import('@/components/community-map').then(m => ({ default: m.CommunityMap })),
@@ -22,22 +23,6 @@ const fadeUp = {
   }),
 }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
-
-/* ── Mock data with coordinates ── */
-type Community = {
-  id: string; name: string; area: string; members: number; providers: number
-  rating: number; emoji: string; tags: string[]; trial: boolean; trialEnd: string | null
-  lat: number; lng: number; serviceRadius: number  // km — radius ที่ผู้ให้บริการในชุมชนนี้ cover
-}
-
-const MOCK_COMMUNITIES: Community[] = [
-  { id: '1', name: 'หมู่บ้านศรีนคร',      area: 'บางแค, กรุงเทพฯ',    members: 248, providers: 34,  rating: 4.8, emoji: '🏘️', tags: ['อาหาร', 'งานช่าง', 'งานบ้าน'],            trial: true,  trialEnd: '30 เม.ย. 2569', lat: 13.7200, lng: 100.4200, serviceRadius: 5  },
-  { id: '2', name: 'คอนโด The Base',       area: 'ลาดพร้าว, กรุงเทพฯ', members: 512, providers: 67,  rating: 4.9, emoji: '🏙️', tags: ['อาหาร', 'ติวเตอร์', 'สุขภาพ'],           trial: true,  trialEnd: '15 มี.ค. 2569', lat: 13.8150, lng: 100.5700, serviceRadius: 3  },
-  { id: '3', name: 'ชุมชนเมืองทอง',        area: 'นนทบุรี',            members: 890, providers: 120, rating: 4.7, emoji: '🌳', tags: ['อาหาร', 'งานช่าง', 'เกษตร'],            trial: false, trialEnd: null,            lat: 13.8800, lng: 100.5400, serviceRadius: 8  },
-  { id: '4', name: 'หมู่บ้านกรีนวิลล์',    area: 'สมุทรปราการ',        members: 156, providers: 22,  rating: 4.6, emoji: '🌿', tags: ['งานบ้าน', 'ดูแลผู้สูงอายุ'],             trial: true,  trialEnd: '01 มิ.ย. 2569', lat: 13.5990, lng: 100.6100, serviceRadius: 4  },
-  { id: '5', name: 'เมืองเชียงใหม่ซิตี้',  area: 'เมือง, เชียงใหม่',   members: 340, providers: 55,  rating: 4.8, emoji: '⛰️', tags: ['อาหาร', 'สินค้าทำมือ', 'ท่องเที่ยว'], trial: false, trialEnd: null,            lat: 18.7900, lng: 98.9800,  serviceRadius: 10 },
-  { id: '6', name: 'ชุมชนริมน้ำ',           area: 'ปทุมธานี',           members: 203, providers: 31,  rating: 4.5, emoji: '🌊', tags: ['เกษตร', 'อาหาร', 'Community Sharing'], trial: true,  trialEnd: '20 พ.ค. 2569', lat: 14.0200, lng: 100.5300, serviceRadius: 6  },
-]
 
 const RADIUS_OPTIONS = [3, 5, 10, 20, 50]
 
@@ -59,11 +44,12 @@ function fmtDist(km: number) {
 type GeoState = 'idle' | 'loading' | 'granted' | 'denied' | 'unavailable'
 
 export default function CommunitiesPage() {
-  const [search, setSearch]           = useState('')
-  const [geoState, setGeoState]       = useState<GeoState>('idle')
-  const [userPos, setUserPos]         = useState<{ lat: number; lng: number } | null>(null)
-  const [searchRadius, setSearchRadius] = useState(10)   // km
-  const [nearbyOnly, setNearbyOnly]   = useState(false)
+  const { data: communities = [], isLoading, isError } = useCommunities()
+  const [search, setSearch]             = useState('')
+  const [geoState, setGeoState]         = useState<GeoState>('idle')
+  const [userPos, setUserPos]           = useState<{ lat: number; lng: number } | null>(null)
+  const [searchRadius, setSearchRadius] = useState(10)
+  const [nearbyOnly, setNearbyOnly]     = useState(false)
   const [showRadiusPicker, setShowRadiusPicker] = useState(false)
 
   /* ── Geolocation ── */
@@ -88,7 +74,7 @@ export default function CommunitiesPage() {
   }, [])
 
   /* ── Filter + sort ── */
-  const withDistance = MOCK_COMMUNITIES.map((c) => ({
+  const withDistance = communities.map((c: MockCommunity) => ({
     ...c,
     distKm: userPos ? haversine(userPos.lat, userPos.lng, c.lat, c.lng) : null,
     /* within service radius = ลูกค้าอยู่ในรัศมีที่ provider ของชุมชนนี้ cover */
@@ -109,6 +95,36 @@ export default function CommunitiesPage() {
       if (nearbyOnly && a.distKm !== null && b.distKm !== null) return a.distKm - b.distKm
       return 0
     })
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-3">
+            <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
+            <p className="text-slate-500 font-medium">กำลังโหลดชุมชน...</p>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  if (isError) {
+    return (
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-3">
+            <AlertCircle className="h-10 w-10 text-red-400 mx-auto" />
+            <p className="text-slate-600 font-medium">โหลดชุมชนไม่ได้ กรุณาลองใหม่</p>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen overflow-x-hidden">

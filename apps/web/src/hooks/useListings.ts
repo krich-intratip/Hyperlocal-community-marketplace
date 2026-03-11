@@ -67,7 +67,8 @@ async function fetchListings(filters: ListingFilters = {}): Promise<MockListing[
 async function fetchListingById(id: string): Promise<MockListing | null> {
   if (USE_REAL_API) {
     const res = await listingsApi.get(id)
-    return res.data.data as unknown as MockListing
+    // API returns the Listing entity directly (not paginated)
+    return res.data as unknown as MockListing
   }
   await new Promise((r) => setTimeout(r, 100))
   return getListingById(id) ?? null
