@@ -38,7 +38,7 @@ export class TaxConfig {
 
   @Column({
     name: 'tax_type',
-    type: 'enum',
+    type: 'simple-enum',
     enum: TaxType,
   })
   taxType: TaxType
@@ -51,7 +51,7 @@ export class TaxConfig {
   /** ใช้กับยอดส่วนไหนของ booking */
   @Column({
     name: 'apply_to',
-    type: 'enum',
+    type: 'simple-enum',
     enum: TaxApplyTo,
     default: TaxApplyTo.AFTER_DISCOUNT,
   })
@@ -65,7 +65,7 @@ export class TaxConfig {
    */
   @Column({
     name: 'borne_by',
-    type: 'enum',
+    type: 'simple-enum',
     enum: ['CUSTOMER', 'PROVIDER', 'PLATFORM'],
     default: 'CUSTOMER',
   })
@@ -105,17 +105,17 @@ export class TaxConfig {
   @Column({ name: 'is_active', default: true })
   isActive: boolean
 
-  @Column({ name: 'effective_from', type: 'timestamptz' })
+  @Column({ name: 'effective_from', type: 'datetime' })
   effectiveFrom: Date
 
-  @Column({ name: 'effective_to', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'effective_to', nullable: true, type: 'datetime' })
   effectiveTo: Date | null             // null = ไม่มีวันหมดอายุ
 
   /* ── Audit ── */
   @Column({ name: 'created_by_sa_id' })
   createdBySaId: string               // Super Admin userId
 
-  @Column({ name: 'last_updated_by_sa_id', nullable: true })
+  @Column({ name: 'last_updated_by_sa_id', nullable: true , type: 'text' })
   lastUpdatedBySaId: string | null
 
   @Column({ nullable: true, type: 'text' })

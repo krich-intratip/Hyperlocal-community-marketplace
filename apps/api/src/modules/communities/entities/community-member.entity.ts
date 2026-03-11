@@ -21,7 +21,7 @@ export class CommunityMember {
   @JoinColumn({ name: 'community_id' })
   community: Community
 
-  @Column({ type: 'enum', enum: MembershipRole, default: MembershipRole.MEMBER })
+  @Column({ type: 'simple-enum', enum: MembershipRole, default: MembershipRole.MEMBER })
   role: MembershipRole
 
   /**
@@ -38,7 +38,7 @@ export class CommunityMember {
    */
   @Column({
     name: 'approval_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: MemberApprovalStatus,
     default: MemberApprovalStatus.PENDING,
   })
@@ -48,7 +48,7 @@ export class CommunityMember {
   @Column({ name: 'approved_by', nullable: true })
   approvedBy: string
 
-  @Column({ name: 'approved_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'approved_at', nullable: true, type: 'datetime' })
   approvedAt: Date
 
   @CreateDateColumn({ name: 'joined_at' })

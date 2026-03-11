@@ -29,14 +29,14 @@ export class Promotion {
 
   /* ── Ownership ── */
   /** Provider who created this promotion (null if created by Community Admin) */
-  @Column({ name: 'provider_id', nullable: true })
+  @Column({ name: 'provider_id', nullable: true , type: 'text' })
   providerId: string | null
 
   @Column({ name: 'community_id' })
   communityId: string
 
   /** CA who approved (and optionally broadcast) this promotion */
-  @Column({ name: 'approved_by_ca_id', nullable: true })
+  @Column({ name: 'approved_by_ca_id', nullable: true , type: 'text' })
   approvedByCaId: string | null
 
   /* ── Promotion details ── */
@@ -46,12 +46,12 @@ export class Promotion {
   @Column({ nullable: true, type: 'text' })
   description: string | null
 
-  @Column({ name: 'banner_image_url', nullable: true })
+  @Column({ name: 'banner_image_url', nullable: true , type: 'text' })
   bannerImageUrl: string | null       // ภาพสำหรับ broadcast card
 
   @Column({
     name: 'promotion_type',
-    type: 'enum',
+    type: 'simple-enum',
     enum: PromotionType,
   })
   promotionType: PromotionType
@@ -80,7 +80,7 @@ export class Promotion {
   minOrderAmount: number | null
 
   /* ── Coupon code ── */
-  @Column({ name: 'coupon_code', nullable: true, unique: true })
+  @Column({ name: 'coupon_code', nullable: true, unique: true , type: 'text' })
   couponCode: string | null           // เช่น "SUMMER30"
 
   /* ── Scope ── */
@@ -99,10 +99,10 @@ export class Promotion {
   applicableListingIds: string | null
 
   /* ── Validity ── */
-  @Column({ name: 'valid_from', type: 'timestamptz' })
+  @Column({ name: 'valid_from', type: 'datetime' })
   validFrom: Date
 
-  @Column({ name: 'valid_to', type: 'timestamptz' })
+  @Column({ name: 'valid_to', type: 'datetime' })
   validTo: Date
 
   /** จำนวนครั้งสูงสุดที่ใช้ได้ทั้งหมด (null = ไม่จำกัด) */
@@ -120,7 +120,7 @@ export class Promotion {
   /* ── Status ── */
   @Column({
     name: 'promotion_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: PromotionStatus,
     default: PromotionStatus.DRAFT,
   })
@@ -129,7 +129,7 @@ export class Promotion {
   @Column({ name: 'rejection_reason', nullable: true, type: 'text' })
   rejectionReason: string | null
 
-  @Column({ name: 'approved_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'approved_at', nullable: true, type: 'datetime' })
   approvedAt: Date | null
 
   /* ── Broadcast / Landing page ── */
@@ -139,7 +139,7 @@ export class Promotion {
   @Column({ name: 'is_broadcast', default: false })
   isBroadcast: boolean
 
-  @Column({ name: 'broadcast_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'broadcast_at', nullable: true, type: 'datetime' })
   broadcastAt: Date | null
 
   /** ลำดับการแสดงผลใน landing page (น้อย = แสดงก่อน) */

@@ -28,7 +28,7 @@ export class CommunityAdminGrant {
   @Column({ name: 'admin_user_id' })
   adminUserId: string
 
-  @Column({ name: 'community_id', nullable: true })
+  @Column({ name: 'community_id', nullable: true , type: 'text' })
   communityId: string | null     // null = requested but community not created yet
 
   @Column({ name: 'requested_location', nullable: true, type: 'text' })
@@ -39,16 +39,16 @@ export class CommunityAdminGrant {
 
   @Column({
     name: 'grant_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: CommunityAdminGrantStatus,
     default: CommunityAdminGrantStatus.PENDING,
   })
   grantStatus: CommunityAdminGrantStatus
 
-  @Column({ name: 'reviewed_by', nullable: true })
+  @Column({ name: 'reviewed_by', nullable: true , type: 'text' })
   reviewedBy: string | null      // Super Admin userId who approved/rejected
 
-  @Column({ name: 'reviewed_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'reviewed_at', nullable: true, type: 'datetime' })
   reviewedAt: Date | null
 
   @Column({ name: 'revoke_reason', nullable: true, type: 'text' })

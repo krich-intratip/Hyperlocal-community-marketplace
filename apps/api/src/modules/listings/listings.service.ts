@@ -29,13 +29,19 @@ export class ListingsService {
     const page = safePage
     const limit = safeLimit
     const cacheKey = `listings:search:${communityId ?? ''}:${category ?? ''}:${keyword ?? ''}:${page}:${limit}`
-    const cached = await this.cache.get<[Listing[], number]>(cacheKey)
+    const cached = await this.cache.get<{ data: Listing[]; total: number; page: number; limit: number }>(cacheKey)
     if (cached) return cached
     const where: any = { status: ListingStatus.ACTIVE }
     if (communityId) where.communityId = communityId
     if (category) where.category = category
     if (keyword) where.title = ILike(`%${keyword}%`)
-    const result = await this.listingRepo.findAndCount({ where, take: limit, skip: (page - 1) * limit })
+    const [data, total] = await this.listingRepo.findAndCount({
+      where,
+      take: limit,
+      skip: (page - 1) * limit,
+      order: { createdAt: 'DESC' },
+    })
+    const result = { data, total, page, limit }
     await this.cache.set(cacheKey, result, LISTINGS_TTL)
     return result
   }

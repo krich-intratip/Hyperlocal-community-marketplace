@@ -3,6 +3,7 @@ import {
   CreateDateColumn, UpdateDateColumn, Index,
 } from 'typeorm'
 import { TrialStatus } from '@chm/shared-types'
+import { jsonCol } from '../../../common/db-types'
 
 @Entity('communities')
 export class Community {
@@ -12,7 +13,6 @@ export class Community {
   @Column()
   name: string
 
-  @Index({ unique: true })
   @Column({ unique: true })
   slug: string
 
@@ -22,7 +22,6 @@ export class Community {
    * Used to build invite links: /join/{inviteCode}
    * Non-expiring as long as the admin's franchise is active.
    */
-  @Index({ unique: true })
   @Column({ name: 'invite_code', unique: true, nullable: true })
   inviteCode: string
 
@@ -46,13 +45,13 @@ export class Community {
   @Column({ name: 'is_active', default: true })
   isActive: boolean
 
-  @Column({ name: 'trial_start_date', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'trial_start_date', nullable: true, type: 'datetime' })
   trialStartDate: Date
 
-  @Column({ name: 'trial_end_date', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'trial_end_date', nullable: true, type: 'datetime' })
   trialEndDate: Date
 
-  @Column({ name: 'trial_status', type: 'enum', enum: TrialStatus, default: TrialStatus.NOT_STARTED })
+  @Column({ name: 'trial_status', type: 'simple-enum', enum: TrialStatus, default: TrialStatus.NOT_STARTED })
   trialStatus: TrialStatus
 
   @Column({ name: 'commission_rate', type: 'decimal', precision: 5, scale: 2, default: 5.00 })
@@ -60,6 +59,17 @@ export class Community {
 
   @Column({ name: 'revenue_share_rate', type: 'decimal', precision: 5, scale: 2, default: 40.00 })
   revenueShareRate: number
+
+  @Column({ name: 'plan_type', default: 'STARTER' })
+  planType: string
+
+  /** Zone radius, service hours, SLA minutes, etc. */
+  @Column({ name: 'settings', type: jsonCol(), nullable: true })
+  settings: object | null
+
+  /** Logo URL, primary color, custom domain, etc. */
+  @Column({ name: 'branding', type: jsonCol(), nullable: true })
+  branding: object | null
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

@@ -1,6 +1,6 @@
 {
   "name": "community-hyper-marketplace",
-  "version": "0.4.2",
+  "version": "0.5.6",
   "private": true,
   "workspaces": [
     "apps/*",

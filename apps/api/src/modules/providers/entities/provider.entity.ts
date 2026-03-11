@@ -5,17 +5,17 @@ import {
 import { VerificationStatus, ProviderStatus } from '@chm/shared-types'
 
 /**
- * Business rule: 1 user account = 1 provider profile = 1 community.
- * If a provider wants to operate in multiple communities they must use separate accounts.
- * Enforced at DB level via UNIQUE(user_id) and at service level via ConflictException.
+ * Store profile entity. 1 user can own multiple store profiles across communities.
+ * communityId = the store's main market (first/primary branch).
+ * Additional markets are tracked via StoreMarket junction table.
  */
 @Entity('providers')
 export class Provider {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Index({ unique: true })          // ← 1 account → 1 provider profile only
-  @Column({ name: 'user_id', unique: true })
+  @Index()
+  @Column({ name: 'user_id' })
   userId: string
 
   @Column({ name: 'community_id' })
@@ -35,7 +35,7 @@ export class Provider {
 
   @Column({
     name: 'verification_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: VerificationStatus,
     default: VerificationStatus.PENDING,
   })
@@ -61,13 +61,13 @@ export class Provider {
    */
   @Column({
     name: 'provider_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: ProviderStatus,
     default: ProviderStatus.ACTIVE,
   })
   providerStatus: ProviderStatus
 
-  @Column({ name: 'left_community_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'left_community_at', nullable: true, type: 'datetime' })
   leftCommunityAt: Date | null
 
   @Column({ name: 'left_reason', nullable: true, type: 'text' })
@@ -83,8 +83,11 @@ export class Provider {
   @Column({ name: 'location_lng', nullable: true, type: 'double precision' })
   locationLng: number | null
 
-  @Column({ name: 'id_card_url', nullable: true })
+  @Column({ name: 'id_card_url', nullable: true, type: 'text' })
   idCardUrl: string | null
+
+  @Column({ name: 'business_template_code', nullable: true, type: 'text' })
+  businessTemplateCode: string | null
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

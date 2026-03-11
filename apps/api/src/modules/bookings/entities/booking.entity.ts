@@ -3,6 +3,7 @@ import {
   CreateDateColumn, UpdateDateColumn, Index,
 } from 'typeorm'
 import { BookingStatus, EscrowStatus, PricingType, DeliveryStatus } from '@chm/shared-types'
+import { jsonCol } from '../../../common/db-types'
 
 /**
  * Commission impact of promotions/discounts:
@@ -59,7 +60,7 @@ export class Booking {
   communityId: string
 
   /* ── Scheduling ── */
-  @Column({ name: 'scheduled_at', type: 'timestamptz' })
+  @Column({ name: 'scheduled_at', type: 'datetime' })
   scheduledAt: Date
 
   /**
@@ -67,16 +68,16 @@ export class Booking {
    * หาก scheduledAt + 12h ผ่านไปแล้ว และ extendedDeadline ยังไม่ถึง
    * ระบบจะยังไม่ trigger no-show flow
    */
-  @Column({ name: 'extended_deadline', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'extended_deadline', nullable: true, type: 'datetime' })
   extendedDeadline: Date | null
 
-  @Column({ name: 'provider_started_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'provider_started_at', nullable: true, type: 'datetime' })
   providerStartedAt: Date | null    // เมื่อ Provider กด "เริ่มงาน"
 
-  @Column({ name: 'provider_completed_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'provider_completed_at', nullable: true, type: 'datetime' })
   providerCompletedAt: Date | null  // เมื่อ Provider กด "เสร็จงาน"
 
-  @Column({ name: 'customer_confirmed_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'customer_confirmed_at', nullable: true, type: 'datetime' })
   customerConfirmedAt: Date | null  // เมื่อลูกค้ากด "ยืนยัน" หรือ auto-release
 
   /* ── Auto-release deadline ── */
@@ -86,12 +87,12 @@ export class Booking {
    * = providerCompletedAt + 72h
    * หากมีการเปิด DISPUTED ก่อน deadline นี้ → auto-release จะถูกระงับ
    */
-  @Column({ name: 'auto_release_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'auto_release_at', nullable: true, type: 'datetime' })
   autoReleaseAt: Date | null
 
   /* ── Booking state ── */
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: BookingStatus,
     default: BookingStatus.PENDING_PAYMENT,
   })
@@ -109,7 +110,7 @@ export class Booking {
   /* ── Pricing ── */
   @Column({
     name: 'pricing_type',
-    type: 'enum',
+    type: 'simple-enum',
     enum: PricingType,
     default: PricingType.FIXED,
   })
@@ -132,10 +133,10 @@ export class Booking {
   @Column({ name: 'adjusted_reason', nullable: true, type: 'text' })
   adjustedReason: string | null
 
-  @Column({ name: 'price_adjustment_approved_by', nullable: true })
+  @Column({ name: 'price_adjustment_approved_by', nullable: true , type: 'text' })
   priceAdjustmentApprovedBy: string | null  // CA userId
 
-  @Column({ name: 'price_adjustment_approved_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'price_adjustment_approved_at', nullable: true, type: 'datetime' })
   priceAdjustmentApprovedAt: Date | null
 
   /**
@@ -149,7 +150,7 @@ export class Booking {
   /**
    * Promotion ID ที่ใช้ใน booking นี้ (nullable = ไม่มีส่วนลด)
    */
-  @Column({ name: 'promotion_id', nullable: true })
+  @Column({ name: 'promotion_id', nullable: true , type: 'text' })
   promotionId: string | null
 
   /** จำนวนส่วนลดที่ได้รับจริง (คำนวณ ณ checkout) */
@@ -169,7 +170,7 @@ export class Booking {
    * รูปแบบ: Array<{ taxCode, taxName, rate, applyTo, borneBy, isInclusive, amount }>
    * Frozen at creation — ไม่เปลี่ยนแม้ SA จะอัพเดต rate ภายหลัง
    */
-  @Column({ name: 'tax_snapshot', nullable: true, type: 'jsonb' })
+  @Column({ name: 'tax_snapshot', nullable: true, type: jsonCol() })
   taxSnapshot: Record<string, unknown>[] | null
 
   /** ภาษีรวมทั้งหมดที่ลูกค้าจ่าย (VAT inclusive หรือ exclusive ตาม config) */
@@ -201,19 +202,19 @@ export class Booking {
   /* ── Escrow / Payment ── */
   @Column({
     name: 'escrow_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: EscrowStatus,
     default: EscrowStatus.PENDING,
   })
   escrowStatus: EscrowStatus
 
-  @Column({ name: 'escrow_held_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'escrow_held_at', nullable: true, type: 'datetime' })
   escrowHeldAt: Date | null          // เมื่อเงิน hold
 
-  @Column({ name: 'escrow_released_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'escrow_released_at', nullable: true, type: 'datetime' })
   escrowReleasedAt: Date | null      // เมื่อโอนให้ Provider
 
-  @Column({ name: 'escrow_refunded_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'escrow_refunded_at', nullable: true, type: 'datetime' })
   escrowRefundedAt: Date | null      // เมื่อคืนเงินลูกค้า
 
   /** จำนวนเงินที่คืน (อาจน้อยกว่า quotedAmount ถ้า PARTIAL_REFUND) */
@@ -231,15 +232,15 @@ export class Booking {
   shippingAmount: number
 
   /** FK to ShippingProvider — which logistics carrier was used */
-  @Column({ name: 'shipping_provider_id', nullable: true })
+  @Column({ name: 'shipping_provider_id', nullable: true , type: 'text' })
   shippingProviderId: string | null
 
-  @Column({ name: 'tracking_number', nullable: true })
+  @Column({ name: 'tracking_number', nullable: true , type: 'text' })
   trackingNumber: string | null
 
   @Column({
     name: 'delivery_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: DeliveryStatus,
     default: DeliveryStatus.NOT_APPLICABLE,
   })
@@ -250,11 +251,11 @@ export class Booking {
   isCrossCommunity: boolean
 
   /** Community of the provider (origin) — for cross-community logistics routing */
-  @Column({ name: 'origin_community_id', nullable: true })
+  @Column({ name: 'origin_community_id', nullable: true , type: 'text' })
   originCommunityId: string | null
 
   /** Community of the customer (destination) */
-  @Column({ name: 'destination_community_id', nullable: true })
+  @Column({ name: 'destination_community_id', nullable: true , type: 'text' })
   destinationCommunityId: string | null
 
   /* ── Trust / Rating impact ── */
@@ -269,7 +270,7 @@ export class Booking {
   trustDeductionAmount: number | null
 
   /* ── Ban record ── */
-  @Column({ name: 'banned_by', nullable: true })
+  @Column({ name: 'banned_by', nullable: true , type: 'text' })
   bannedBy: string | null            // Super Admin userId ที่กด ban
 
   @Column({ name: 'ban_reason', nullable: true, type: 'text' })

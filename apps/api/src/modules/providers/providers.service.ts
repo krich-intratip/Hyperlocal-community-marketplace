@@ -68,6 +68,12 @@ export class ProvidersService {
     return this.providerRepo.save(provider)
   }
 
+  async findAll(params: { communityId?: string } = {}) {
+    const where: Record<string, unknown> = { verificationStatus: VerificationStatus.APPROVED, isActive: true }
+    if (params.communityId) where['communityId'] = params.communityId
+    return this.providerRepo.find({ where, order: { createdAt: 'DESC' } })
+  }
+
   async findMyProfile(userId: string) {
     return this.providerRepo.findOne({ where: { userId } })
   }

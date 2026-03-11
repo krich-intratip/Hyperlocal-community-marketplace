@@ -25,7 +25,6 @@ export class BookingDispute {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Index()
   @Column({ name: 'booking_id' })
   bookingId: string
 
@@ -37,7 +36,7 @@ export class BookingDispute {
   providerId: string
 
   /** Community Admin ที่รับผิดชอบ community นี้ */
-  @Column({ name: 'community_admin_id', nullable: true })
+  @Column({ name: 'community_admin_id', nullable: true , type: 'text' })
   communityAdminId: string | null
 
   /* ── Dispute details ── */
@@ -56,16 +55,16 @@ export class BookingDispute {
   /* ── Status ── */
   @Column({
     name: 'dispute_status',
-    type: 'enum',
+    type: 'simple-enum',
     enum: DisputeStatus,
     default: DisputeStatus.OPEN,
   })
   disputeStatus: DisputeStatus
 
-  @Column({ name: 'reviewed_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'reviewed_at', nullable: true, type: 'datetime' })
   reviewedAt: Date | null              // เมื่อ CA รับเรื่อง
 
-  @Column({ name: 'resolved_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'resolved_at', nullable: true, type: 'datetime' })
   resolvedAt: Date | null
 
   /* ── Resolution decision ── */
@@ -87,7 +86,7 @@ export class BookingDispute {
   resolvedProviderPayout: number | null
 
   /* ── Escalation (fraud/collusion) ── */
-  @Column({ name: 'escalated_to_sa_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'escalated_to_sa_at', nullable: true, type: 'datetime' })
   escalatedToSaAt: Date | null
 
   @Column({ name: 'escalated_reason', nullable: true, type: 'text' })
@@ -96,10 +95,10 @@ export class BookingDispute {
   @Column({ name: 'sa_decision', nullable: true, type: 'text' })
   saDecision: string | null           // Super Admin ตัดสินใจ (รวมถึง ban หรือไม่)
 
-  @Column({ name: 'sa_decided_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'sa_decided_at', nullable: true, type: 'datetime' })
   saDecidedAt: Date | null
 
-  @Column({ name: 'sa_user_id', nullable: true })
+  @Column({ name: 'sa_user_id', nullable: true , type: 'text' })
   saUserId: string | null             // Super Admin ที่ตัดสิน
 
   /* ── Timestamps ── */

@@ -60,13 +60,13 @@ export class CommissionLedger {
 
     @Column({
         name: 'status',
-        type: 'enum',
+        type: 'simple-enum',
         enum: CommissionLedgerStatus,
         default: CommissionLedgerStatus.PENDING,
     })
     status: CommissionLedgerStatus
 
-    @Column({ name: 'transaction_date', type: 'timestamptz' })
+    @Column({ name: 'transaction_date', type: 'datetime' })
     transactionDate: Date
 
     @CreateDateColumn({ name: 'created_at' })

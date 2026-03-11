@@ -347,6 +347,83 @@ export enum PayoutStatus {
   FAILED = 'FAILED',
 }
 
+// ─── Feature: Franchise-as-a-Platform ───────────────────────────────────────
+
+/**
+ * 10 Business Templates — one per MarketplaceCategory.
+ * Each template defines default catalog schema, order flow, and recommended modules.
+ */
+export enum BusinessTemplateCode {
+  FOOD = 'FOOD',
+  REPAIR = 'REPAIR',
+  HOME_SERVICES = 'HOME_SERVICES',
+  TUTORING = 'TUTORING',
+  ELDERLY_CARE = 'ELDERLY_CARE',
+  HANDMADE = 'HANDMADE',
+  HEALTH_WELLNESS = 'HEALTH_WELLNESS',
+  AGRICULTURE = 'AGRICULTURE',
+  FREELANCE = 'FREELANCE',
+  COMMUNITY_SHARING = 'COMMUNITY_SHARING',
+}
+
+/**
+ * Platform module codes — capability units that can be enabled/disabled per market or store.
+ * Core modules are required for every market; optional modules can be added as plugins.
+ */
+export enum ModuleCode {
+  // Commerce
+  POS = 'POS',
+  ONLINE_ORDER = 'ONLINE_ORDER',
+  PROMOTIONS = 'PROMOTIONS',
+  LOYALTY = 'LOYALTY',
+  RECEIPT = 'RECEIPT',
+  // Catalog & Inventory
+  CATALOG = 'CATALOG',
+  INVENTORY = 'INVENTORY',
+  SUPPLIER = 'SUPPLIER',
+  // Services
+  BOOKING = 'BOOKING',
+  DISPATCH = 'DISPATCH',
+  JOB_TRACKING = 'JOB_TRACKING',
+  // Marketplace
+  MARKETPLACE = 'MARKETPLACE',
+  SEARCH = 'SEARCH',
+  REVIEWS = 'REVIEWS',
+  ANNOUNCEMENTS = 'ANNOUNCEMENTS',
+  // Finance
+  EXPORT = 'EXPORT',
+  STATEMENT = 'STATEMENT',
+}
+
+export enum ModuleCategory {
+  COMMERCE = 'COMMERCE',
+  CATALOG = 'CATALOG',
+  SERVICES = 'SERVICES',
+  MARKETPLACE = 'MARKETPLACE',
+  FINANCE = 'FINANCE',
+}
+
+/** Subscription plan tier for a Market (Community). */
+export enum PlanType {
+  STARTER = 'STARTER',
+  GROWTH = 'GROWTH',
+  PRO = 'PRO',
+}
+
+/** Operational status of a Store's membership in a specific Market. */
+export enum StoreMarketStatus {
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
+
+/** How a Store tracks its product/service stock. */
+export enum InventoryPolicy {
+  NONE = 'NONE',       // บริการ / ไม่ต้องนับ
+  COUNT = 'COUNT',     // นับชิ้น/ล็อต
+  INGREDIENT = 'INGREDIENT', // นับวัตถุดิบ (ร้านอาหาร)
+}
+
 // ─── Feature: Delivery / Logistics (future-ready) ───────────────────────────
 
 /**

@@ -13,7 +13,6 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Index({ unique: true })
   @Column({ unique: true })
   email: string
 
@@ -26,7 +25,7 @@ export class User {
   @Column({ name: 'avatar_url', nullable: true })
   avatarUrl: string
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.CUSTOMER })
+  @Column({ type: 'simple-enum', enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole
 
   @Column({ name: 'login_provider', default: 'google' })
@@ -40,7 +39,7 @@ export class User {
 
   /* ── KYC / Identity & Location fields ── */
 
-  @Column({ name: 'kyc_status', type: 'enum', enum: KycStatus, default: KycStatus.UNVERIFIED })
+  @Column({ name: 'kyc_status', type: 'simple-enum', enum: KycStatus, default: KycStatus.UNVERIFIED })
   kycStatus: KycStatus
 
   @Column({ name: 'address', nullable: true, type: 'text' })
@@ -52,10 +51,10 @@ export class User {
   @Column({ name: 'location_lng', nullable: true, type: 'double precision' })
   locationLng: number | null
 
-  @Column({ name: 'id_card_url', nullable: true })
+  @Column({ name: 'id_card_url', nullable: true, type: 'text' })
   idCardUrl: string | null
 
-  @Column({ name: 'id_verified_at', nullable: true, type: 'timestamptz' })
+  @Column({ name: 'id_verified_at', nullable: true, type: 'datetime' })
   idVerifiedAt: Date | null
 
   @CreateDateColumn({ name: 'created_at' })

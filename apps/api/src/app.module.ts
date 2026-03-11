@@ -16,32 +16,48 @@ import { DashboardModule } from './modules/dashboard/dashboard.module'
 import { NotificationsModule } from './modules/notifications/notifications.module'
 import { AdminModule } from './modules/admin/admin.module'
 import { HealthModule } from './modules/health/health.module'
+import { BusinessTemplatesModule } from './modules/business-templates/business-templates.module'
+import { PlatformModulesModule } from './modules/platform-modules/platform-modules.module'
+import { MarketModulesModule } from './modules/market-modules/market-modules.module'
+import { StoreMarketsModule } from './modules/store-markets/store-markets.module'
+import { StoreModulesModule } from './modules/store-modules/store-modules.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env.development', '.env'],
     }),
 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get<string>('DATABASE_URL'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        migrations: [__dirname + '/db/migrations/*{.ts,.js}'],
-        synchronize: configService.get<string>('APP_ENV') === 'development',
-        logging: configService.get<string>('APP_ENV') === 'development',
-        ssl:
-          configService.get<string>('APP_ENV') === 'production'
-            ? {
-                rejectUnauthorized:
-                  configService.get<string>('DB_SSL_REJECT_UNAUTHORIZED', 'true') !== 'false',
-              }
-            : false,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const appEnv = configService.get<string>('APP_ENV', 'development')
+
+        if (appEnv !== 'production') {
+          return {
+            type: 'better-sqlite3',
+            database: configService.get<string>('SQLITE_PATH', './dev.db'),
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: true,
+            logging: true,
+          }
+        }
+
+        return {
+          type: 'postgres',
+          url: configService.get<string>('DATABASE_URL'),
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          migrations: [__dirname + '/db/migrations/*{.ts,.js}'],
+          synchronize: false,
+          logging: false,
+          ssl:
+            configService.get<string>('DB_SSL_REJECT_UNAUTHORIZED', 'true') !== 'false'
+              ? { rejectUnauthorized: true }
+              : { rejectUnauthorized: false },
+        }
+      },
     }),
 
     ThrottlerModule.forRootAsync({
@@ -86,6 +102,11 @@ import { HealthModule } from './modules/health/health.module'
     DashboardModule,
     NotificationsModule,
     AdminModule,
+    BusinessTemplatesModule,
+    PlatformModulesModule,
+    MarketModulesModule,
+    StoreMarketsModule,
+    StoreModulesModule,
   ],
 })
 export class AppModule {}

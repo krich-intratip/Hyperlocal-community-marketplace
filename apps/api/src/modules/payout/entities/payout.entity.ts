@@ -40,7 +40,7 @@ export class Payout {
 
     @Column({
         name: 'status',
-        type: 'enum',
+        type: 'simple-enum',
         enum: PayoutStatus,
         default: PayoutStatus.DRAFT,
     })
@@ -50,10 +50,10 @@ export class Payout {
     @Column({ name: 'approved_by', nullable: true })
     approvedBy: string
 
-    @Column({ name: 'approved_at', nullable: true, type: 'timestamptz' })
+    @Column({ name: 'approved_at', nullable: true, type: 'datetime' })
     approvedAt: Date
 
-    @Column({ name: 'paid_at', nullable: true, type: 'timestamptz' })
+    @Column({ name: 'paid_at', nullable: true, type: 'datetime' })
     paidAt: Date
 
     /** Reference from the payment gateway (e.g. bank transfer ref, slip no.) */

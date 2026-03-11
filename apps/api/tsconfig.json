@@ -1,5 +1,10 @@
 {
   "extends": "../../tsconfig.json",
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "transpileOnly": false,
+    "files": true
+  },
   "compilerOptions": {
     "target": "ES2021",
     "lib": ["ES2021", "ES2021.String"],
@@ -12,6 +17,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
+    "moduleDetection": "auto",
     "paths": {
       "@chm/shared-types": ["../../packages/shared-types/src/index.ts"],
       "@/*": ["./src/*"]

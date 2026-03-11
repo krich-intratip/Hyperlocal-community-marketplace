@@ -1,0 +1,8 @@
+dist/
+node_modules/
+dev.db
+dev.db-shm
+dev.db-wal
+.env
+.env.local
+coverage/

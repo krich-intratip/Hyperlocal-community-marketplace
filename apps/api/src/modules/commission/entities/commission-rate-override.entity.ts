@@ -39,11 +39,11 @@ export class CommissionRateOverride {
     @Column({ name: 'override_rate', type: 'decimal', precision: 5, scale: 2 })
     overrideRate: number
 
-    @Column({ name: 'valid_from', type: 'timestamptz' })
+    @Column({ name: 'valid_from', type: 'datetime' })
     validFrom: Date
 
     /** null = no expiry (permanent override) */
-    @Column({ name: 'valid_to', nullable: true, type: 'timestamptz' })
+    @Column({ name: 'valid_to', nullable: true, type: 'datetime' })
     validTo: Date
 
     /** Human-readable reason / promotion name */
