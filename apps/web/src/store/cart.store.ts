@@ -10,6 +10,8 @@ export interface CartItem {
   providerId: string
   providerAvatar: string
   community: string
+  /** Community UUID — required for CreateOrderDto */
+  communityId: string
   menuName?: string
   price: number
   unit: string

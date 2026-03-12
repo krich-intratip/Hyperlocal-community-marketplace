@@ -12,8 +12,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useCartStore } from '@/store/cart.store'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
-import { useCreateBooking } from '@/hooks/useBookings'
-import type { CreateBookingDto } from '@/types'
+import { useCreateOrder } from '@/hooks/useOrders'
+import type { CreateOrderDto } from '@/types'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -34,7 +34,7 @@ export default function CartPage() {
   const { items, updateQty, removeItem, clearCart, totalPrice, itemsByProvider, clearProvider } = useCartStore()
   const grouped = itemsByProvider()
   const providerIds = Object.keys(grouped)
-  const createBooking = useCreateBooking()
+  const createOrder = useCreateOrder()
 
   const [step, setStep] = useState<Step>('review')
   const [payMethod, setPayMethod] = useState<PayMethod>('promptpay')
@@ -58,18 +58,21 @@ export default function CartPage() {
     for (const providerId of providerIds) {
       const provItems = grouped[providerId]
       const first = provItems[0]
-      const provTotal = provItems.reduce((s, i) => s + i.price * i.qty, 0)
-      const dto: CreateBookingDto = {
+      const dto: CreateOrderDto = {
         providerId: first.providerId,
-        serviceDescription: provItems.map((i) => `${i.menuName ?? i.listingTitle} ×${i.qty}`).join(', '),
-        scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        amount: Math.round(provTotal * 1.05),
-        note: provItems.map((i) => noteByItem[i.id]).filter(Boolean).join(' | ') || undefined,
+        communityId: first.communityId,
+        items: provItems.map((i) => ({
+          listingId: i.listingId,
+          qty: i.qty,
+          note: noteByItem[i.id] || undefined,
+        })),
+        deliveryAddress: addressByProvider[providerId] || undefined,
+        paymentMethod: payMethod === 'promptpay' ? 'PROMPTPAY' : 'CASH',
       }
       await new Promise<void>((resolve) => {
-        createBooking.mutate(dto, {
-          onSuccess: (data) => { if (data?.id) ids.push(data.id); resolve() },
-          onError: () => { ids.push(`B${Date.now().toString().slice(-6)}`); resolve() },
+        createOrder.mutate(dto, {
+          onSuccess: (res) => { const id = (res as any)?.data?.id ?? (res as any)?.id; if (id) ids.push(id); resolve() },
+          onError: () => { ids.push(`O${Date.now().toString().slice(-6)}`); resolve() },
         })
       })
     }
