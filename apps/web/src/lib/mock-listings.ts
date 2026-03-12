@@ -1,5 +1,12 @@
 export interface MenuStock { name: string; stock: number; max: number; price: number }
 
+export interface Nutrition {
+  calories: number      // kcal per serving
+  protein: number       // grams
+  carbs: number         // grams
+  fat: number           // grams
+}
+
 export interface MockListing {
   id: string
   /** Mock provider UUID — overridden by real UUID from API at runtime */
@@ -15,6 +22,9 @@ export interface MockListing {
   providerTrustScore: number
   providerBio: string
   status: 'available' | 'busy' | 'offline'
+  /** Provider shop status — used to show vacation/closed popup */
+  shopStatus?: 'OPEN' | 'VACATION' | 'CLOSED'
+  vacationMessage?: string
   category: string
   price: number
   unit: string
@@ -34,6 +44,9 @@ export interface MockListing {
   lat: number
   lng: number
   isPromoted?: boolean
+  /** Nutritional information (FOOD category only) */
+  isHealthOption?: boolean
+  nutrition?: Nutrition
 }
 
 export const MOCK_LISTINGS: MockListing[] = [
@@ -50,6 +63,8 @@ export const MOCK_LISTINGS: MockListing[] = [
     availableDays: [0,1,2,3,4], openTime: '07:00', closeTime: '17:00',
     responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 342,
     lat: 13.726, lng: 100.482,
+    isHealthOption: false,
+    nutrition: { calories: 450, protein: 18, carbs: 55, fat: 15 },
     menuStock: [
       { name: 'ข้าวราดแกง', stock: 8, max: 20, price: 80 },
       { name: 'ส้มตำ', stock: 3, max: 15, price: 60 },
@@ -141,6 +156,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     providerVerified: true, providerTrustScore: 97,
     providerBio: 'ครูนวดแผนไทยใบรับรองจากกรมการแพทย์ ประสบการณ์ 8 ปี ลูกค้าประจำ 200+ คน',
     status: 'available', category: 'HEALTH_WELLNESS', price: 400, unit: 'ชั่วโมง', isPromoted: true,
+    shopStatus: 'VACATION', vacationMessage: 'หยุดพักร้อนช่วงสงกรานต์ กลับมาให้บริการวันที่ 17 เม.ย. 2569',
     rating: 4.9, reviews: 74, community: 'หมู่บ้านกรีนวิลล์', area: 'บึงกุ่ม, กรุงเทพฯ',
     distance: '1.8 กม.', image: '💆', tags: ['นวด', 'แผนไทย', 'ถึงบ้าน', 'ครูนวดรับรอง'],
     availableDays: [1,2,3,4,5,6], openTime: '10:00', closeTime: '21:00',
@@ -232,6 +248,8 @@ export const MOCK_LISTINGS: MockListing[] = [
     availableDays: [0,1,2,3,4], openTime: '08:00', closeTime: '14:00',
     responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 267,
     lat: 13.727, lng: 100.483,
+    isHealthOption: true,
+    nutrition: { calories: 380, protein: 32, carbs: 28, fat: 12 },
     menuStock: [
       { name: 'ไก่อบสมุนไพร', stock: 12, max: 20, price: 120 },
       { name: 'ปลานึ่งมะนาว', stock: 6, max: 15, price: 130 },

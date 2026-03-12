@@ -2,7 +2,7 @@ import {
   Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn, Index,
 } from 'typeorm'
-import { VerificationStatus, ProviderStatus } from '@chm/shared-types'
+import { VerificationStatus, ProviderStatus, ShopStatus } from '@chm/shared-types'
 
 /**
  * Store profile entity. 1 user can own multiple store profiles across communities.
@@ -88,6 +88,23 @@ export class Provider {
 
   @Column({ name: 'business_template_code', nullable: true, type: 'text' })
   businessTemplateCode: string | null
+
+  // ─── Vacation / Temporary Closure (VAC-1) ──────────────────────────────────
+  @Column({
+    name: 'shop_status',
+    type: 'simple-enum',
+    enum: ShopStatus,
+    default: ShopStatus.OPEN,
+  })
+  shopStatus: ShopStatus
+
+  /** Announcement message shown when shop is on VACATION */
+  @Column({ name: 'vacation_message', nullable: true, type: 'text' })
+  vacationMessage: string | null
+
+  /** Optional date when shop plans to reopen */
+  @Column({ name: 'vacation_until', nullable: true, type: 'datetime' })
+  vacationUntil: Date | null
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

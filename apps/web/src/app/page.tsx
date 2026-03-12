@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { MarketBackground } from '@/components/market-background'
 import { useT } from '@/hooks/useT'
+import { APP_VERSION, APP_UPDATED, APP_DEVELOPER } from '@/lib/version'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -353,8 +354,15 @@ export default function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="bg-gradient-to-br from-indigo-950 to-violet-950 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-slate-500">
-          {t.home.footer}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center space-y-2">
+          <p className="text-sm text-slate-500">{t.home.footer}</p>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/10">
+              v{APP_VERSION}
+            </span>
+            <span className="text-xs text-slate-500">อัพเดทล่าสุด {APP_UPDATED}</span>
+            <span className="text-xs font-semibold text-indigo-400">by {APP_DEVELOPER}</span>
+          </div>
         </div>
       </footer>
     </main>

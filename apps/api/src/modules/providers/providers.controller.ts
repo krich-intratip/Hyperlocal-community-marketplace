@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, Body, Query, Req, UseGuards } from '@nestjs/common'
+import { Controller, Post, Patch, Get, Param, Body, Query, Req, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
@@ -59,5 +59,17 @@ export class ProvidersController {
   @ApiOperation({ summary: 'Reject a provider (admin only)' })
   reject(@Param('id') id: string) {
     return this.providersService.reject(id)
+  }
+
+  /** Provider: set vacation / reopen shop */
+  @Patch('me/vacation')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Set shop vacation status' })
+  setVacation(
+    @Req() req: any,
+    @Body() body: { shopStatus: 'OPEN' | 'VACATION' | 'CLOSED'; vacationMessage?: string; vacationUntil?: string },
+  ) {
+    return this.providersService.setVacation(req.user.id, body)
   }
 }

@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { MapPin, Users, Calendar, ChevronRight, Search, Star, Navigation, Loader2, AlertCircle, X, SlidersHorizontal } from 'lucide-react'
-import { useState, useCallback } from 'react'
+import { MapPin, Users, Calendar, ChevronRight, Search, Star, Navigation, Loader2, AlertCircle, X, SlidersHorizontal, Filter } from 'lucide-react'
+import { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useCommunities, type MockCommunity } from '@/hooks/useCommunities'
@@ -26,6 +26,18 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
 const RADIUS_OPTIONS = [3, 5, 10, 20, 50]
 
+const REGIONS: MockCommunity['region'][] = [
+  'ภาคกลาง', 'ภาคเหนือ', 'ภาคอีสาน', 'ภาคตะวันออก', 'ภาคใต้',
+]
+
+const REGION_EMOJI: Record<MockCommunity['region'], string> = {
+  'ภาคกลาง':       '🏙️',
+  'ภาคเหนือ':      '⛰️',
+  'ภาคอีสาน':      '🌾',
+  'ภาคตะวันออก':   '⚓',
+  'ภาคใต้':        '🏖️',
+}
+
 /* ── Haversine distance (km) ── */
 function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371
@@ -45,6 +57,8 @@ type GeoState = 'idle' | 'loading' | 'granted' | 'denied' | 'unavailable'
 
 export default function CommunitiesPage() {
   const { data: communities = [], isLoading, isError } = useCommunities()
+
+  // ── Search + Geo ──────────────────────────────────────────────────────────
   const [search, setSearch]             = useState('')
   const [geoState, setGeoState]         = useState<GeoState>('idle')
   const [userPos, setUserPos]           = useState<{ lat: number; lng: number } | null>(null)
@@ -52,7 +66,21 @@ export default function CommunitiesPage() {
   const [nearbyOnly, setNearbyOnly]     = useState(false)
   const [showRadiusPicker, setShowRadiusPicker] = useState(false)
 
-  /* ── Geolocation ── */
+  // ── Region / Province / Active filters ───────────────────────────────────
+  const [selectedRegion, setSelectedRegion]     = useState<MockCommunity['region'] | ''>('')
+  const [selectedProvince, setSelectedProvince] = useState('')
+  const [activeOnly, setActiveOnly]             = useState(false)
+  const [showFilters, setShowFilters]           = useState(false)
+
+  // ── Derived province list (based on selected region) ─────────────────────
+  const provinceList = useMemo(() => {
+    const base = selectedRegion
+      ? communities.filter((c) => c.region === selectedRegion)
+      : communities
+    return [...new Set(base.map((c) => c.province))].sort()
+  }, [communities, selectedRegion])
+
+  // ── Geolocation ───────────────────────────────────────────────────────────
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) { setGeoState('unavailable'); return }
     setGeoState('loading')
@@ -73,11 +101,26 @@ export default function CommunitiesPage() {
     setNearbyOnly(false)
   }, [])
 
-  /* ── Filter + sort ── */
+  // ── Region selection (clears province if region changes) ──────────────────
+  const handleRegionSelect = (region: MockCommunity['region'] | '') => {
+    setSelectedRegion(region)
+    setSelectedProvince('') // reset province when region changes
+  }
+
+  // ── Clear all filters ─────────────────────────────────────────────────────
+  const clearFilters = () => {
+    setSelectedRegion('')
+    setSelectedProvince('')
+    setActiveOnly(false)
+    setSearch('')
+  }
+
+  const hasFilters = selectedRegion !== '' || selectedProvince !== '' || activeOnly
+
+  // ── Filter + sort ─────────────────────────────────────────────────────────
   const withDistance = communities.map((c: MockCommunity) => ({
     ...c,
     distKm: userPos ? haversine(userPos.lat, userPos.lng, c.lat, c.lng) : null,
-    /* within service radius = ลูกค้าอยู่ในรัศมีที่ provider ของชุมชนนี้ cover */
     inServiceArea: userPos
       ? haversine(userPos.lat, userPos.lng, c.lat, c.lng) <= c.serviceRadius
       : true,
@@ -85,6 +128,9 @@ export default function CommunitiesPage() {
 
   const filtered = withDistance
     .filter((c) => {
+      if (selectedRegion && c.region !== selectedRegion) return false
+      if (selectedProvince && c.province !== selectedProvince) return false
+      if (activeOnly && c.activeListings === 0) return false
       const matchSearch = c.name.includes(search) || c.area.includes(search) || c.tags.some((t) => t.includes(search))
       if (nearbyOnly && userPos) {
         return matchSearch && (c.distKm ?? Infinity) <= searchRadius
@@ -146,21 +192,112 @@ export default function CommunitiesPage() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
           className="max-w-xl mx-auto space-y-3">
 
-          {/* Search input */}
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="ค้นหาชุมชน, พื้นที่, หรือประเภทบริการ..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl glass border-none text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-            />
+          {/* Search input + Filter toggle */}
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="ค้นหาชุมชน, จังหวัด, หรือประเภทบริการ..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl glass border-none text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              />
+            </div>
+            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+              onClick={() => setShowFilters(p => !p)}
+              className={`relative flex items-center gap-2 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all ${
+                showFilters || hasFilters
+                  ? 'bg-primary text-white shadow-md shadow-indigo-200/50'
+                  : 'glass text-slate-700 hover:text-primary'
+              }`}>
+              <Filter className="h-4 w-4" />
+              <span className="hidden sm:inline">ฟิลเตอร์</span>
+              {hasFilters && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-rose-500 text-white text-xs font-bold flex items-center justify-center">
+                  {[selectedRegion, selectedProvince, activeOnly].filter(Boolean).length}
+                </span>
+              )}
+            </motion.button>
           </div>
+
+          {/* Filter panel */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, y: -8 }}
+                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden">
+                <div className="glass-heavy rounded-2xl shadow-xl p-4 space-y-4 text-left">
+
+                  {/* Region chips */}
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">ภาค</p>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleRegionSelect('')}
+                        className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${
+                          selectedRegion === '' ? 'bg-primary text-white' : 'glass-sm text-slate-600 hover:text-primary'
+                        }`}>
+                        ทั้งหมด
+                      </button>
+                      {REGIONS.map((r) => (
+                        <button key={r} onClick={() => handleRegionSelect(r)}
+                          className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${
+                            selectedRegion === r ? 'bg-primary text-white' : 'glass-sm text-slate-600 hover:text-primary'
+                          }`}>
+                          {REGION_EMOJI[r]} {r}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Province dropdown */}
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">จังหวัด</p>
+                    <select
+                      value={selectedProvince}
+                      onChange={(e) => setSelectedProvince(e.target.value)}
+                      className="w-full rounded-xl glass text-sm py-2.5 px-3 border-none focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white/60">
+                      <option value="">-- ทุกจังหวัด --</option>
+                      {provinceList.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Active toggle + Clear */}
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <div
+                        onClick={() => setActiveOnly(p => !p)}
+                        className={`relative w-11 h-6 rounded-full transition-colors ${
+                          activeOnly ? 'bg-primary' : 'bg-slate-200'
+                        }`}>
+                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${
+                          activeOnly ? 'left-6' : 'left-1'
+                        }`} />
+                      </div>
+                      <span className="text-sm font-semibold text-slate-700">เปิดบริการอยู่</span>
+                    </label>
+
+                    {hasFilters && (
+                      <button onClick={clearFilters}
+                        className="flex items-center gap-1 text-xs font-bold text-rose-500 hover:text-rose-700 transition-colors">
+                        <X className="h-3.5 w-3.5" />
+                        ล้างฟิลเตอร์
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Geo controls */}
           <div className="flex items-center gap-2 flex-wrap justify-center">
-            {/* Near Me button */}
             {geoState !== 'granted' ? (
               <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                 onClick={requestLocation}
@@ -233,11 +370,44 @@ export default function CommunitiesPage() {
           </AnimatePresence>
         </motion.div>
 
+        {/* Active filter chips (summary row) */}
+        {hasFilters && (
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center flex-wrap gap-2 mt-4">
+            {selectedRegion && (
+              <span className="inline-flex items-center gap-1.5 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">
+                {REGION_EMOJI[selectedRegion]} {selectedRegion}
+                <button onClick={() => handleRegionSelect('')}><X className="h-3 w-3" /></button>
+              </span>
+            )}
+            {selectedProvince && (
+              <span className="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">
+                📍 {selectedProvince}
+                <button onClick={() => setSelectedProvince('')}><X className="h-3 w-3" /></button>
+              </span>
+            )}
+            {activeOnly && (
+              <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full">
+                ✅ เปิดบริการอยู่
+                <button onClick={() => setActiveOnly(false)}><X className="h-3 w-3" /></button>
+              </span>
+            )}
+          </motion.div>
+        )}
+
         {/* Result summary */}
-        {nearbyOnly && userPos && (
+        {(nearbyOnly && userPos) ? (
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="text-sm text-slate-500 mt-4">
             พบ <strong className="text-blue-600">{filtered.length} ชุมชน</strong> ในรัศมี {searchRadius} กม. จากตำแหน่งของคุณ
+          </motion.p>
+        ) : (
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="text-sm text-slate-500 mt-4">
+            {filtered.length < communities.length
+              ? <>กรองแล้ว <strong className="text-primary">{filtered.length}</strong> / {communities.length} ชุมชน</>
+              : <>ชุมชนทั้งหมด <strong className="text-primary">{communities.length}</strong> แห่งทั่วไทย</>
+            }
           </motion.p>
         )}
       </section>
@@ -288,6 +458,10 @@ export default function CommunitiesPage() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1.5">
+                    {/* Region badge */}
+                    <span className="text-xs glass-sm text-slate-500 px-2 py-0.5 rounded-full whitespace-nowrap">
+                      {REGION_EMOJI[community.region]} {community.region}
+                    </span>
                     {community.trial && (
                       <span className="text-xs cat-health font-semibold px-2 py-0.5 rounded-full whitespace-nowrap">
                         ฟรี
@@ -364,21 +538,25 @@ export default function CommunitiesPage() {
             className="text-center py-20">
             <div className="text-5xl mb-4">{nearbyOnly ? '📍' : '🔍'}</div>
             <p className="text-slate-600 font-semibold mb-1">
-              {nearbyOnly ? `ไม่พบชุมชนในรัศมี ${searchRadius} กม.` : 'ไม่พบชุมชนที่ตรงกับคำค้นหา'}
+              {nearbyOnly ? `ไม่พบชุมชนในรัศมี ${searchRadius} กม.` : 'ไม่พบชุมชนที่ตรงกับเงื่อนไข'}
             </p>
-            {nearbyOnly && (
-              <p className="text-sm text-slate-400 mb-5">ลองขยายรัศมีการค้นหาให้กว้างขึ้น</p>
-            )}
-            {nearbyOnly && (
-              <div className="flex gap-2 justify-center flex-wrap">
-                {RADIUS_OPTIONS.filter(r => r > searchRadius).slice(0, 3).map(r => (
-                  <button key={r} onClick={() => setSearchRadius(r)}
-                    className="px-4 py-2 rounded-xl glass text-sm font-bold text-primary hover:bg-white/30 transition-colors">
-                    ขยายเป็น {r} กม.
-                  </button>
-                ))}
-              </div>
-            )}
+            <p className="text-sm text-slate-400 mb-5">
+              {hasFilters ? 'ลองลดฟิลเตอร์ให้น้อยลง' : nearbyOnly ? 'ลองขยายรัศมีการค้นหา' : 'ลองใช้คำค้นหาอื่น'}
+            </p>
+            <div className="flex gap-2 justify-center flex-wrap">
+              {hasFilters && (
+                <button onClick={clearFilters}
+                  className="px-4 py-2 rounded-xl glass text-sm font-bold text-primary hover:bg-white/30 transition-colors">
+                  ล้างฟิลเตอร์ทั้งหมด
+                </button>
+              )}
+              {nearbyOnly && RADIUS_OPTIONS.filter(r => r > searchRadius).slice(0, 3).map(r => (
+                <button key={r} onClick={() => setSearchRadius(r)}
+                  className="px-4 py-2 rounded-xl glass text-sm font-bold text-primary hover:bg-white/30 transition-colors">
+                  ขยายเป็น {r} กม.
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
 

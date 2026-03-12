@@ -450,3 +450,44 @@ export enum OrderStatus {
   COMPLETED       = 'COMPLETED',
   CANCELLED       = 'CANCELLED',
 }
+
+// ─── Feature: Return / Refund System (RETURN-1) ─────────────────────────────
+
+/**
+ * Reason a customer is requesting a return.
+ * Applies to cart orders (physical goods). Services use dispute flow.
+ */
+export enum ReturnReason {
+  NOT_AS_DESCRIBED = 'NOT_AS_DESCRIBED', // สินค้าไม่ตรงปก
+  DAMAGED          = 'DAMAGED',          // สินค้าเสียหาย / ชำรุด
+  WRONG_ITEM       = 'WRONG_ITEM',       // ได้รับสินค้าผิด
+  MISSING_ITEM     = 'MISSING_ITEM',     // ได้รับของไม่ครบ
+  OTHER            = 'OTHER',            // อื่นๆ
+}
+
+/**
+ * Lifecycle of a return request.
+ * PENDING → UNDER_REVIEW → APPROVED → REFUNDED
+ *                        → REJECTED
+ */
+export enum ReturnStatus {
+  PENDING      = 'PENDING',       // รอการตรวจสอบ
+  UNDER_REVIEW = 'UNDER_REVIEW',  // Community Admin กำลังตรวจสอบ
+  APPROVED     = 'APPROVED',      // อนุมัติ — รอโอนเงินคืน
+  REFUNDED     = 'REFUNDED',      // คืนเงินแล้ว
+  REJECTED     = 'REJECTED',      // ปฏิเสธ
+}
+
+// ─── Feature: Provider Vacation / Temporary Closure (VAC-1) ─────────────────
+
+/**
+ * Operational state of a provider's shop/storefront.
+ * OPEN    = ให้บริการตามปกติ
+ * VACATION = หยุดพักร้อนชั่วคราว — แสดง banner + popup ให้ลูกค้า
+ * CLOSED  = ปิดกิจการ (ถาวร)
+ */
+export enum ShopStatus {
+  OPEN     = 'OPEN',
+  VACATION = 'VACATION',
+  CLOSED   = 'CLOSED',
+}

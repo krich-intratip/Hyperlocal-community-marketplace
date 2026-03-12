@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Param, Body, Query, Req, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
-import { ListingsService } from './listings.service'
+import { ListingsService, ListingSortOption } from './listings.service'
 import { MarketplaceCategory } from '@chm/shared-types'
 
 @ApiTags('Listings')
@@ -15,10 +15,19 @@ export class ListingsController {
     @Query('communityId') communityId?: string,
     @Query('category') category?: MarketplaceCategory,
     @Query('keyword') keyword?: string,
+    @Query('isHealthOption') isHealthOptionRaw?: string,
+    @Query('minPrice') minPriceRaw?: string,
+    @Query('maxPrice') maxPriceRaw?: string,
+    @Query('sort') sort?: ListingSortOption,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {
-    return this.listingsService.search({ communityId, category, keyword, page, limit })
+    const isHealthOption = isHealthOptionRaw === 'true' ? true : undefined
+    const minPrice = minPriceRaw !== undefined ? parseFloat(minPriceRaw) : undefined
+    const maxPrice = maxPriceRaw !== undefined ? parseFloat(maxPriceRaw) : undefined
+    return this.listingsService.search({
+      communityId, category, keyword, isHealthOption, minPrice, maxPrice, sort, page, limit,
+    })
   }
 
   @Get(':id')

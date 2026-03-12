@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { MapPin, Star, Shield, Clock, Phone, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart, Minus, Plus } from 'lucide-react'
+import { MapPin, Star, Shield, Clock, Phone, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart, Minus, Plus, UmbrellaOff, Flame, Beef, Wheat } from 'lucide-react'
 import Link from 'next/link'
 import { useState, lazy, Suspense } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
@@ -141,6 +141,31 @@ export default function ListingDetailClient({ id }: { id: string }) {
           <span className="text-slate-700 dark:text-slate-200 font-medium">{listing.title}</span>
         </motion.div>
 
+        {/* ── Vacation / Closed banner ── */}
+        {listing.shopStatus && listing.shopStatus !== 'OPEN' && (
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0.5}
+            className={`flex items-start gap-3 rounded-2xl px-5 py-4 mb-5 shadow-sm ${
+              listing.shopStatus === 'VACATION'
+                ? 'bg-amber-50 border border-amber-200'
+                : 'bg-red-50 border border-red-200'
+            }`}>
+            <UmbrellaOff className={`h-5 w-5 flex-shrink-0 mt-0.5 ${
+              listing.shopStatus === 'VACATION' ? 'text-amber-500' : 'text-red-400'
+            }`} />
+            <div>
+              <p className={`font-bold text-sm ${
+                listing.shopStatus === 'VACATION' ? 'text-amber-800' : 'text-red-700'
+              }`}>
+                {listing.shopStatus === 'VACATION' ? '🏖️ ร้านปิดชั่วคราว (พักร้อน)' : '🚫 ร้านปิดให้บริการ'}
+              </p>
+              {listing.vacationMessage && (
+                <p className="text-sm text-slate-600 mt-0.5">{listing.vacationMessage}</p>
+              )}
+              <p className="text-xs text-slate-500 mt-1">ยังคงสามารถดูข้อมูลและรายการเมนูได้ แต่ยังไม่สามารถสั่งได้ในขณะนี้</p>
+            </div>
+          </motion.div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* ── Left: details ── */}
           <div className="lg:col-span-2 space-y-5">
@@ -214,6 +239,46 @@ export default function ListingDetailClient({ id }: { id: string }) {
 
               <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">{listing.description}</p>
             </motion.div>
+
+            {/* ── Nutrition card (FOOD only) ── */}
+            {listing.nutrition && (
+              <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2.5}
+                className="bg-white/90 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  {listing.isHealthOption && (
+                    <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full">🥗 เมนูสุขภาพ</span>
+                  )}
+                  <h2 className="font-extrabold text-base text-slate-900 dark:text-white">ข้อมูลโภชนาการ (ต่อ 1 มื้อ)</h2>
+                </div>
+                <div className="grid grid-cols-4 gap-3">
+                  {/* Calories */}
+                  <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800">
+                    <Flame className="h-5 w-5 text-amber-500" />
+                    <span className="text-xl font-extrabold text-amber-700 dark:text-amber-300">{listing.nutrition.calories}</span>
+                    <span className="text-xs text-amber-600 dark:text-amber-400 font-semibold">แคลอรี่</span>
+                  </div>
+                  {/* Protein */}
+                  <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+                    <Beef className="h-5 w-5 text-blue-500" />
+                    <span className="text-xl font-extrabold text-blue-700 dark:text-blue-300">{listing.nutrition.protein}g</span>
+                    <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold">โปรตีน</span>
+                  </div>
+                  {/* Carbs */}
+                  <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-800">
+                    <Wheat className="h-5 w-5 text-violet-500" />
+                    <span className="text-xl font-extrabold text-violet-700 dark:text-violet-300">{listing.nutrition.carbs}g</span>
+                    <span className="text-xs text-violet-600 dark:text-violet-400 font-semibold">คาร์บ</span>
+                  </div>
+                  {/* Fat */}
+                  <div className="flex flex-col items-center gap-1 p-3 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800">
+                    <span className="text-2xl">🫒</span>
+                    <span className="text-xl font-extrabold text-rose-700 dark:text-rose-300">{listing.nutrition.fat}g</span>
+                    <span className="text-xs text-rose-600 dark:text-rose-400 font-semibold">ไขมัน</span>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-400 mt-3 text-center">* ข้อมูลโภชนาการโดยประมาณ อาจแตกต่างตามเมนูที่เลือก</p>
+              </motion.div>
+            )}
 
             {/* Menu / Service items — with image, stock, per-item cart */}
             {listing.menuStock && listing.menuStock.length > 0 && (

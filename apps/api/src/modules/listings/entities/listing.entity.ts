@@ -60,7 +60,24 @@ export class Listing {
   closeTime: string | null
 
   @Column({ name: 'menu_stock', type: jsonCol(), nullable: true })
-  menuStock: Array<{ name: string; stock: number; max: number; price: number }> | null
+  menuStock: Array<{ name: string; stock: number; max: number; price: number; calories?: number | null }> | null
+
+  // ─── Nutrition info (FOOD category) ────────────────────────────────────────
+  @Column({ name: 'calories_per_serving', nullable: true, type: 'real' })
+  caloriesPerServing: number | null
+
+  @Column({ name: 'protein_grams', nullable: true, type: 'real' })
+  proteinGrams: number | null
+
+  @Column({ name: 'carbs_grams', nullable: true, type: 'real' })
+  carbsGrams: number | null
+
+  @Column({ name: 'fat_grams', nullable: true, type: 'real' })
+  fatGrams: number | null
+
+  /** Tag: is this a health-conscious / low-calorie option? */
+  @Column({ name: 'is_health_option', default: false })
+  isHealthOption: boolean
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date

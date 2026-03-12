@@ -93,6 +93,9 @@ function MarketplacePageInner() {
   const sortBy         = (searchParams.get('sort') as 'rating' | 'price') ?? 'rating'
   const statusFilter   = (searchParams.get('status') as ProviderStatus | 'ALL') ?? 'ALL'
   const radiusKm       = parseFloat(searchParams.get('radius') ?? '5')
+  const healthOnly     = searchParams.get('health') === '1'
+  const minPrice       = searchParams.get('minPrice') ? parseInt(searchParams.get('minPrice')!) : 0
+  const maxPrice       = searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!) : 0
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
   function updateParam(key: string, value: string) {
@@ -102,6 +105,13 @@ function MarketplacePageInner() {
     } else {
       params.set(key, value)
     }
+    startTransition(() => { router.replace(`${pathname}?${params.toString()}`, { scroll: false }) })
+  }
+
+  function toggleHealth() {
+    const params = new URLSearchParams(searchParams.toString())
+    if (healthOnly) params.delete('health')
+    else params.set('health', '1')
     startTransition(() => { router.replace(`${pathname}?${params.toString()}`, { scroll: false }) })
   }
 
@@ -124,6 +134,9 @@ function MarketplacePageInner() {
     .filter(l => statusFilter === 'ALL' || l.status === statusFilter)
     .filter(l => !search || l.title.includes(search) || l.provider.includes(search) || l.tags.some(tag => tag.includes(search)))
     .filter(l => parseFloat(l.distance) <= radiusKm)
+    .filter(l => !healthOnly || l.isHealthOption === true)
+    .filter(l => minPrice === 0 || l.price >= minPrice)
+    .filter(l => maxPrice === 0 || l.price <= maxPrice)
 
   const mapListings = filtered.map(l => ({
     id: l.id, title: l.title, provider: l.provider,
@@ -185,6 +198,17 @@ function MarketplacePageInner() {
               className="w-20 accent-blue-600" />
             <span className="text-sm font-bold text-blue-600">{radiusKm} {t.common.km}</span>
           </div>
+
+          {/* Health option filter */}
+          <button
+            onClick={toggleHealth}
+            className={`flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-bold transition-all ${
+              healthOnly
+                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-200/40'
+                : 'glass text-slate-600 dark:text-slate-300 hover:text-emerald-600'
+            }`}>
+            🥗 {healthOnly ? 'ตัวเลือกสุขภาพ' : 'เพื่อสุขภาพ'}
+          </button>
 
           {/* View toggle */}
           <div className="flex items-center rounded-xl glass overflow-hidden ml-auto">

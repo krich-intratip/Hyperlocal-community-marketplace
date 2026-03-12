@@ -8,12 +8,13 @@ import { MarketBackground } from '@/components/market-background'
 import {
   TrendingUp, Star, CalendarCheck, DollarSign, Plus, Clock, CheckCircle, Eye,
   PauseCircle, PlayCircle, LogOut, AlertTriangle, X, MapPin, ShieldCheck,
-  BarChart3, Zap, MessageCircle,
+  BarChart3, Zap, MessageCircle, UmbrellaOff, Umbrella, Loader2,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { SPARKLINE_7D, PROVIDER_SUMMARY } from '@/lib/mock-provider-analytics'
+import { useSetVacation } from '@/hooks/useVacation'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -67,6 +68,7 @@ const MOCK_PROVIDER = {
 }
 
 type ModalType = 'suspend' | 'reactivate' | 'deactivate' | 'leave' | null
+type ShopStatus = 'OPEN' | 'VACATION' | 'CLOSED'
 
 export default function ProviderDashboardPage() {
   useAuthGuard(['provider', 'admin', 'superadmin'])
@@ -74,6 +76,39 @@ export default function ProviderDashboardPage() {
   const [modal, setModal]                   = useState<ModalType>(null)
   const [leaveReason, setLeaveReason]       = useState('')
   const [actionDone, setActionDone]         = useState(false)
+
+  // Vacation / Shop status
+  const [shopStatus, setShopStatus]             = useState<ShopStatus>('OPEN')
+  const [vacationMsg, setVacationMsg]           = useState('')
+  const [vacationUntil, setVacationUntil]       = useState('')
+  const [showVacationModal, setShowVacationModal] = useState(false)
+  const [vacationDone, setVacationDone]         = useState(false)
+  const setVacation = useSetVacation()
+
+  async function handleSetVacation() {
+    try {
+      await setVacation.mutateAsync({
+        shopStatus: 'VACATION',
+        vacationMessage: vacationMsg || undefined,
+        vacationUntil: vacationUntil || undefined,
+      })
+    } catch { /* ignore — mock */ }
+    setShopStatus('VACATION')
+    setShowVacationModal(false)
+    setVacationDone(true)
+    setTimeout(() => setVacationDone(false), 3000)
+  }
+
+  async function handleEndVacation() {
+    try {
+      await setVacation.mutateAsync({ shopStatus: 'OPEN' })
+    } catch { /* ignore — mock */ }
+    setShopStatus('OPEN')
+    setVacationMsg('')
+    setVacationUntil('')
+    setVacationDone(true)
+    setTimeout(() => setVacationDone(false), 3000)
+  }
 
   const { fmt } = useDateFormat()
   const thisMonthRevenue = MOCK_ORDERS.filter(o => o.status !== 'pending').reduce((s, o) => s + o.amount, 0)
@@ -299,8 +334,82 @@ export default function ProviderDashboardPage() {
           </div>
         </motion.div>
 
-        {/* Revenue note */}
+        {/* ── Shop Vacation / Closure Mode ── */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7}
+          className="mt-6 glass-card rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/20">
+            <div className="flex items-center gap-2">
+              <UmbrellaOff className="h-4 w-4 text-slate-600" />
+              <h2 className="font-bold text-slate-900">สถานะร้านค้า (Vacation Mode)</h2>
+            </div>
+            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold ${
+              shopStatus === 'OPEN'     ? 'bg-green-100 text-green-700 border-green-200' :
+              shopStatus === 'VACATION' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                                         'bg-red-100 text-red-600 border-red-200'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${
+                shopStatus === 'OPEN' ? 'bg-green-500' : shopStatus === 'VACATION' ? 'bg-amber-400' : 'bg-red-500'
+              }`} />
+              {shopStatus === 'OPEN' ? 'เปิดให้บริการ' : shopStatus === 'VACATION' ? 'พักร้าน (Vacation)' : 'ปิดร้าน'}
+            </div>
+          </div>
+
+          <div className="px-6 py-5 space-y-4">
+            {/* Success toast */}
+            <AnimatePresence>
+              {vacationDone && (
+                <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2.5">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span className="text-sm text-green-700 font-medium">อัพเดตสถานะร้านค้าเรียบร้อยแล้ว</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {shopStatus === 'OPEN' && (
+              <div className="space-y-3">
+                <p className="text-sm text-slate-600">ร้านของคุณกำลังเปิดให้บริการ ลูกค้าสามารถจองบริการได้ตามปกติ</p>
+                <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowVacationModal(true)}
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border-2 border-amber-200 bg-amber-50 hover:bg-amber-100 transition-all text-left">
+                  <UmbrellaOff className="h-5 w-5 text-amber-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-bold text-amber-800">เปิด Vacation Mode (พักร้านชั่วคราว)</p>
+                    <p className="text-xs text-amber-600">Listings จะแสดงแบนเนอร์ "ร้านปิดชั่วคราว" ให้ลูกค้าทราบ</p>
+                  </div>
+                </motion.button>
+              </div>
+            )}
+
+            {shopStatus === 'VACATION' && (
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                  <UmbrellaOff className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-800">ร้านอยู่ในโหมดพักร้อน</p>
+                    {vacationMsg && <p className="text-xs text-amber-700 mt-0.5">{vacationMsg}</p>}
+                    {vacationUntil && <p className="text-xs text-amber-600 mt-0.5">กลับมาวันที่: <strong>{vacationUntil}</strong></p>}
+                  </div>
+                </div>
+                <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
+                  onClick={handleEndVacation}
+                  disabled={setVacation.isPending}
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border-2 border-green-200 bg-green-50 hover:bg-green-100 transition-all text-left disabled:opacity-60">
+                  {setVacation.isPending
+                    ? <Loader2 className="h-5 w-5 text-green-500 animate-spin flex-shrink-0" />
+                    : <Umbrella className="h-5 w-5 text-green-500 flex-shrink-0" />}
+                  <div>
+                    <p className="text-sm font-bold text-green-700">กลับมาเปิดร้านอีกครั้ง</p>
+                    <p className="text-xs text-green-600">ยกเลิก Vacation Mode — ลูกค้าจองได้ทันที</p>
+                  </div>
+                </motion.button>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Revenue note */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={9}
           className="mt-6 p-5 rounded-2xl glass border border-primary/20">
           <div className="flex items-start gap-3">
             <DollarSign className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
@@ -314,7 +423,7 @@ export default function ProviderDashboardPage() {
         </motion.div>
 
         {/* ── Provider Profile & Status Management ── */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={8}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={10}
           className="mt-6 glass-card rounded-2xl overflow-hidden">
 
           {/* Section header */}
@@ -463,6 +572,72 @@ export default function ProviderDashboardPage() {
         </motion.div>
 
       </section>
+
+      {/* ── Vacation Modal ── */}
+      <AnimatePresence>
+        {showVacationModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && setShowVacationModal(false)}>
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}
+              className="w-full max-w-md glass-heavy rounded-3xl shadow-2xl overflow-hidden">
+              <div className="bg-amber-50 border-b border-amber-100 px-6 py-4 flex items-center justify-between">
+                <h3 className="font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                  <UmbrellaOff className="h-5 w-5 text-amber-500" /> เปิด Vacation Mode
+                </h3>
+                <button onClick={() => setShowVacationModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-sm text-slate-600">
+                  Listings ของคุณจะแสดงแบนเนอร์ &ldquo;ร้านปิดชั่วคราว&rdquo; ลูกค้าไม่สามารถจองใหม่ได้ (งานเดิมยังคงดำเนินการตามปกติ)
+                </p>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                    ข้อความแจ้งลูกค้า (ไม่บังคับ)
+                  </label>
+                  <textarea
+                    value={vacationMsg}
+                    onChange={(e) => setVacationMsg(e.target.value)}
+                    rows={3}
+                    placeholder="เช่น หยุดพักร้อนช่วงสงกรานต์ กลับมาให้บริการวันที่ 17 เม.ย. 2569"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                    วันที่กลับมาเปิดร้าน (ไม่บังคับ)
+                  </label>
+                  <input
+                    type="date"
+                    value={vacationUntil}
+                    onChange={(e) => setVacationUntil(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 transition-all"
+                  />
+                </div>
+                <div className="flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2.5">
+                  <AlertTriangle className="h-4 w-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-blue-700">คุณสามารถยกเลิก Vacation Mode ได้ตลอดเวลาจากหน้าแดชบอร์ด</p>
+                </div>
+                <div className="flex gap-3 mt-2">
+                  <button onClick={() => setShowVacationModal(false)}
+                    className="flex-1 rounded-xl border-2 border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:glass-sm transition-colors">
+                    ยกเลิก
+                  </button>
+                  <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                    onClick={handleSetVacation}
+                    disabled={setVacation.isPending}
+                    className="flex-1 rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-200 hover:bg-amber-600 disabled:opacity-60 transition-all flex items-center justify-center gap-2">
+                    {setVacation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                    เปิด Vacation Mode
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Confirmation Modal ── */}
       <AnimatePresence>

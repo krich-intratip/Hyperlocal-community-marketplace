@@ -132,6 +132,22 @@ export const listingsApi = {
   list: (params?: { search?: string; category?: string; status?: string; page?: number }) =>
     apiClient.get<PaginatedResponse<Listing>>('/listings', { params }),
 
+  search: (params?: {
+    communityId?: string
+    category?: string
+    keyword?: string
+    isHealthOption?: boolean
+    minPrice?: number
+    maxPrice?: number
+    sort?: 'newest' | 'price_asc' | 'price_desc' | 'promoted'
+    page?: number
+    limit?: number
+  }) =>
+    apiClient.get<{ data: Listing[]; total: number; page: number; limit: number }>(
+      '/listings/search',
+      { params },
+    ),
+
   get: (id: string) =>
     apiClient.get<ApiResponse<Listing>>(`/listings/${id}`),
 }
@@ -230,6 +246,42 @@ export const reviewsApi = {
   /** PATCH /reviews/:id/reply — provider replies to a review (JWT required) */
   reply: (id: string, replyText: string) =>
     apiClient.patch<ApiResponse<{ success: boolean }>>(`/reviews/${id}/reply`, { replyText }),
+}
+
+// ─── Returns ──────────────────────────────────────────────────────────────────
+
+export const returnsApi = {
+  /** POST /returns — customer creates a return request */
+  create: (dto: { orderId: string; reason: string; description: string; evidenceImages?: string[] }) =>
+    apiClient.post<{ id: string; status: string }>('/returns', dto),
+
+  /** GET /returns/order/:orderId — get return request for an order */
+  getByOrder: (orderId: string) =>
+    apiClient.get<{ id: string; status: string; reason: string; description: string } | null>(
+      `/returns/order/${orderId}`,
+    ),
+
+  /** GET /returns — admin list (CA/SA) */
+  listAll: (params?: { status?: string; page?: number; limit?: number }) =>
+    apiClient.get<{ data: unknown[]; total: number; page: number; limit: number }>(
+      '/returns',
+      { params },
+    ),
+
+  /** PATCH /returns/:id/status — admin update status */
+  updateStatus: (id: string, dto: { status: string; refundAmount?: number; resolutionNote?: string }) =>
+    apiClient.patch(`/returns/${id}/status`, dto),
+}
+
+// ─── Provider vacation ────────────────────────────────────────────────────────
+
+export const vacationApi = {
+  /** PATCH /providers/me/vacation — set shop status */
+  set: (dto: { shopStatus: 'OPEN' | 'VACATION' | 'CLOSED'; vacationMessage?: string; vacationUntil?: string }) =>
+    apiClient.patch<{ shopStatus: string; vacationMessage: string | null; vacationUntil: string | null }>(
+      '/providers/me/vacation',
+      dto,
+    ),
 }
 
 // ─── System mode ──────────────────────────────────────────────────────────────

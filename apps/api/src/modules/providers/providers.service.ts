@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException, BadRequestException }
 import { InjectRepository } from '@nestjs/typeorm'
 import { IsNull, Not, Repository } from 'typeorm'
 import { Provider } from './entities/provider.entity'
-import { VerificationStatus, ProviderStatus } from '@chm/shared-types'
+import { VerificationStatus, ProviderStatus, ShopStatus } from '@chm/shared-types'
 
 @Injectable()
 export class ProvidersService {
@@ -157,5 +157,20 @@ export class ProvidersService {
     return this.providerRepo.find({
       where: { communityId, verificationStatus: VerificationStatus.PENDING },
     })
+  }
+
+  /** Provider: set shop vacation status (VAC-1) */
+  async setVacation(
+    userId: string,
+    data: { shopStatus: 'OPEN' | 'VACATION' | 'CLOSED'; vacationMessage?: string; vacationUntil?: string },
+  ) {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) throw new NotFoundException('Provider profile not found')
+    await this.providerRepo.update(provider.id, {
+      shopStatus: data.shopStatus as ShopStatus,
+      vacationMessage: data.vacationMessage ?? null,
+      vacationUntil: data.vacationUntil ? new Date(data.vacationUntil) : null,
+    })
+    return this.findById(provider.id)
   }
 }

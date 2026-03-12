@@ -23,6 +23,7 @@ import { StoreMarketsModule } from './modules/store-markets/store-markets.module
 import { StoreModulesModule } from './modules/store-modules/store-modules.module'
 import { OrdersModule } from './modules/orders/orders.module'
 import { SystemModule } from './modules/system/system.module'
+import { ReturnsModule } from './modules/returns/returns.module'
 
 @Module({
   imports: [
@@ -111,6 +112,7 @@ import { SystemModule } from './modules/system/system.module'
     StoreModulesModule,
     OrdersModule,
     SystemModule,
+    ReturnsModule,
   ],
 })
 export class AppModule {}
