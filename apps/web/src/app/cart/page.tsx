@@ -7,6 +7,7 @@ import { AppFooter } from '@/components/app-footer'
 import {
   ShoppingCart, Trash2, Minus, Plus, ChevronLeft, ArrowRight,
   CheckCircle, Package, MapPin, Shield, Copy, Smartphone,
+  Tag, X as XIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -43,10 +44,34 @@ export default function CartPage() {
   const [orderIds, setOrderIds] = useState<string[]>([])
   const [noteByItem, setNoteByItem] = useState<Record<string, string>>({})
   const [addressByProvider, setAddressByProvider] = useState<Record<string, string>>({})
+  const [promoInput, setPromoInput] = useState('')
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number; label: string } | null>(null)
+  const [promoError, setPromoError] = useState('')
+
+  // ── Promo codes ──────────────────────────────────────────────────────────────
+  const PROMO_CODES: Record<string, { label: string; calc: (sub: number) => number }> = {
+    CHM10:    { label: 'ลด 10% ทุกออเดอร์',         calc: (s) => Math.round(s * 0.10) },
+    NEWUSER:  { label: 'ลด ฿50 สำหรับลูกค้าใหม่',   calc: (s) => Math.min(50, s)      },
+    HEALTH20: { label: 'ลด 20% เมนูสุขภาพ',         calc: (s) => Math.round(s * 0.20) },
+    SUMMER15: { label: 'ลด 15% ซัมเมอร์เซล',        calc: (s) => Math.round(s * 0.15) },
+  }
+
+  function applyPromo() {
+    const code = promoInput.trim().toUpperCase()
+    if (!code) return
+    const promo = PROMO_CODES[code]
+    if (!promo) { setPromoError('โค้ดไม่ถูกต้องหรือหมดอายุแล้ว'); return }
+    const discount = promo.calc(subtotal)
+    setAppliedPromo({ code, discount, label: promo.label })
+    setPromoError('')
+    setPromoInput('')
+  }
+  function removePromo() { setAppliedPromo(null); setPromoError('') }
 
   const subtotal = totalPrice()
   const platformFee = Math.round(subtotal * 0.05)
-  const grandTotal = subtotal + platformFee
+  const discount = appliedPromo?.discount ?? 0
+  const grandTotal = subtotal + platformFee - discount
 
   function canCheckout() {
     return items.length > 0 && providerIds.every((pid) => (addressByProvider[pid] ?? '').trim() !== '')
@@ -261,13 +286,56 @@ export default function CartPage() {
               })}
             </AnimatePresence>
 
-            {/* Order summary */}
+            {/* Promo Code */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={providerIds.length + 2}
+              className="glass rounded-2xl p-4 mb-4">
+              <p className="text-xs font-bold text-slate-600 mb-2.5 flex items-center gap-1.5">
+                <Tag className="h-3.5 w-3.5 text-primary" /> โค้ดส่วนลด
+              </p>
+              {appliedPromo ? (
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+                  <div>
+                    <p className="text-sm font-bold text-green-700">{appliedPromo.code}</p>
+                    <p className="text-xs text-green-600">{appliedPromo.label} — ลด ฿{appliedPromo.discount.toLocaleString()}</p>
+                  </div>
+                  <button onClick={removePromo} className="text-green-400 hover:text-red-500 transition-colors">
+                    <XIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    value={promoInput}
+                    onChange={(e) => { setPromoInput(e.target.value); setPromoError('') }}
+                    onKeyDown={(e) => e.key === 'Enter' && applyPromo()}
+                    placeholder="กรอกโค้ด เช่น CHM10"
+                    className="flex-1 px-3 py-2 glass border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 uppercase placeholder-normal"
+                  />
+                  <button onClick={applyPromo}
+                    className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-bold hover:bg-blue-700 transition-colors whitespace-nowrap">
+                    ใช้โค้ด
+                  </button>
+                </div>
+              )}
+              {promoError && <p className="text-xs text-red-500 mt-1.5">{promoError}</p>}
+              {!appliedPromo && !promoError && (
+                <p className="text-xs text-slate-400 mt-1.5">ลองใช้: CHM10, NEWUSER, HEALTH20, SUMMER15</p>
+              )}
+            </motion.div>
+
+            {/* Order summary */}
+            <motion.div variants={fadeUp} initial="hidden" animate="show" custom={providerIds.length + 3}
               className="glass rounded-2xl p-5 mb-5 space-y-2 text-sm">
               <div className="flex justify-between text-slate-600 dark:text-slate-300">
                 <span>ยอดรวมสินค้า</span>
                 <span>฿{subtotal.toLocaleString()}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span className="flex items-center gap-1"><Tag className="h-3 w-3" /> ส่วนลด ({appliedPromo?.code})</span>
+                  <span>-฿{discount.toLocaleString()}</span>
+                </div>
+              )}
               <div className="flex justify-between text-slate-400 text-xs">
                 <span>ค่าบริการแพลตฟอร์ม (5%)</span>
                 <span>฿{platformFee.toLocaleString()}</span>
@@ -280,7 +348,7 @@ export default function CartPage() {
 
             <motion.button
               variants={fadeUp} initial="hidden" animate="show"
-              custom={providerIds.length + 3}
+              custom={providerIds.length + 4}
               whileHover={canCheckout() ? { scale: 1.02 } : {}}
               whileTap={canCheckout() ? { scale: 0.97 } : {}}
               disabled={!canCheckout()}

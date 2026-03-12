@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart } from 'lucide-react'
+import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart, Search, Loader2 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { ThemeLanguageToggle } from '@/components/theme-language-toggle'
 import { useT } from '@/hooks/useT'
@@ -11,6 +11,107 @@ import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
 import { CartDrawer } from '@/components/cart-drawer'
 import { NotificationBell } from '@/components/notification-bell'
+import { useSearch } from '@/hooks/useSearch'
+
+// ── Search Bar component ──────────────────────────────────────────────────────
+function SearchBar() {
+  const router = useRouter()
+  const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const [activeIdx, setActiveIdx] = useState(-1)
+  const { results, loading } = useSearch(query)
+  const wrapRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setActiveIdx(-1)
+    setOpen(query.trim().length > 0)
+  }, [query, results])
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (!open) return
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIdx((i) => Math.min(i + 1, results.length - 1)) }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); setActiveIdx((i) => Math.max(i - 1, -1)) }
+    if (e.key === 'Escape')    { setOpen(false); setQuery('') }
+    if (e.key === 'Enter') {
+      if (activeIdx >= 0 && results[activeIdx]) {
+        router.push(`/marketplace/${results[activeIdx].id}` as any)
+        setQuery(''); setOpen(false)
+      } else if (query.trim()) {
+        router.push(`/marketplace?q=${encodeURIComponent(query.trim())}` as any)
+        setQuery(''); setOpen(false)
+      }
+    }
+  }
+
+  function handleSelect(id: string) {
+    router.push(`/marketplace/${id}` as any)
+    setQuery(''); setOpen(false)
+  }
+
+  const CAT_EMOJI: Record<string, string> = {
+    FOOD:'🍱', REPAIR:'🔧', HOME_SERVICES:'🏠', TUTORING:'📚',
+    HEALTH_WELLNESS:'💊', AGRICULTURE:'🌾', FREELANCE:'💻',
+    ELDERLY_CARE:'🧓', HANDMADE:'🎨', COMMUNITY_SHARING:'🤝',
+  }
+
+  return (
+    <div ref={wrapRef} className="relative w-64 lg:w-80">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+        {loading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-300 animate-spin" />}
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => query.trim() && setOpen(true)}
+          placeholder="ค้นหาสินค้า บริการ ร้านค้า..."
+          className="w-full pl-9 pr-4 py-2 glass border border-white/40 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder-slate-400"
+        />
+      </div>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-full left-0 right-0 mt-2 glass-heavy rounded-2xl shadow-xl overflow-hidden z-50 border border-white/30">
+            {results.length === 0 && !loading && (
+              <div className="px-4 py-3 text-sm text-slate-500 text-center">ไม่พบผลลัพธ์</div>
+            )}
+            {results.map((r, i) => (
+              <button key={r.id} onClick={() => handleSelect(r.id)}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                  i === activeIdx ? 'bg-primary/10' : 'hover:bg-white/30'
+                } ${i > 0 ? 'border-t border-white/20' : ''}`}>
+                <span className="text-xl flex-shrink-0 w-8 text-center">{r.image}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-800 truncate">{r.title}</p>
+                  <p className="text-xs text-slate-500">{r.provider} · {CAT_EMOJI[r.category] ?? ''}</p>
+                </div>
+                <span className="text-xs font-bold text-slate-600 flex-shrink-0">฿{r.price}</span>
+              </button>
+            ))}
+            {query.trim() && (
+              <button onClick={() => { router.push(`/marketplace?q=${encodeURIComponent(query.trim())}` as any); setQuery(''); setOpen(false) }}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-primary font-semibold border-t border-white/20 hover:bg-white/20 transition-colors">
+                <Search className="h-4 w-4" />
+                ค้นหา &ldquo;{query}&rdquo; ทั้งหมด
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 const ROLE_LABEL: Record<string, string> = {
   customer: 'ลูกค้า',
@@ -68,6 +169,7 @@ export function Navbar() {
 
   const NAV_LINKS = [
     { href: '/marketplace', label: t.nav.marketplace },
+    { href: '/stores',      label: 'ร้านค้า' },
     { href: '/communities', label: t.nav.communities },
     { href: '/franchise', label: t.nav.franchise },
     { href: '/guide', label: t.nav.guide },
@@ -116,6 +218,11 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+        </div>
+
+        {/* Desktop search bar */}
+        <div className="hidden lg:block">
+          <SearchBar />
         </div>
 
         {/* Desktop right */}

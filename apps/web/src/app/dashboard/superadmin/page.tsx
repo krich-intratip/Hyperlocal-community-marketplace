@@ -9,7 +9,7 @@ import Link from 'next/link'
 import {
   Crown, Building2, Users, TrendingUp, DollarSign, ShieldCheck,
   Clock, CheckCircle, Pause, ArrowRightLeft, BarChart3,
-  Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star,
+  Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star, Layers,
 } from 'lucide-react'
 import { useT } from '@/hooks/useT'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
@@ -61,6 +61,7 @@ const QUICK_LINKS = [
   { href: '/dashboard/superadmin/franchise', icon: Megaphone, label: 'ประกาศ Global', desc: 'สร้างและจัดการประกาศ', color: 'text-amber-600', bg: 'bg-amber-50' },
   { href: '/marketplace', icon: Globe, label: 'Marketplace', desc: 'ดูตลาดในฐานะผู้ใช้', color: 'text-purple-600', bg: 'bg-purple-50' },
   { href: '/communities', icon: Users, label: 'ชุมชนทั้งหมด', desc: 'ดูภาพรวมชุมชน', color: 'text-green-600', bg: 'bg-green-50' },
+  { href: '/dashboard/superadmin/templates', icon: Layers, label: 'Template Builder', desc: 'Business Templates & Modules', color: 'text-violet-600', bg: 'bg-violet-50' },
   { href: '/dashboard/superadmin/system', icon: Settings, label: 'ตั้งค่าระบบ', desc: 'โหมดฝึกอบรม / ใช้งาน', color: 'text-slate-600', bg: 'bg-slate-100' },
 ]
 
@@ -297,7 +298,7 @@ export default function SuperAdminDashboardPage() {
           <h2 className="text-base font-bold text-slate-700">เมนูหลัก</h2>
         </motion.div>
         <motion.div variants={stagger} initial="hidden" animate="show"
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {QUICK_LINKS.map((link, i) => (
             <motion.div key={link.href + link.label} variants={fadeUp} custom={i} whileHover={{ y: -4 }}>
               <Link href={link.href as any}
