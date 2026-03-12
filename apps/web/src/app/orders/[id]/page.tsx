@@ -83,6 +83,15 @@ function buildMockOrder(id: string): MockOrder {
   }
 }
 
+// ── Static params (required for output: 'export') ─────────────────────────────
+// Pre-render representative order IDs; other IDs work via client-side navigation
+export function generateStaticParams() {
+  return [
+    'ORD-001', 'ORD-002', 'ORD-003', 'ORD-004', 'ORD-005',
+    'ORD-006', 'ORD-007', 'ORD-008', 'ORD-009', 'ORD-010',
+  ].map((id) => ({ id }))
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   useAuthGuard()
