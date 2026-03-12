@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
@@ -29,6 +30,23 @@ const RETURN_REASONS = [
 ]
 
 export default function ReturnRequestPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+        <AppFooter />
+      </main>
+    }>
+      <ReturnRequestContent />
+    </Suspense>
+  )
+}
+
+function ReturnRequestContent() {
   useAuthGuard()
   const searchParams = useSearchParams()
   const orderId = searchParams.get('orderId') ?? ''

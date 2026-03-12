@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState, useMemo, useTransition } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
@@ -103,6 +104,23 @@ const ALL_CATEGORIES = [...new Set(ALL_PROVIDERS.flatMap((p) => p.categories))].
 
 // ── Component ──────────────────────────────────────────────────────────────────
 export default function StoresPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen overflow-x-hidden">
+        <MarketBackground />
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <Store className="h-8 w-8 animate-pulse text-primary" />
+        </div>
+        <AppFooter />
+      </main>
+    }>
+      <StoresContent />
+    </Suspense>
+  )
+}
+
+function StoresContent() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
