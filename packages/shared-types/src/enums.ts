@@ -438,3 +438,15 @@ export enum DeliveryStatus {
   DELIVERED = 'DELIVERED',
   FAILED = 'FAILED',
 }
+
+/**
+ * Status of a multi-item cart order (CART-7).
+ */
+export enum OrderStatus {
+  PENDING_PAYMENT = 'PENDING_PAYMENT',
+  PAID            = 'PAID',
+  PROCESSING      = 'PROCESSING',
+  READY           = 'READY',
+  COMPLETED       = 'COMPLETED',
+  CANCELLED       = 'CANCELLED',
+}

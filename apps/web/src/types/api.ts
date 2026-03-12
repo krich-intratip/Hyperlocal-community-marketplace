@@ -173,11 +173,63 @@ export interface Booking {
 }
 
 export interface CreateBookingDto {
+  /** ID of the listing being booked */
+  listingId: string
   providerId: string
-  serviceDescription: string
+  communityId: string
   scheduledAt: string
-  amount: number
-  couponCode?: string
+  note?: string
+}
+
+// ─── Order (cart checkout) ─────────────────────────────────────────────────────
+
+export type OrderStatus =
+  | 'PENDING_PAYMENT'
+  | 'PAID'
+  | 'PROCESSING'
+  | 'READY'
+  | 'COMPLETED'
+  | 'CANCELLED'
+
+export interface OrderItem {
+  id: string
+  listingId: string
+  listingTitle: string
+  unitPrice: number
+  qty: number
+  lineTotal: number
+  note?: string
+}
+
+export interface Order {
+  id: string
+  customerId: string
+  providerId: string
+  communityId: string
+  status: OrderStatus
+  items: OrderItem[]
+  subtotal: number
+  platformFee: number
+  total: number
+  deliveryAddress?: string
+  paymentMethod: string
+  note?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateOrderItemDto {
+  listingId: string
+  qty: number
+  note?: string
+}
+
+export interface CreateOrderDto {
+  providerId: string
+  communityId: string
+  items: CreateOrderItemDto[]
+  deliveryAddress?: string
+  paymentMethod?: string
   note?: string
 }
 
@@ -269,6 +321,30 @@ export interface Notification {
   read: boolean
   createdAt: string
   href?: string
+}
+
+// ─── Review ───────────────────────────────────────────────────────────────────
+
+export interface Review {
+  id: string
+  bookingId: string
+  reviewerId: string
+  providerId: string
+  listingId?: string
+  listingTitle?: string
+  rating: number
+  comment?: string
+  providerReply?: string
+  isFlagged: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateReviewDto {
+  bookingId: string
+  rating: number
+  comment?: string
+  // providerId intentionally omitted — server derives it from the booking record
 }
 
 // ─── KYC / Address ────────────────────────────────────────────────────────────

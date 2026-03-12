@@ -18,6 +18,15 @@ export class Review {
   @Column({ name: 'provider_id' })
   providerId: string
 
+  @Column({ name: 'listing_id', nullable: true })
+  listingId: string | null
+
+  @Column({ name: 'listing_title', nullable: true, type: 'text' })
+  listingTitle: string | null
+
+  @Column({ name: 'provider_reply', nullable: true, type: 'text' })
+  providerReply: string | null
+
   @Column({ type: 'smallint' })
   rating: number
 

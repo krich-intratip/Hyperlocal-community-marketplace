@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useBooking, useCancelBooking, type MockBooking } from '@/hooks/useBookings'
+import { useSubmitReview } from '@/hooks/useReviews'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -75,7 +76,7 @@ function adaptBooking(b: MockBooking) {
 
 // ── ReviewModal ────────────────────────────────────────────────────────────────
 
-function ReviewModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (r: number, c: string) => void }) {
+function ReviewModal({ onClose, onSubmit, isLoading }: { onClose: () => void; onSubmit: (r: number, c: string) => void; isLoading?: boolean }) {
   const [rating, setRating] = useState(5)
   const [comment, setComment] = useState('')
   const [hover, setHover] = useState(0)
@@ -120,8 +121,9 @@ function ReviewModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (r:
 
         <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
           onClick={() => onSubmit(rating, comment)}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-base font-bold text-white hover:bg-amber-600 transition-colors shadow-lg shadow-amber-100">
-          <ThumbsUp className="h-4 w-4" /> ส่งรีวิว
+          disabled={isLoading}
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-base font-bold text-white hover:bg-amber-600 transition-colors shadow-lg shadow-amber-100 disabled:opacity-60 disabled:cursor-not-allowed">
+          <ThumbsUp className="h-4 w-4" /> {isLoading ? 'กำลังส่ง...' : 'ส่งรีวิว'}
         </motion.button>
       </motion.div>
     </motion.div>
@@ -135,6 +137,8 @@ export default function BookingDetailClient({ id }: { id: string }) {
   const { data: raw, isLoading, isError } = useBooking(id)
   const cancelMutation = useCancelBooking()
   const { fmt, fmtDT } = useDateFormat()
+
+  const submitReview = useSubmitReview()
 
   const [showReview, setShowReview] = useState(false)
   const [reviewed, setReviewed] = useState(false)
@@ -183,9 +187,16 @@ export default function BookingDetailClient({ id }: { id: string }) {
   const StatusIcon = cfg.icon
 
   function handleReview(rating: number, comment: string) {
-    setReviewData({ rating, comment })
-    setReviewed(true)
-    setShowReview(false)
+    submitReview.mutate(
+      { bookingId: booking.id, rating, comment },
+      {
+        onSuccess: () => {
+          setReviewData({ rating, comment })
+          setReviewed(true)
+          setShowReview(false)
+        },
+      },
+    )
   }
 
   function handleCancel() {
@@ -198,7 +209,11 @@ export default function BookingDetailClient({ id }: { id: string }) {
     <>
       <AnimatePresence>
         {showReview && (
-          <ReviewModal onClose={() => setShowReview(false)} onSubmit={handleReview} />
+          <ReviewModal
+            onClose={() => setShowReview(false)}
+            onSubmit={handleReview}
+            isLoading={submitReview.isPending}
+          />
         )}
       </AnimatePresence>
 

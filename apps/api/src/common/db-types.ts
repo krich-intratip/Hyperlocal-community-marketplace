@@ -7,3 +7,15 @@ const isProd = () => process.env.APP_ENV === 'production'
  * SQLite doesn't support jsonb; TypeORM stores it as TEXT with JSON serialization.
  */
 export const jsonCol = (): ColumnType => (isProd() ? 'jsonb' : 'simple-json')
+
+/**
+ * Returns 'double precision' for PostgreSQL (prod) or 'float' for SQLite (dev).
+ * Use for monetary/decimal columns.
+ */
+export const floatCol = (): ColumnType => (isProd() ? 'double precision' : 'float')
+
+/**
+ * Returns 'timestamptz' for PostgreSQL (prod) or 'datetime' for SQLite (dev).
+ * Use with @CreateDateColumn / @UpdateDateColumn / @Column({ type: timestampCol() }).
+ */
+export const timestampCol = (): ColumnType => (isProd() ? 'timestamptz' : 'datetime')

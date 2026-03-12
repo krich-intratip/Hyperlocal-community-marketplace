@@ -11,6 +11,8 @@ import { Navbar } from '@/components/navbar'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { useAuthStore } from '@/store/auth.store'
+import { useProviderReviews, useReviewReply } from '@/hooks/useReviews'
 import {
   MOCK_REVIEWS,
   RATING_DISTRIBUTION,
@@ -33,6 +35,13 @@ const SENTIMENT_CONFIG: Record<ReviewSentiment, { label: string; icon: typeof Th
   negative: { label: 'เชิงลบ',   icon: ThumbsDown,  color: 'text-red-700',   bg: 'bg-red-50',    border: 'border-red-200'   },
 }
 
+/** Derive sentiment from a 1-5 rating (no NLP needed for MVP) */
+function sentimentFromRating(rating: number): ReviewSentiment {
+  if (rating >= 4) return 'positive'
+  if (rating === 3) return 'neutral'
+  return 'negative'
+}
+
 function StarRow({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-0.5">
@@ -49,7 +58,13 @@ function useDateFmt(dateStr: string) {
   return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-function ReviewCard({ review }: { review: MockReview }) {
+function ReviewCard({
+  review,
+  onReply,
+}: {
+  review: MockReview
+  onReply?: (id: string, text: string) => void
+}) {
   const [replyMode, setReplyMode] = useState(false)
   const [replyText, setReplyText] = useState(review.replyText ?? '')
   const [replied, setReplied] = useState(review.replied)
@@ -59,9 +74,12 @@ function ReviewCard({ review }: { review: MockReview }) {
 
   const handleSendReply = () => {
     if (!replyText.trim()) return
+    // Optimistic local update first for immediate UI feedback
     setSavedReply(replyText)
     setReplied(true)
     setReplyMode(false)
+    // Persist to API
+    onReply?.(review.id, replyText)
   }
 
   return (
@@ -143,15 +161,40 @@ function ReviewCard({ review }: { review: MockReview }) {
 
 export default function ProviderReviewsClient() {
   useAuthGuard(['provider', 'admin', 'superadmin'])
+  const { user } = useAuthStore()
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
   const [starFilter, setStarFilter] = useState<number | null>(null)
 
-  const positiveCount = MOCK_REVIEWS.filter(r => r.sentiment === 'positive').length
-  const neutralCount  = MOCK_REVIEWS.filter(r => r.sentiment === 'neutral').length
-  const negativeCount = MOCK_REVIEWS.filter(r => r.sentiment === 'negative').length
-  const unansweredCount = MOCK_REVIEWS.filter(r => !r.replied).length
+  // Real data — falls back to mock when API is unavailable
+  const { data: realReviews } = useProviderReviews(user?.id ?? '')
+  const reviewReply = useReviewReply()
 
-  const filteredReviews = MOCK_REVIEWS.filter(r => {
+  // Map real API reviews to the MockReview shape used by this UI, or fall back to mock
+  const reviews: MockReview[] = (realReviews && realReviews.length > 0)
+    ? realReviews.map(r => ({
+        id: r.id,
+        customer: r.reviewerId,
+        rating: r.rating,
+        date: r.createdAt,
+        text: r.comment ?? '',
+        sentiment: sentimentFromRating(r.rating),
+        listing: r.listingTitle ?? '',
+        replied: !!r.providerReply,
+        replyText: r.providerReply ?? undefined,
+      }))
+    : MOCK_REVIEWS
+
+  const handleReply = (reviewId: string, replyText: string) => {
+    if (!user?.id) return
+    reviewReply.mutate({ id: reviewId, replyText, providerId: user.id })
+  }
+
+  const positiveCount = reviews.filter(r => r.sentiment === 'positive').length
+  const neutralCount  = reviews.filter(r => r.sentiment === 'neutral').length
+  const negativeCount = reviews.filter(r => r.sentiment === 'negative').length
+  const unansweredCount = reviews.filter(r => !r.replied).length
+
+  const filteredReviews = reviews.filter(r => {
     if (starFilter !== null && r.rating !== starFilter) return false
     if (activeFilter === 'positive')  return r.sentiment === 'positive'
     if (activeFilter === 'negative')  return r.sentiment === 'negative'
@@ -159,7 +202,14 @@ export default function ProviderReviewsClient() {
     return true
   })
 
-  const responseRate = Math.round((MOCK_REVIEWS.filter(r => r.replied).length / MOCK_REVIEWS.length) * 100)
+  const responseRate = reviews.length > 0
+    ? Math.round((reviews.filter(r => r.replied).length / reviews.length) * 100)
+    : 0
+
+  // Use real average rating if available, else from mock summary
+  const avgRating = (realReviews && realReviews.length > 0)
+    ? (realReviews.reduce((sum, r) => sum + r.rating, 0) / realReviews.length).toFixed(1)
+    : PROVIDER_SUMMARY.avgRating
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -190,8 +240,8 @@ export default function ProviderReviewsClient() {
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'รีวิวทั้งหมด',  value: MOCK_REVIEWS.length, icon: '📝', color: 'glass-sm'   },
-            { label: 'คะแนนเฉลี่ย',   value: `${PROVIDER_SUMMARY.avgRating} ⭐`, icon: '⭐', color: 'bg-amber-50' },
+            { label: 'รีวิวทั้งหมด',  value: reviews.length, icon: '📝', color: 'glass-sm'   },
+            { label: 'คะแนนเฉลี่ย',   value: `${avgRating} ⭐`, icon: '⭐', color: 'bg-amber-50' },
             { label: 'อัตราตอบ',      value: `${responseRate}%`,  icon: '💬', color: 'bg-green-50'  },
             { label: 'ยังไม่ตอบ',     value: unansweredCount,     icon: '⏰', color: 'bg-red-50'    },
           ].map((s, i) => (
@@ -254,7 +304,7 @@ export default function ProviderReviewsClient() {
               ].map(({ type, count }) => {
                 const cfg = SENTIMENT_CONFIG[type]
                 const SIcon = cfg.icon
-                const pct = Math.round((count / MOCK_REVIEWS.length) * 100)
+                const pct = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0
                 return (
                   <div key={type}>
                     <div className="flex items-center justify-between mb-1">
@@ -281,7 +331,7 @@ export default function ProviderReviewsClient() {
             <div className="mt-5 p-3 bg-purple-50 border border-purple-100 rounded-xl">
               <p className="text-xs font-bold text-purple-700 mb-1">🤖 AI Summary</p>
               <p className="text-xs text-purple-600 leading-relaxed">
-                รีวิวเชิงบวก {Math.round((positiveCount / MOCK_REVIEWS.length) * 100)}% บ่งชี้ถึงความพึงพอใจสูง
+                รีวิวเชิงบวก {reviews.length > 0 ? Math.round((positiveCount / reviews.length) * 100) : 0}% บ่งชี้ถึงความพึงพอใจสูง
                 ประเด็นที่ลูกค้ายกถึงบ่อย: ความสะอาด ความตรงเวลา และรสชาติ
                 ควรตอบรีวิวเชิงลบทุกข้อภายใน 24 ชม.
               </p>
@@ -293,7 +343,7 @@ export default function ProviderReviewsClient() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
           className="flex items-center gap-2 flex-wrap mb-5">
           {([
-            { key: 'all',       label: 'ทั้งหมด',    count: MOCK_REVIEWS.length },
+            { key: 'all',       label: 'ทั้งหมด',    count: reviews.length },
             { key: 'positive',  label: 'เชิงบวก',    count: positiveCount },
             { key: 'negative',  label: 'เชิงลบ',    count: negativeCount },
             { key: 'unanswered',label: 'ยังไม่ตอบ', count: unansweredCount },
@@ -324,7 +374,7 @@ export default function ProviderReviewsClient() {
             </div>
           ) : (
             filteredReviews.map(review => (
-              <ReviewCard key={review.id} review={review} />
+              <ReviewCard key={review.id} review={review} onReply={handleReply} />
             ))
           )}
         </motion.div>
