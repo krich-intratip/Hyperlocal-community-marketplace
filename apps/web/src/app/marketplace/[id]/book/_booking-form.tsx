@@ -84,11 +84,11 @@ export default function BookingFormClient({ id }: { id: string }) {
   function handleConfirm() {
     setLoading(true)
     const dto: CreateBookingDto = {
-      providerId: listing!.id,
-      serviceDescription: listing!.title + (selectedMenus.length ? ' — ' + selectedMenus.join(', ') : ''),
+      listingId: listing!.id,
+      providerId: listing!.providerId,
+      communityId: listing!.communityId,
       scheduledAt: `${selectedDate!.toISOString().slice(0, 10)}T${selectedTime}:00`,
-      amount: grandTotal,
-      note: note || undefined,
+      note: note || (selectedMenus.length ? selectedMenus.join(', ') : undefined),
     }
     createBooking.mutate(dto, {
       onSuccess: (data) => {

@@ -21,6 +21,8 @@ import { PlatformModulesModule } from './modules/platform-modules/platform-modul
 import { MarketModulesModule } from './modules/market-modules/market-modules.module'
 import { StoreMarketsModule } from './modules/store-markets/store-markets.module'
 import { StoreModulesModule } from './modules/store-modules/store-modules.module'
+import { OrdersModule } from './modules/orders/orders.module'
+import { SystemModule } from './modules/system/system.module'
 
 @Module({
   imports: [
@@ -107,6 +109,8 @@ import { StoreModulesModule } from './modules/store-modules/store-modules.module
     MarketModulesModule,
     StoreMarketsModule,
     StoreModulesModule,
+    OrdersModule,
+    SystemModule,
   ],
 })
 export class AppModule {}

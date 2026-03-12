@@ -61,6 +61,7 @@ const QUICK_LINKS = [
   { href: '/dashboard/superadmin/franchise', icon: Megaphone, label: 'ประกาศ Global', desc: 'สร้างและจัดการประกาศ', color: 'text-amber-600', bg: 'bg-amber-50' },
   { href: '/marketplace', icon: Globe, label: 'Marketplace', desc: 'ดูตลาดในฐานะผู้ใช้', color: 'text-purple-600', bg: 'bg-purple-50' },
   { href: '/communities', icon: Users, label: 'ชุมชนทั้งหมด', desc: 'ดูภาพรวมชุมชน', color: 'text-green-600', bg: 'bg-green-50' },
+  { href: '/dashboard/superadmin/system', icon: Settings, label: 'ตั้งค่าระบบ', desc: 'โหมดฝึกอบรม / ใช้งาน', color: 'text-slate-600', bg: 'bg-slate-100' },
 ]
 
 // ── Component ──────────────────────────────────────────────────────────────────

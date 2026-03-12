@@ -21,6 +21,10 @@ import type {
   Listing,
   Notification,
   AnalyticsResponse,
+  Order,
+  CreateOrderDto,
+  Review,
+  CreateReviewDto,
 } from '@/types'
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -184,4 +188,58 @@ export const uploadApi = {
 export const dashboardApi = {
   getAnalytics: (params?: { months?: number; communityId?: string }) =>
     apiClient.get<AnalyticsResponse>('/dashboard/analytics', { params }),
+}
+
+// ─── Orders (cart checkout) ───────────────────────────────────────────────────
+
+export const ordersApi = {
+  /** POST /orders — create a multi-item order from the cart */
+  create: (dto: CreateOrderDto) =>
+    apiClient.post<Order>('/orders', dto),
+
+  /** GET /orders/my — all orders for the authenticated customer */
+  listMy: () =>
+    apiClient.get<Order[]>('/orders/my'),
+
+  /** GET /orders/:id */
+  get: (id: string) =>
+    apiClient.get<Order>(`/orders/${id}`),
+}
+
+// ─── Reviews ──────────────────────────────────────────────────────────────────
+
+export const reviewsApi = {
+  /** POST /reviews — submit review for a completed booking (JWT required) */
+  create: (dto: CreateReviewDto) =>
+    apiClient.post<ApiResponse<Review>>('/reviews', dto),
+
+  /** GET /reviews/booking/:bookingId — check if review exists for a booking */
+  getByBooking: (bookingId: string) =>
+    apiClient.get<ApiResponse<Review | null>>(`/reviews/booking/${bookingId}`),
+
+  /** GET /reviews/provider/:id — list all reviews for a provider (public) */
+  listByProvider: (providerId: string) =>
+    apiClient.get<ApiResponse<Review[]>>(`/reviews/provider/${providerId}`),
+
+  /** GET /reviews/provider/:id/stats — aggregate rating + count (public) */
+  getProviderStats: (providerId: string) =>
+    apiClient.get<ApiResponse<{ averageRating: number; totalReviews: number }>>(
+      `/reviews/provider/${providerId}/stats`,
+    ),
+
+  /** PATCH /reviews/:id/reply — provider replies to a review (JWT required) */
+  reply: (id: string, replyText: string) =>
+    apiClient.patch<ApiResponse<{ success: boolean }>>(`/reviews/${id}/reply`, { replyText }),
+}
+
+// ─── System mode ──────────────────────────────────────────────────────────────
+
+export const systemApi = {
+  /** GET /system/mode — public, returns current mode */
+  getMode: () =>
+    apiClient.get<{ mode: 'training' | 'production'; isTrainingMode: boolean }>('/system/mode'),
+
+  /** PATCH /system/mode — Super Admin only */
+  setMode: (trainingMode: boolean) =>
+    apiClient.patch<{ success: boolean }>('/system/mode', { trainingMode }),
 }

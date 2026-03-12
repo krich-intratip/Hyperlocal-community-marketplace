@@ -26,6 +26,7 @@ import { PlatformModule } from '../modules/platform-modules/entities/platform-mo
 import { MarketModule } from '../modules/market-modules/entities/market-module.entity'
 import { StoreMarket } from '../modules/store-markets/entities/store-market.entity'
 import { StoreModule } from '../modules/store-modules/entities/store-module.entity'
+import { SystemConfig } from '../modules/system/entities/system-config.entity'
 
 // ─── DataSource ───────────────────────────────────────────────────────────────
 const AppDataSource = new DataSource({
@@ -33,7 +34,7 @@ const AppDataSource = new DataSource({
   database: process.env.SQLITE_PATH ?? './dev.db',
   entities: [
     User, Community, CommunityMember, Provider, Listing,
-    BusinessTemplate, PlatformModule, MarketModule, StoreMarket, StoreModule,
+    BusinessTemplate, PlatformModule, MarketModule, StoreMarket, StoreModule, SystemConfig,
   ],
   synchronize: true,
   logging: false,
@@ -434,6 +435,11 @@ async function seed() {
     }
   }
   console.log(`  ✅ ${stoModCount} store-module entries`)
+
+  // ── System Config — default to training mode ─────────────────────────────
+  const sysRepo = AppDataSource.getRepository(SystemConfig)
+  await sysRepo.upsert({ key: 'TRAINING_MODE_ACTIVE', value: 'true' }, ['key'])
+  console.log('  ✅ system_config: TRAINING_MODE_ACTIVE=true')
 
   // ── Done ─────────────────────────────────────────────────────────────────
   console.log('\n🎉 Seed complete!')

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Toaster } from 'sonner'
 import { PwaInstallBanner } from '@/components/pwa-install-banner'
 import { ErrorBoundary } from '@/components/error-boundary'
+import { TrainingModeBanner } from '@/components/training-mode-banner'
 import { useAuthHydrate } from '@/hooks/useAuthHydrate'
 
 function AuthHydrator() {
@@ -30,6 +31,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthHydrator />
       <ErrorBoundary>
+        <TrainingModeBanner />
         {children}
       </ErrorBoundary>
       <PwaInstallBanner />

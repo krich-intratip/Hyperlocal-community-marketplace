@@ -2,6 +2,10 @@ export interface MenuStock { name: string; stock: number; max: number; price: nu
 
 export interface MockListing {
   id: string
+  /** Mock provider UUID — overridden by real UUID from API at runtime */
+  providerId: string
+  /** Mock community UUID — overridden by real UUID from API at runtime */
+  communityId: string
   title: string
   description: string
   provider: string
@@ -34,7 +38,7 @@ export interface MockListing {
 
 export const MOCK_LISTINGS: MockListing[] = [
   {
-    id: '1',
+    id: '1', providerId: 'mock-p-01', communityId: 'mock-c-01',
     title: 'ทำอาหารกล่องส่งถึงที่',
     description: 'รับทำอาหารกล่องหลากหลายเมนู ทั้งข้าวราดแกง อาหารตามสั่ง ส้มตำ ลาบ ทำจากวัตถุดิบสด ปรุงรสอร่อย สั่งล่วงหน้า 1 วัน จัดส่งถึงบ้านในรัศมี 3 กม. ราคาเหมาะสม รับทั้งแบบรายวันและรายเดือน',
     provider: 'คุณแม่สมใจ', providerAvatar: '👩‍🍳', providerSince: 'ม.ค. 2567',
@@ -54,7 +58,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '2',
+    id: '2', providerId: 'mock-p-02', communityId: 'mock-c-01',
     title: 'ซ่อมแอร์บ้าน ล้างแอร์',
     description: 'บริการซ่อมและล้างแอร์บ้านทุกยี่ห้อ ช่างมีใบรับรอง ประสบการณ์กว่า 10 ปี ใช้อุปกรณ์มาตรฐาน สามารถออกใบรับประกันงาน 3 เดือน บริการถึงบ้านในเขตกรุงเทพและปริมณฑล',
     provider: 'ช่างสมชาย', providerAvatar: '👨‍🔧', providerSince: 'มี.ค. 2566',
@@ -68,7 +72,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     lat: 13.721, lng: 100.487,
   },
   {
-    id: '3',
+    id: '3', providerId: 'mock-p-03', communityId: 'mock-c-02',
     title: 'สอนภาษาอังกฤษเด็กประถม',
     description: 'สอนภาษาอังกฤษสำหรับเด็กชั้น ป.1–ป.6 เน้นการสนทนา อ่าน เขียน ด้วยเทคนิคที่สนุกและเป็นธรรมชาติ มีประสบการณ์สอนมากกว่า 5 ปี สามารถสอนออนไลน์หรือที่บ้านนักเรียน',
     provider: 'ครูน้องใหม่', providerAvatar: '👩‍🏫', providerSince: 'มิ.ย. 2567',
@@ -82,7 +86,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     lat: 13.729, lng: 100.479,
   },
   {
-    id: '4',
+    id: '4', providerId: 'mock-p-04', communityId: 'mock-c-02',
     title: 'ทำความสะอาดบ้านรายวัน',
     description: 'บริการทำความสะอาดบ้านและคอนโดครบวงจร ทีมงานมืออาชีพ ตรวจสอบประวัติแล้ว ใช้อุปกรณ์และน้ำยาทำความสะอาดมาตรฐาน ISO รับทั้งรายครั้ง รายสัปดาห์ และรายเดือน',
     provider: 'บริษัท Clean Home', providerAvatar: '🧹', providerSince: 'ก.ค. 2565',
@@ -96,7 +100,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     lat: 13.724, lng: 100.490,
   },
   {
-    id: '5',
+    id: '5', providerId: 'mock-p-05', communityId: 'mock-c-03',
     title: 'ดูแลผู้สูงอายุกลางวัน',
     description: 'บริการดูแลผู้สูงอายุระหว่างวัน โดยผู้มีประสบการณ์ด้านการดูแลผู้สูงอายุและผู้ป่วย ช่วยทำกิจวัตรประจำวัน กายภาพบำบัดเบื้องต้น พาไปพบแพทย์ ดูแลด้วยความใส่ใจ',
     provider: 'คุณสมศรี', providerAvatar: '👩‍⚕️', providerSince: 'ก.พ. 2568',
@@ -110,7 +114,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     lat: 13.718, lng: 100.483,
   },
   {
-    id: '6',
+    id: '6', providerId: 'mock-p-06', communityId: 'mock-c-04',
     title: 'กระเป๋าผ้าทอมือ handmade',
     description: 'กระเป๋าผ้าทอมือจากผ้าฝ้ายแท้ 100% งานฝีมือชาวบ้าน ลวดลายไทยเอกลักษณ์ ทนทาน สีสวยไม่ตก มีหลายรูปแบบและขนาด รับออเดอร์ล่วงหน้า 7 วัน สามารถสั่งทำลายพิเศษได้',
     provider: 'ร้านป้าแดง', providerAvatar: '👩‍🎨', providerSince: 'ส.ค. 2566',
@@ -130,7 +134,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '7',
+    id: '7', providerId: 'mock-p-07', communityId: 'mock-c-05',
     title: 'นวดแผนไทย ออกนอกสถานที่',
     description: 'บริการนวดแผนไทยออกนอกสถานที่ ครูนวดรับรองจากกรมการแพทย์แผนไทย ประสบการณ์กว่า 8 ปี ใช้น้ำมันนวดอย่างดี นวดแก้ปวดเมื่อย คลายกล้ามเนื้อ มีอุปกรณ์ครบ',
     provider: 'หมอนวดประเสริฐ', providerAvatar: '🧘', providerSince: 'พ.ย. 2566',
@@ -144,7 +148,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     lat: 13.715, lng: 100.493,
   },
   {
-    id: '8',
+    id: '8', providerId: 'mock-p-08', communityId: 'mock-c-06',
     title: 'ผักออร์แกนิคส่งรายสัปดาห์',
     description: 'ผักสวนครัวออร์แกนิค ปลูกเองโดยไม่ใช้สารเคมี ตัดสดทุกเช้า จัดเซ็ตรายสัปดาห์ 5–8 ชนิดหมุนเวียนตามฤดูกาล ส่งถึงบ้านทุกวัน จ อ และ ศ ก่อน 09:00 น. ลองสั่งครั้งแรกฟรีถุงผ้า',
     provider: 'สวนคุณลุงทอง', providerAvatar: '👨‍🌾', providerSince: 'ม.ค. 2567',
@@ -163,7 +167,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '9',
+    id: '9', providerId: 'mock-p-09', communityId: 'mock-c-02',
     title: 'ออกแบบ Logo & Brand Identity',
     description: 'บริการออกแบบ Logo โลโก้และ Brand Identity ครบวงจร เข้าใจ DNA แบรนด์คุณ ทำ concept หลายแบบให้เลือก แก้ไขไม่จำกัดครั้งจนพอใจ ส่ง source file ครบ ทุก format พร้อมใช้งาน',
     provider: 'ดีไซเนอร์เอ', providerAvatar: '👨‍💻', providerSince: 'ก.ย. 2567',
@@ -182,7 +186,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '10',
+    id: '10', providerId: 'mock-p-10', communityId: 'mock-c-03',
     title: 'ยืม-คืนอุปกรณ์ทำครัว',
     description: 'แบ่งปันอุปกรณ์ทำครัวในชุมชน เช่น หม้อทอดไร้น้ำมัน เครื่องปั่น ที่ปิ้งย่าง หม้อหุงข้าวขนาดใหญ่ เหมาะสำหรับจัดงาน ปาร์ตี้ ยืมรายวัน ราคาถูก ช่วยลดค่าใช้จ่ายในชุมชน',
     provider: 'Community Pool', providerAvatar: '🤝', providerSince: 'เม.ย. 2568',
@@ -202,7 +206,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '11',
+    id: '11', providerId: 'mock-p-11', communityId: 'mock-c-01',
     title: 'ซ่อมท่อน้ำ-ประปา',
     description: 'บริการซ่อมท่อน้ำ ประปา ก๊อกน้ำรั่ว ท่อแตก ท่ออุดตัน สุขภัณฑ์ ด้วยอุปกรณ์ครบ งานสะอาดเรียบร้อย มีการรับประกันงาน 30 วัน เรียกได้ทุกวัน รวมถึงวันหยุด',
     provider: 'ช่างวิชัย', providerAvatar: '🔧', providerSince: 'ก.พ. 2567',
@@ -216,7 +220,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     lat: 13.723, lng: 100.488,
   },
   {
-    id: '12',
+    id: '12', providerId: 'mock-p-12', communityId: 'mock-c-02',
     title: 'อาหารคลีนออเดอร์ล่วงหน้า',
     description: 'อาหารคลีนเพื่อสุขภาพ คำนวณแคลอรี่ทุกเมนู วัตถุดิบสด ใช้น้ำมันน้อย ไม่มีผงชูรส รองรับอาหารพิเศษ เช่น คีโต ลดน้ำหนัก เบาหวาน สั่งล่วงหน้า 1 วัน ส่งทุกเช้า',
     provider: 'ครัวคลีนคลีน', providerAvatar: '👩‍🍳', providerSince: 'ต.ค. 2567',
@@ -237,7 +241,7 @@ export const MOCK_LISTINGS: MockListing[] = [
   },
   // ── ภาคเหนือ: เชียงใหม่ ──────────────────────────────────────────────
   {
-    id: '13',
+    id: '13', providerId: 'mock-p-13', communityId: 'mock-c-04',
     title: 'คลาสทำอาหารเหนือ เชียงใหม่',
     description: 'เรียนทำอาหารเหนือต้นตำรับกับเชฟมืออาชีพ เมนูขึ้นชื่อ: ขนมจีนน้ำเงี้ยว แกงฮังเล ซุปหน่อไม้ และข้าวซอย เรียนเป็นกลุ่มเล็ก สูงสุด 8 คน รวมตลาดเช้า รับวัตถุดิบสด',
     provider: 'เชฟนุ้ย ครัวเหนือ', providerAvatar: '👨‍🍳', providerSince: 'เม.ย. 2567',
@@ -256,7 +260,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '14',
+    id: '14', providerId: 'mock-p-14', communityId: 'mock-c-07',
     title: 'สปานวดล้านนา อโรมาเทอราพี',
     description: 'สปาระดับพรีเมียม บรรยากาศล้านนา ใช้สมุนไพรท้องถิ่นเชียงใหม่ ทีมนวดบำบัดผ่านการรับรองนานาชาติ บริการนวดหน้า สปาตัว ล้างผิว และแพ็กเกจคู่ ที่ตั้งย่านนิมมานเฮมิน',
     provider: 'สปาล้านนา', providerAvatar: '🌸', providerSince: 'ก.พ. 2566',
@@ -275,7 +279,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '15',
+    id: '15', providerId: 'mock-p-15', communityId: 'mock-c-04',
     title: 'ไกด์เดินป่าดอยสุเทพ',
     description: 'ไกด์เดินป่ามืออาชีพ ใบอนุญาตนำเที่ยว TAT รู้จักพฤกษศาสตร์ สัตว์ป่า และวัฒนธรรมท้องถิ่น เส้นทางดอยสุเทพ น้ำตกมณฑาธาร และหมู่บ้านชาวเขา รวมชุดอุปกรณ์พื้นฐาน',
     provider: 'ไกด์นุ ดอยสุเทพ', providerAvatar: '🏔️', providerSince: 'ก.ย. 2566',
@@ -290,7 +294,7 @@ export const MOCK_LISTINGS: MockListing[] = [
   },
   // ── ภาคใต้: ภูเก็ต ──────────────────────────────────────────────────
   {
-    id: '16',
+    id: '16', providerId: 'mock-p-16', communityId: 'mock-c-08',
     title: 'อาหารทะเลสด ปากน้ำ ภูเก็ต',
     description: 'ร้านอาหารทะเลสดริมทะเลภูเก็ต วัตถุดิบสดจากชาวประมงโดยตรงทุกเช้า ปรุงตามสั่งรสชาติต้นตำรับใต้ บริการนั่งทานในร้าน รับทำกล่องส่ง และจัดเลี้ยงกลุ่ม',
     provider: 'ป้าหนู อาหารทะเล', providerAvatar: '🦞', providerSince: 'ก.พ. 2567',
@@ -310,7 +314,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '17',
+    id: '17', providerId: 'mock-p-17', communityId: 'mock-c-08',
     title: 'เรียนดำน้ำ PADI Open Water ภูเก็ต',
     description: 'คอร์สดำน้ำ PADI Open Water Diver ครบสมบูรณ์ 3-4 วัน ทฤษฎีและปฏิบัติจริง ครูสอน PADI Instructor อุปกรณ์มาตรฐานสากล ปลอดภัย 100% รับ Certificate จริงจาก PADI',
     provider: 'ครูดำน้ำภูเก็ต', providerAvatar: '🤿', providerSince: 'พ.ย. 2565',
@@ -330,7 +334,7 @@ export const MOCK_LISTINGS: MockListing[] = [
   },
   // ── ภาคอีสาน: ขอนแก่น ───────────────────────────────────────────────
   {
-    id: '18',
+    id: '18', providerId: 'mock-p-18', communityId: 'mock-c-09',
     title: 'ส้มตำ ลาบ อีสานแท้ ขอนแก่น',
     description: 'ร้านส้มตำอีสานแท้ สูตรลับจากบ้านเกิดขอนแก่น ส้มตำรสจัด ลาบหมูดิบ ลาบสุก ก้อยปลา เมนูขึ้นชื่อ ลูกค้าประจำ 100+ ราย รับส่งออเดอร์ถึงบ้านในเขตเมืองขอนแก่น',
     provider: 'ร้านส้มตำยายแดง', providerAvatar: '🌶️', providerSince: 'ม.ค. 2568',
@@ -351,7 +355,7 @@ export const MOCK_LISTINGS: MockListing[] = [
   },
   // ── ภาคเหนือ: เชียงใหม่ (ช่าง) ─────────────────────────────────────
   {
-    id: '19',
+    id: '19', providerId: 'mock-p-19', communityId: 'mock-c-04',
     title: 'ช่างไฟฟ้าบ้าน ติดตั้ง ซ่อม เชียงใหม่',
     description: 'ช่างไฟฟ้าใบอนุญาต กฟน. รับงานทั่วเชียงใหม่ ติดตั้งระบบไฟฟ้าบ้านและคอนโด ซ่อมบอร์ด ปลั๊ก สวิตช์ ระบบแอร์ ติดตั้งโซลาร์เซลล์ รับประกันงาน 1 ปี',
     provider: 'ช่างไฟวิมล', providerAvatar: '⚡', providerSince: 'มิ.ย. 2567',
@@ -366,7 +370,7 @@ export const MOCK_LISTINGS: MockListing[] = [
   },
   // ── ปริมณฑล: นนทบุรี ────────────────────────────────────────────────
   {
-    id: '20',
+    id: '20', providerId: 'mock-p-20', communityId: 'mock-c-03',
     title: 'จัดสวน ดูแลสวนรายเดือน',
     description: 'บริการจัดสวนและดูแลสวนครบวงจร ออกแบบสวน ปลูกต้นไม้ ตัดแต่งกิ่ง ดูแลรายเดือน ใช้ปุ๋ยอินทรีย์ ไม่ใช้ยาฆ่าแมลงอันตราย ทั้งสวนบ้าน คอนโด และสำนักงาน',
     provider: 'สวนสวยบางใหญ่', providerAvatar: '🌳', providerSince: 'ก.ค. 2567',
@@ -386,7 +390,7 @@ export const MOCK_LISTINGS: MockListing[] = [
   },
   // ── Phase 13: ชุมชนทั่วประเทศ ────────────────────────────────────────
   {
-    id: '21',
+    id: '21', providerId: 'mock-p-21', communityId: 'mock-c-10',
     title: 'ก๋วยเตี๋ยวเนื้อ หมู สไตล์นครสวรรค์',
     description: 'ก๋วยเตี๋ยวเนื้อต้มยำสไตล์นครสวรรค์ดั้งเดิม น้ำซุปกระดูกต้มนานกว่า 8 ชั่วโมง เนื้อนุ่มเปื่อย ลูกชิ้นเนื้อทำเอง ราคาคุ้มค่า เปิดบริการทุกวัน ไม่มีวันหยุด',
     provider: 'ร้านก๋วยเตี๋ยวนครสวรรค์', providerAvatar: '🍜', providerSince: 'ต.ค. 2567',
@@ -405,7 +409,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '22',
+    id: '22', providerId: 'mock-p-22', communityId: 'mock-c-11',
     title: 'ซ่อมแซมบ้าน ไฟฟ้า ประปา พัทยา',
     description: 'บริการซ่อมแซมครบวงจรในเมืองพัทยาและโดยรอบ ซ่อมแอร์ ประปา ไฟฟ้า กระเบื้อง ทาสี มีช่างหลายทีม รับงานด่วนได้ ราคาโปร่งใส ไม่บวกราคา',
     provider: 'ช่างพัทยา ครบวงจร', providerAvatar: '🔩', providerSince: 'ก.ค. 2567',
@@ -419,7 +423,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     lat: 12.935, lng: 100.883,
   },
   {
-    id: '23',
+    id: '23', providerId: 'mock-p-23', communityId: 'mock-c-12',
     title: 'ล่องแก่งแม่น้ำแควน้อย กาญจนบุรี',
     description: 'แพ็กเกจล่องแก่งครึ่งวันและเต็มวัน ครูฝึกมีใบอนุญาต อุปกรณ์ความปลอดภัยครบ ชมวิวธรรมชาติริมแม่น้ำ แคมปิ้ง BBQ ริมน้ำ เหมาะสำหรับครอบครัวและกลุ่มเพื่อน',
     provider: 'ไกด์ล่องแก่งกาญจน์', providerAvatar: '🛶', providerSince: 'ก.ย. 2567',
@@ -438,7 +442,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '24',
+    id: '24', providerId: 'mock-p-24', communityId: 'mock-c-13',
     title: 'ดุเรียน เงาะ มังคุด ส่งตรงสวน สุราษฎร์ฯ',
     description: 'ผลไม้สดจากสวนโดยตรง ไม่ผ่านพ่อค้าคนกลาง ดุเรียนหมอนทอง ชะนี เงาะโรงเรียน มังคุด ลองกอง ส่งด่วนทางไปรษณีย์ด้วยกล่องเย็น รับประกันคุณภาพ',
     provider: 'สวนผลไม้สุราษฎร์', providerAvatar: '🍊', providerSince: 'ธ.ค. 2567',
@@ -457,7 +461,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     ],
   },
   {
-    id: '25',
+    id: '25', providerId: 'mock-p-25', communityId: 'mock-c-14',
     title: 'เซรามิคลำปาง สั่งทำตามแบบ',
     description: 'งานเซรามิคฝีมือช่างลำปางรุ่นเก่า ถ้วยชาม แจกัน ของที่ระลึก ของขวัญ สั่งทำตามแบบ พิมพ์ชื่อ โลโก้ได้ ส่งทั่วประเทศ รับประกันคุณภาพ ไม่ผ่านคนกลาง',
     provider: 'เซรามิคลำปาง ช่างบุ', providerAvatar: '🏺', providerSince: 'เม.ย. 2568',
