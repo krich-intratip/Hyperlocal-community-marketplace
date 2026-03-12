@@ -17,6 +17,8 @@ apps/web/.env
 apps/web/.env.local
 apps/api/.env
 apps/api/.env.local
+apps/api/.env.development
+apps/api/dev.db
 
 # =============================================================================
 # Node / npm / pnpm
@@ -34,6 +36,10 @@ pnpm-debug.log*
 # =============================================================================
 apps/web/.next/
 apps/web/out/
+apps/web/dist/
+*.tsbuildinfo
+*.tmp.*
+*.tmp
 
 # =============================================================================
 # NestJS / TypeScript build
