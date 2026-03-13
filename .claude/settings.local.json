@@ -113,7 +113,27 @@
       "Bash(grep -l \"Entity\" \"/d/Dropbox/DB.mr.Krich/PARA/3_Projects/0_Dev/Hyperlocal_community_marketplace/apps/api/src/modules/providers/entities\"/*.ts)",
       "Bash(xargs head -50)",
       "Bash(xargs grep -l \"SystemConfig\\\\|system\")",
-      "Bash(xargs grep -l \"UserRole\\\\|enum\")"
+      "Bash(xargs grep -l \"UserRole\\\\|enum\")",
+      "Bash(gh run:*)",
+      "Bash(apps/api/src/modules/business-templates/business-templates.controller.ts:*)",
+      "Bash(grep -n \"id: ''7''\" \"D:\\\\Dropbox\\\\DB.mr.Krich\\\\PARA\\\\3_Projects\\\\0_Dev\\\\Hyperlocal_community_marketplace\\\\apps\\\\web\\\\src\\\\lib\\\\mock-listings.ts\")",
+      "Bash(claude --version)",
+      "Bash(npm show:*)",
+      "Bash(npm update:*)",
+      "Bash(npm install:*)",
+      "Bash(where claude:*)",
+      "Bash(npm list:*)",
+      "Bash(\"C:\\\\Users\\\\DrKri\\\\AppData\\\\Roaming\\\\npm\\\\claude\" --version)",
+      "Bash(claude update:*)",
+      "Bash(New-Item -ItemType Directory -Force \"D:\\\\Dropbox\\\\DB.mr.Krich\\\\PARA\\\\3_Projects\\\\0_Dev\\\\Hyperlocal_community_marketplace\\\\apps\\\\web\\\\src\\\\app\\\\stores\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"D:\\\\Dropbox\\\\DB.mr.Krich\\\\PARA\\\\3_Projects\\\\0_Dev\\\\Hyperlocal_community_marketplace\\\\apps\\\\web\\\\src\\\\app\\\\dashboard\\\\superadmin\\\\templates\")",
+      "Bash(New-Item -ItemType Directory -Force \"D:\\\\Dropbox\\\\DB.mr.Krich\\\\PARA\\\\3_Projects\\\\0_Dev\\\\Hyperlocal_community_marketplace\\\\apps\\\\web\\\\src\\\\app\\\\orders\\\\[id]\")",
+      "mcp__Windows-MCP__PowerShell",
+      "Bash(npx wrangler:*)",
+      "Bash(node -e \"const p=require\\(''./apps/api/package.json''\\); p.version=''1.4.0''; require\\(''fs''\\).writeFileSync\\(''./apps/api/package.json'', JSON.stringify\\(p, null, 2\\)+''\\\\n''\\); console.log\\(''done''\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(npx next:*)"
     ]
   }
 }

@@ -6,9 +6,13 @@ import { Listing } from '../listings/entities/listing.entity'
 import { Provider } from '../providers/entities/provider.entity'
 import { OrdersController } from './orders.controller'
 import { OrdersService } from './orders.service'
+import { NotificationsModule } from '../notifications/notifications.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderItem, Listing, Provider])],
+  imports: [
+    TypeOrmModule.forFeature([Order, OrderItem, Listing, Provider]),
+    NotificationsModule,
+  ],
   controllers: [OrdersController],
   providers: [OrdersService],
   exports: [OrdersService],

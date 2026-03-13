@@ -35,7 +35,16 @@ export const notifKeys = {
 async function fetchNotifications(): Promise<MockNotification[]> {
   if (USE_REAL_API) {
     const res = await notificationsApi.list()
-    return res.data.data as unknown as MockNotification[]
+    const apiData = (res.data?.data ?? res.data ?? []) as any[]
+    return apiData.map((n: any) => ({
+      id: n.id,
+      type: n.type,
+      title: n.title,
+      body: n.body,
+      read: n.isRead ?? n.read ?? false,
+      createdAt: n.createdAt,
+      href: n.href ?? undefined,
+    }))
   }
   await new Promise((r) => setTimeout(r, 100))
   return MOCK_NOTIFS
@@ -57,6 +66,22 @@ export function useUnreadCount() {
       return notifs.filter((n) => !n.read).length
     },
     staleTime: 15 * 1000,
+  })
+}
+
+export function useMarkRead() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (USE_REAL_API) {
+        await notificationsApi.markRead(id)
+        return
+      }
+      await new Promise((r) => setTimeout(r, 150))
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: notifKeys.all })
+    },
   })
 }
 

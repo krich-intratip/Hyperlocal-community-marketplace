@@ -59,7 +59,9 @@ export class NotificationsGateway {
     payload: Record<string, unknown>,
   ): Promise<void> {
     this.logger.log(`[WS-STUB] → userId=${userId} type=${type}`)
-    await this.notificationsService.send(userId, type, payload)
+    const title = String(payload['title'] ?? type)
+    const body  = String(payload['body']  ?? '')
+    await this.notificationsService.send(userId, type, title, body, { data: payload })
   }
 
   /**

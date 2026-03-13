@@ -6,13 +6,57 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { ListingStatus } from '@chm/shared-types'
+import { ListingStatus, NotificationType } from '@chm/shared-types'
 import { Order } from './entities/order.entity'
 import { OrderItem } from './entities/order-item.entity'
 import { Listing } from '../listings/entities/listing.entity'
 import { Provider } from '../providers/entities/provider.entity'
 import { CreateOrderDto } from './dto/create-order.dto'
 import { UpdateOrderStatusDto, OrderStatus } from './dto/update-order-status.dto'
+import { NotificationsService } from '../notifications/notifications.service'
+
+/** Short order reference (last 8 chars of UUID, uppercased) */
+function shortRef(id: string): string {
+  return id.slice(-8).toUpperCase()
+}
+
+/** Maps an OrderStatus transition to a customer notification */
+const ORDER_NOTIF_MAP: Partial<Record<OrderStatus, {
+  type: NotificationType
+  title: string
+  body: (order: Order) => string
+}>> = {
+  [OrderStatus.CONFIRMED]: {
+    type: NotificationType.BOOKING_CONFIRMED,
+    title: 'ออเดอร์ได้รับการยืนยัน ✅',
+    body: (o) => `ออเดอร์ #${shortRef(o.id)} ของคุณได้รับการยืนยันจากผู้ให้บริการแล้ว`,
+  },
+  [OrderStatus.IN_PROGRESS]: {
+    type: NotificationType.BOOKING_IN_PROGRESS,
+    title: 'ผู้ให้บริการกำลังดำเนินงาน 🔧',
+    body: (o) => `ออเดอร์ #${shortRef(o.id)} อยู่ระหว่างดำเนินการ`,
+  },
+  [OrderStatus.PENDING_CONFIRMATION]: {
+    type: NotificationType.BOOKING_COMPLETED_BY_PROVIDER,
+    title: 'กรุณายืนยันการรับบริการ ⏰',
+    body: (o) => `ผู้ให้บริการแจ้งว่าออเดอร์ #${shortRef(o.id)} เสร็จแล้ว กรุณายืนยันภายใน 72 ชั่วโมง`,
+  },
+  [OrderStatus.COMPLETED]: {
+    type: NotificationType.BOOKING_COMPLETED,
+    title: 'บริการเสร็จสมบูรณ์ 🎉',
+    body: (o) => `ออเดอร์ #${shortRef(o.id)} เสร็จสมบูรณ์ ขอบคุณที่ใช้บริการ!`,
+  },
+  [OrderStatus.CANCELLED_BY_PROVIDER]: {
+    type: NotificationType.BOOKING_CANCELLED,
+    title: 'ออเดอร์ถูกยกเลิก ❌',
+    body: (o) => `น่าเสียดาย — ออเดอร์ #${shortRef(o.id)} ถูกยกเลิกโดยผู้ให้บริการ`,
+  },
+  [OrderStatus.CANCELLED_BY_CUSTOMER]: {
+    type: NotificationType.BOOKING_CANCELLED,
+    title: 'ออเดอร์ถูกยกเลิก',
+    body: (o) => `ออเดอร์ #${shortRef(o.id)} ถูกยกเลิกแล้ว`,
+  },
+}
 
 /** Role-based status transition rules */
 const ALLOWED_TRANSITIONS: Record<string, Record<string, OrderStatus[]>> = {
@@ -48,6 +92,8 @@ export class OrdersService {
 
     @InjectRepository(Provider)
     private readonly providerRepo: Repository<Provider>,
+
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   /**
@@ -232,7 +278,23 @@ export class OrdersService {
     }
 
     await this.orderRepo.update(id, { status: nextStatus })
-    return this.orderRepo.findOne({ where: { id } }) as Promise<Order>
+    const updatedOrder = await this.orderRepo.findOne({ where: { id } }) as Order
+
+    // NF-1: fire notification to customer on relevant status changes
+    const notifDef = ORDER_NOTIF_MAP[nextStatus]
+    if (notifDef) {
+      this.notificationsService
+        .send(
+          updatedOrder.customerId,
+          notifDef.type,
+          notifDef.title,
+          notifDef.body(updatedOrder),
+          { href: `/orders/${updatedOrder.id}`, data: { orderId: updatedOrder.id } },
+        )
+        .catch(() => { /* never throw — notification failure must not fail the request */ })
+    }
+
+    return updatedOrder
   }
 
   // ── BE-3: Provider incoming orders ──────────────────────────────────────────
