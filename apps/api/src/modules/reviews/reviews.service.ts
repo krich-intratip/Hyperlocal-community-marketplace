@@ -11,16 +11,33 @@ import { BookingStatus } from '@chm/shared-types'
 import { Review } from './entities/review.entity'
 import { Booking } from '../bookings/entities/booking.entity'
 import { Listing } from '../listings/entities/listing.entity'
+import { Provider } from '../providers/entities/provider.entity'
+
+// ── PDPA helper ───────────────────────────────────────────────────────────────
+
+/**
+ * Masks a reviewer UUID for PDPA compliance on public endpoints.
+ * Shows only last 4 chars: "ผู้ใช้ ****xxxx"
+ */
+function maskReviewerId(id: string): string {
+  const last4 = id.slice(-4).toUpperCase()
+  return `ผู้ใช้ ****${last4}`
+}
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepo: Repository<Review>,
+
     @InjectRepository(Booking)
     private readonly bookingRepo: Repository<Booking>,
+
     @InjectRepository(Listing)
     private readonly listingRepo: Repository<Listing>,
+
+    @InjectRepository(Provider)
+    private readonly providerRepo: Repository<Provider>,
   ) {}
 
   async create(
@@ -54,38 +71,95 @@ export class ReviewsService {
       listingTitle: listing?.title ?? null,
       rating: data.rating,
       comment: data.comment,
+      isVisible: true,
+      approvedAt: null,
     })
     return this.reviewRepo.save(review)
   }
 
+  /**
+   * Returns all reviews for a provider — for PROVIDER DASHBOARD (no PDPA masking).
+   * Shows both visible and hidden reviews so provider can manage them.
+   */
   async findByProvider(providerId: string) {
     return this.reviewRepo.find({ where: { providerId }, order: { createdAt: 'DESC' } })
+  }
+
+  /**
+   * Returns only VISIBLE reviews for public display — with PDPA reviewer masking.
+   * Used by public provider profile page.
+   */
+  async findByProviderPublic(providerId: string): Promise<(Omit<Review, 'reviewerId'> & { reviewerMasked: string })[]> {
+    const reviews = await this.reviewRepo.find({
+      where: { providerId, isVisible: true },
+      order: { createdAt: 'DESC' },
+    })
+    return reviews.map(r => {
+      const { reviewerId, ...rest } = r
+      return { ...rest, reviewerMasked: maskReviewerId(reviewerId) }
+    })
   }
 
   async findByBooking(bookingId: string) {
     return this.reviewRepo.findOne({ where: { bookingId } })
   }
 
+  /**
+   * Provider stats — includes transparencyScore (visible / total × 100).
+   * Uses only visible reviews for averageRating (public-facing stats).
+   */
   async getProviderStats(providerId: string) {
-    const result = await this.reviewRepo
-      .createQueryBuilder('r')
-      .select('AVG(r.rating)', 'averageRating')
-      .addSelect('COUNT(r.id)', 'totalReviews')
-      .where('r.provider_id = :providerId', { providerId })
-      .getRawOne()
-    return {
-      averageRating: parseFloat(result.averageRating) || 0,
-      totalReviews: parseInt(result.totalReviews) || 0,
-    }
+    const [allResult, visibleResult] = await Promise.all([
+      this.reviewRepo
+        .createQueryBuilder('r')
+        .select('COUNT(r.id)', 'totalReviews')
+        .where('r.provider_id = :providerId', { providerId })
+        .getRawOne(),
+      this.reviewRepo
+        .createQueryBuilder('r')
+        .select('AVG(r.rating)', 'averageRating')
+        .addSelect('COUNT(r.id)', 'visibleReviews')
+        .where('r.provider_id = :providerId', { providerId })
+        .andWhere('r.is_visible = :v', { v: true })
+        .getRawOne(),
+    ])
+
+    const totalReviews  = parseInt(allResult.totalReviews)   || 0
+    const visibleReviews = parseInt(visibleResult.visibleReviews) || 0
+    const averageRating  = parseFloat(visibleResult.averageRating) || 0
+    const transparencyScore = totalReviews > 0
+      ? Math.round((visibleReviews / totalReviews) * 100)
+      : 100   // 100% if no reviews yet
+
+    return { averageRating, totalReviews, visibleReviews, transparencyScore }
   }
 
-  async addReply(id: string, providerId: string, replyText: string) {
+  async addReply(id: string, userId: string, replyText: string) {
     const review = await this.reviewRepo.findOne({ where: { id } })
     if (!review) throw new NotFoundException('Review not found')
-    if (review.providerId !== providerId)
+
+    // Resolve provider profile by userId
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider || review.providerId !== provider.id)
       throw new ForbiddenException('Only the reviewed provider can reply to this review')
+
     await this.reviewRepo.update(id, { providerReply: replyText })
     return { success: true }
+  }
+
+  /** RV-2: Provider toggles visibility of a specific review */
+  async setVisibility(id: string, userId: string, isVisible: boolean) {
+    const review = await this.reviewRepo.findOne({ where: { id } })
+    if (!review) throw new NotFoundException('Review not found')
+
+    // Resolve provider profile by userId
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider || review.providerId !== provider.id)
+      throw new ForbiddenException('Only the reviewed provider can manage review visibility')
+
+    const approvedAt = isVisible ? new Date() : null
+    await this.reviewRepo.update(id, { isVisible, approvedAt })
+    return { success: true, isVisible }
   }
 
   async flag(id: string) {

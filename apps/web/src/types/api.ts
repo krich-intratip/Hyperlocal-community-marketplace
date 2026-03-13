@@ -333,6 +333,8 @@ export interface Review {
   id: string
   bookingId: string
   reviewerId: string
+  /** PDPA-masked reviewer ID on public endpoints (e.g. "ผู้ใช้ ****A1B2") */
+  reviewerMasked?: string
   providerId: string
   listingId?: string
   listingTitle?: string
@@ -340,6 +342,10 @@ export interface Review {
   comment?: string
   providerReply?: string
   isFlagged: boolean
+  /** RV-2: whether this review is shown publicly */
+  isVisible: boolean
+  /** RV-2: timestamp when provider approved this review */
+  approvedAt?: string | null
   createdAt: string
   updatedAt: string
 }

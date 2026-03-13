@@ -10,9 +10,10 @@ const USE_REAL_API = !!process.env.NEXT_PUBLIC_API_BASE_URL
 // ── Query keys ────────────────────────────────────────────────────────────────
 
 export const reviewKeys = {
-  byBooking: (bookingId: string) => ['reviews', 'booking', bookingId] as const,
-  byProvider: (providerId: string) => ['reviews', 'provider', providerId] as const,
-  providerStats: (providerId: string) => ['reviews', 'provider', providerId, 'stats'] as const,
+  byBooking:      (bookingId: string)  => ['reviews', 'booking', bookingId]             as const,
+  byProvider:     (providerId: string) => ['reviews', 'provider', providerId]            as const,
+  byProviderMgmt: (providerId: string) => ['reviews', 'provider', providerId, 'manage'] as const,
+  providerStats:  (providerId: string) => ['reviews', 'provider', providerId, 'stats']  as const,
 }
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
@@ -31,7 +32,7 @@ export function useBookingReview(bookingId: string) {
   })
 }
 
-/** List all reviews for a provider — used in provider dashboard */
+/** List visible reviews for a provider — public, PDPA-safe (used on public profile page) */
 export function useProviderReviews(providerId: string) {
   return useQuery({
     queryKey: reviewKeys.byProvider(providerId),
@@ -45,14 +46,35 @@ export function useProviderReviews(providerId: string) {
   })
 }
 
-/** Get provider's aggregate review stats */
+/**
+ * RV-2: List ALL reviews (visible + hidden) for provider dashboard management.
+ * Uses the authenticated manage endpoint.
+ */
+export function useProviderReviewsManage(providerId: string) {
+  return useQuery({
+    queryKey: reviewKeys.byProviderMgmt(providerId),
+    queryFn: async () => {
+      if (!USE_REAL_API || !providerId) return []
+      const res = await reviewsApi.listByProviderManage(providerId)
+      return res.data.data ?? []
+    },
+    enabled: !!providerId && USE_REAL_API,
+    staleTime: 30 * 1000,
+  })
+}
+
+/** Get provider's aggregate review stats (includes transparencyScore) */
 export function useProviderReviewStats(providerId: string) {
   return useQuery({
     queryKey: reviewKeys.providerStats(providerId),
     queryFn: async () => {
-      if (!USE_REAL_API || !providerId) return { averageRating: 0, totalReviews: 0 }
+      if (!USE_REAL_API || !providerId) return {
+        averageRating: 0, totalReviews: 0, visibleReviews: 0, transparencyScore: 100,
+      }
       const res = await reviewsApi.getProviderStats(providerId)
-      return res.data.data ?? { averageRating: 0, totalReviews: 0 }
+      return res.data.data ?? {
+        averageRating: 0, totalReviews: 0, visibleReviews: 0, transparencyScore: 100,
+      }
     },
     enabled: !!providerId && USE_REAL_API,
     staleTime: 2 * 60 * 1000,
@@ -72,7 +94,6 @@ export function useSubmitReview() {
       return null
     },
     onSuccess: (_data, variables) => {
-      // Invalidate booking caches (so reviewLeft refreshes) and review cache
       qc.invalidateQueries({ queryKey: bookingKeys.all })
       qc.invalidateQueries({ queryKey: reviewKeys.byBooking(variables.bookingId) })
     },
@@ -101,6 +122,38 @@ export function useReviewReply() {
     },
     onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: reviewKeys.byProvider(variables.providerId) })
+      qc.invalidateQueries({ queryKey: reviewKeys.byProviderMgmt(variables.providerId) })
+    },
+  })
+}
+
+/**
+ * RV-2: Provider sets a review's visibility (approve = true / hide = false).
+ * On success, invalidates manage list + public list + stats.
+ */
+export function useSetReviewVisibility() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      id,
+      isVisible,
+      providerId,
+    }: {
+      id: string
+      isVisible: boolean
+      providerId: string
+    }) => {
+      if (USE_REAL_API) {
+        const res = await reviewsApi.setVisibility(id, isVisible)
+        return res.data
+      }
+      await new Promise((r) => setTimeout(r, 300))
+      return { success: true, isVisible }
+    },
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({ queryKey: reviewKeys.byProviderMgmt(variables.providerId) })
+      qc.invalidateQueries({ queryKey: reviewKeys.byProvider(variables.providerId) })
+      qc.invalidateQueries({ queryKey: reviewKeys.providerStats(variables.providerId) })
     },
   })
 }

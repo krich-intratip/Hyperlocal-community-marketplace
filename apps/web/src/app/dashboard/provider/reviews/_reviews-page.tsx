@@ -5,14 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import {
   ChevronLeft, Star, MessageCircle, ThumbsUp, ThumbsDown, Minus,
-  Reply, CheckCircle,
+  Reply, CheckCircle, Eye, EyeOff, ShieldCheck, Loader2,
 } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useAuthStore } from '@/store/auth.store'
-import { useProviderReviews, useReviewReply } from '@/hooks/useReviews'
+import {
+  useProviderReviewsManage,
+  useReviewReply,
+  useSetReviewVisibility,
+} from '@/hooks/useReviews'
 import {
   MOCK_REVIEWS,
   RATING_DISTRIBUTION,
@@ -20,6 +24,7 @@ import {
   type MockReview,
   type ReviewSentiment,
 } from '@/lib/mock-provider-analytics'
+import type { Review } from '@/types'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -27,15 +32,18 @@ const fadeUp = {
 }
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } }
 
-type FilterTab = 'all' | 'positive' | 'negative' | 'unanswered'
+type FilterTab = 'all' | 'positive' | 'negative' | 'unanswered' | 'hidden'
 
-const SENTIMENT_CONFIG: Record<ReviewSentiment, { label: string; icon: typeof ThumbsUp; color: string; bg: string; border: string }> = {
-  positive: { label: 'เชิงบวก',   icon: ThumbsUp,   color: 'text-green-700', bg: 'bg-green-50',  border: 'border-green-200' },
-  neutral:  { label: 'กลางๆ',     icon: Minus,      color: 'text-slate-600', bg: 'glass-sm',   border: 'border-white/20' },
-  negative: { label: 'เชิงลบ',   icon: ThumbsDown,  color: 'text-red-700',   bg: 'bg-red-50',    border: 'border-red-200'   },
+const SENTIMENT_CONFIG: Record<ReviewSentiment, {
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  color: string; bg: string; border: string
+}> = {
+  positive: { label: 'เชิงบวก', icon: ThumbsUp,   color: 'text-green-700', bg: 'bg-green-50',  border: 'border-green-200' },
+  neutral:  { label: 'กลางๆ',   icon: Minus,      color: 'text-slate-600', bg: 'glass-sm',     border: 'border-white/20' },
+  negative: { label: 'เชิงลบ',  icon: ThumbsDown, color: 'text-red-700',   bg: 'bg-red-50',    border: 'border-red-200' },
 }
 
-/** Derive sentiment from a 1-5 rating (no NLP needed for MVP) */
 function sentimentFromRating(rating: number): ReviewSentiment {
   if (rating >= 4) return 'positive'
   if (rating === 3) return 'neutral'
@@ -53,17 +61,24 @@ function StarRow({ rating }: { rating: number }) {
   )
 }
 
-function useDateFmt(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('th-TH', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  })
 }
+
+// ── ReviewCard ────────────────────────────────────────────────────────────────
 
 function ReviewCard({
   review,
   onReply,
+  onToggleVisibility,
+  togglingId,
 }: {
-  review: MockReview
+  review: MockReview & { isVisible?: boolean; realId?: string }
   onReply?: (id: string, text: string) => void
+  onToggleVisibility?: (id: string, visible: boolean) => void
+  togglingId?: string | null
 }) {
   const [replyMode, setReplyMode] = useState(false)
   const [replyText, setReplyText] = useState(review.replyText ?? '')
@@ -71,20 +86,28 @@ function ReviewCard({
   const [savedReply, setSavedReply] = useState(review.replyText ?? '')
   const sentCfg = SENTIMENT_CONFIG[review.sentiment]
   const SentIcon = sentCfg.icon
+  const isHidden = review.isVisible === false
+  const isToggling = togglingId === review.id
 
   const handleSendReply = () => {
     if (!replyText.trim()) return
-    // Optimistic local update first for immediate UI feedback
     setSavedReply(replyText)
     setReplied(true)
     setReplyMode(false)
-    // Persist to API
     onReply?.(review.id, replyText)
   }
 
   return (
     <motion.div variants={fadeUp} whileHover={{ y: -1 }}
-      className="glass-card rounded-2xl p-5">
+      className={`glass-card rounded-2xl p-5 transition-opacity ${isHidden ? 'opacity-60' : 'opacity-100'}`}>
+
+      {/* Hidden badge */}
+      {isHidden && (
+        <div className="flex items-center gap-1.5 mb-3 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-500 w-fit">
+          <EyeOff className="h-3 w-3" />
+          ซ่อนจากสาธารณะ
+        </div>
+      )}
 
       {/* Review header */}
       <div className="flex items-start justify-between mb-3">
@@ -96,18 +119,39 @@ function ReviewCard({
             <p className="font-bold text-slate-800 text-sm">{review.customer}</p>
             <div className="flex items-center gap-2 mt-0.5">
               <StarRow rating={review.rating} />
-              <span className="text-xs text-slate-400">{useDateFmt(review.date)}</span>
+              <span className="text-xs text-slate-400">{formatDate(review.date)}</span>
             </div>
           </div>
         </div>
-        <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${sentCfg.bg} ${sentCfg.color} border ${sentCfg.border}`}>
-          <SentIcon className="h-3 w-3" />
-          {sentCfg.label}
+        <div className="flex items-center gap-2">
+          <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${sentCfg.bg} ${sentCfg.color} border ${sentCfg.border}`}>
+            <SentIcon className="h-3 w-3" />
+            {sentCfg.label}
+          </div>
+          {/* Visibility toggle */}
+          {onToggleVisibility && (
+            <button
+              onClick={() => onToggleVisibility(review.id, !review.isVisible)}
+              disabled={isToggling}
+              title={isHidden ? 'แสดงรีวิวนี้' : 'ซ่อนรีวิวนี้'}
+              className={`p-1.5 rounded-lg transition-colors disabled:opacity-50 ${
+                isHidden
+                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  : 'bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-500'
+              }`}>
+              {isToggling
+                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                : isHidden
+                  ? <Eye className="h-3.5 w-3.5" />
+                  : <EyeOff className="h-3.5 w-3.5" />
+              }
+            </button>
+          )}
         </div>
       </div>
 
       {/* Review body */}
-      <p className="text-sm text-slate-700 leading-relaxed mb-2">"{review.text}"</p>
+      <p className="text-sm text-slate-700 leading-relaxed mb-2">&ldquo;{review.text}&rdquo;</p>
       <p className="text-xs text-slate-400 mb-4">บริการ: {review.listing}</p>
 
       {/* Existing reply */}
@@ -157,23 +201,47 @@ function ReviewCard({
   )
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────────
+// ── TransparencyBadge ─────────────────────────────────────────────────────────
+
+function TransparencyBadge({ score }: { score: number }) {
+  const color = score >= 80 ? 'bg-green-50 text-green-700 border-green-200'
+    : score >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200'
+    : 'bg-rose-50 text-rose-700 border-rose-200'
+  return (
+    <div className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-semibold ${color}`}>
+      <ShieldCheck className="h-4 w-4" />
+      <span>ความโปร่งใส {score}%</span>
+      <div className="w-20 h-1.5 rounded-full bg-white/60 overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all ${
+            score >= 80 ? 'bg-green-500' : score >= 50 ? 'bg-amber-500' : 'bg-rose-500'
+          }`}
+          style={{ width: `${score}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ProviderReviewsClient() {
   useAuthGuard(['provider', 'admin', 'superadmin'])
   const { user } = useAuthStore()
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
   const [starFilter, setStarFilter] = useState<number | null>(null)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
 
-  // Real data — falls back to mock when API is unavailable
-  const { data: realReviews } = useProviderReviews(user?.id ?? '')
-  const reviewReply = useReviewReply()
+  // RV-2: Use manage endpoint (all reviews incl. hidden) for provider dashboard
+  const { data: realReviews } = useProviderReviewsManage(user?.id ?? '')
+  const reviewReply    = useReviewReply()
+  const setVisibility  = useSetReviewVisibility()
 
-  // Map real API reviews to the MockReview shape used by this UI, or fall back to mock
-  const reviews: MockReview[] = (realReviews && realReviews.length > 0)
-    ? realReviews.map(r => ({
+  // Map real API reviews to the MockReview shape, or fall back to mock
+  const reviews: (MockReview & { isVisible?: boolean })[] = (realReviews && realReviews.length > 0)
+    ? realReviews.map((r: Review) => ({
         id: r.id,
-        customer: r.reviewerId,
+        customer: r.reviewerMasked ?? r.reviewerId,
         rating: r.rating,
         date: r.createdAt,
         text: r.comment ?? '',
@@ -181,34 +249,51 @@ export default function ProviderReviewsClient() {
         listing: r.listingTitle ?? '',
         replied: !!r.providerReply,
         replyText: r.providerReply ?? undefined,
+        isVisible: r.isVisible,
       }))
-    : MOCK_REVIEWS
+    : MOCK_REVIEWS.map(m => ({ ...m, isVisible: true }))
 
   const handleReply = (reviewId: string, replyText: string) => {
     if (!user?.id) return
     reviewReply.mutate({ id: reviewId, replyText, providerId: user.id })
   }
 
-  const positiveCount = reviews.filter(r => r.sentiment === 'positive').length
-  const neutralCount  = reviews.filter(r => r.sentiment === 'neutral').length
-  const negativeCount = reviews.filter(r => r.sentiment === 'negative').length
-  const unansweredCount = reviews.filter(r => !r.replied).length
+  const handleToggleVisibility = async (reviewId: string, makeVisible: boolean) => {
+    if (!user?.id) return
+    setTogglingId(reviewId)
+    try {
+      await setVisibility.mutateAsync({ id: reviewId, isVisible: makeVisible, providerId: user.id })
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
+  // Counts
+  const visibleCount    = reviews.filter(r => r.isVisible !== false).length
+  const hiddenCount     = reviews.filter(r => r.isVisible === false).length
+  const positiveCount   = reviews.filter(r => r.sentiment === 'positive').length
+  const neutralCount    = reviews.filter(r => r.sentiment === 'neutral').length
+  const negativeCount   = reviews.filter(r => r.sentiment === 'negative').length
+  const unansweredCount = reviews.filter(r => !r.replied && r.isVisible !== false).length
+  const transparencyScore = reviews.length > 0
+    ? Math.round((visibleCount / reviews.length) * 100)
+    : 100
 
   const filteredReviews = reviews.filter(r => {
     if (starFilter !== null && r.rating !== starFilter) return false
-    if (activeFilter === 'positive')  return r.sentiment === 'positive'
-    if (activeFilter === 'negative')  return r.sentiment === 'negative'
-    if (activeFilter === 'unanswered') return !r.replied
+    if (activeFilter === 'positive')   return r.sentiment === 'positive' && r.isVisible !== false
+    if (activeFilter === 'negative')   return r.sentiment === 'negative' && r.isVisible !== false
+    if (activeFilter === 'unanswered') return !r.replied && r.isVisible !== false
+    if (activeFilter === 'hidden')     return r.isVisible === false
     return true
   })
 
-  const responseRate = reviews.length > 0
-    ? Math.round((reviews.filter(r => r.replied).length / reviews.length) * 100)
+  const responseRate = visibleCount > 0
+    ? Math.round((reviews.filter(r => r.replied && r.isVisible !== false).length / visibleCount) * 100)
     : 0
 
-  // Use real average rating if available, else from mock summary
-  const avgRating = (realReviews && realReviews.length > 0)
-    ? (realReviews.reduce((sum, r) => sum + r.rating, 0) / realReviews.length).toFixed(1)
+  const avgRating = reviews.filter(r => r.isVisible !== false).length > 0
+    ? (reviews.filter(r => r.isVisible !== false).reduce((sum, r) => sum + r.rating, 0) / visibleCount).toFixed(1)
     : PROVIDER_SUMMARY.avgRating
 
   return (
@@ -229,21 +314,26 @@ export default function ProviderReviewsClient() {
         </motion.div>
 
         {/* Header */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1} className="mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-            <Star className="h-6 w-6 text-amber-500 fill-amber-500" /> จัดการรีวิว
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">วิเคราะห์ Sentiment และตอบรีวิวลูกค้า</p>
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1} className="mb-4">
+          <div className="flex items-start justify-between flex-wrap gap-3">
+            <div>
+              <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                <Star className="h-6 w-6 text-amber-500 fill-amber-500" /> จัดการรีวิว
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">Sentiment analysis · อนุมัติ/ซ่อนรีวิว · PDPA compliant</p>
+            </div>
+            <TransparencyBadge score={transparencyScore} />
+          </div>
         </motion.div>
 
         {/* Summary Cards */}
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'รีวิวทั้งหมด',  value: reviews.length, icon: '📝', color: 'glass-sm'   },
-            { label: 'คะแนนเฉลี่ย',   value: `${avgRating} ⭐`, icon: '⭐', color: 'bg-amber-50' },
-            { label: 'อัตราตอบ',      value: `${responseRate}%`,  icon: '💬', color: 'bg-green-50'  },
-            { label: 'ยังไม่ตอบ',     value: unansweredCount,     icon: '⏰', color: 'bg-red-50'    },
+            { label: 'รีวิวทั้งหมด', value: reviews.length,    icon: '📝', color: 'glass-sm' },
+            { label: 'คะแนนเฉลี่ย',  value: `${avgRating} ⭐`, icon: '⭐', color: 'bg-amber-50' },
+            { label: 'อัตราตอบ',     value: `${responseRate}%`, icon: '💬', color: 'bg-green-50' },
+            { label: 'ซ่อนอยู่',     value: hiddenCount,        icon: '🙈', color: 'bg-rose-50' },
           ].map((s, i) => (
             <motion.div key={s.label} variants={fadeUp} custom={i} whileHover={{ y: -2 }}
               className={`${s.color} rounded-2xl p-4 border border-white shadow-sm`}>
@@ -265,7 +355,7 @@ export default function ProviderReviewsClient() {
               {RATING_DISTRIBUTION.map(item => (
                 <button key={item.star}
                   onClick={() => setStarFilter(starFilter === item.star ? null : item.star)}
-                  className={`w-full flex items-center gap-3 text-sm group transition-opacity ${
+                  className={`w-full flex items-center gap-3 text-sm transition-opacity ${
                     starFilter !== null && starFilter !== item.star ? 'opacity-40' : 'opacity-100'
                   }`}>
                   <div className="flex items-center gap-1 w-16 flex-shrink-0">
@@ -292,7 +382,7 @@ export default function ProviderReviewsClient() {
             )}
           </motion.div>
 
-          {/* Sentiment Breakdown */}
+          {/* Sentiment + Transparency */}
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
             className="glass-card rounded-2xl p-5">
             <h2 className="font-extrabold text-slate-900 text-sm mb-4">Sentiment Analysis</h2>
@@ -302,9 +392,9 @@ export default function ProviderReviewsClient() {
                 { type: 'neutral'  as ReviewSentiment, count: neutralCount  },
                 { type: 'negative' as ReviewSentiment, count: negativeCount },
               ].map(({ type, count }) => {
-                const cfg = SENTIMENT_CONFIG[type]
+                const cfg  = SENTIMENT_CONFIG[type]
                 const SIcon = cfg.icon
-                const pct = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0
+                const pct  = visibleCount > 0 ? Math.round((count / visibleCount) * 100) : 0
                 return (
                   <div key={type}>
                     <div className="flex items-center justify-between mb-1">
@@ -327,13 +417,15 @@ export default function ProviderReviewsClient() {
               })}
             </div>
 
-            {/* AI Sentiment summary */}
-            <div className="mt-5 p-3 bg-purple-50 border border-purple-100 rounded-xl">
-              <p className="text-xs font-bold text-purple-700 mb-1">🤖 AI Summary</p>
-              <p className="text-xs text-purple-600 leading-relaxed">
-                รีวิวเชิงบวก {reviews.length > 0 ? Math.round((positiveCount / reviews.length) * 100) : 0}% บ่งชี้ถึงความพึงพอใจสูง
-                ประเด็นที่ลูกค้ายกถึงบ่อย: ความสะอาด ความตรงเวลา และรสชาติ
-                ควรตอบรีวิวเชิงลบทุกข้อภายใน 24 ชม.
+            {/* Transparency explanation */}
+            <div className="mt-5 p-3 bg-blue-50 border border-blue-100 rounded-xl">
+              <p className="text-xs font-bold text-blue-700 mb-1">
+                <ShieldCheck className="h-3.5 w-3.5 inline mr-1" />
+                ความโปร่งใส {transparencyScore}%
+              </p>
+              <p className="text-xs text-blue-600 leading-relaxed">
+                {visibleCount} จาก {reviews.length} รีวิวแสดงต่อสาธารณะ
+                {transparencyScore < 80 && ' — ลองเพิ่มรีวิวที่มองเห็นเพื่อสร้างความน่าเชื่อถือ'}
               </p>
             </div>
           </motion.div>
@@ -343,10 +435,11 @@ export default function ProviderReviewsClient() {
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6}
           className="flex items-center gap-2 flex-wrap mb-5">
           {([
-            { key: 'all',       label: 'ทั้งหมด',    count: reviews.length },
-            { key: 'positive',  label: 'เชิงบวก',    count: positiveCount },
-            { key: 'negative',  label: 'เชิงลบ',    count: negativeCount },
-            { key: 'unanswered',label: 'ยังไม่ตอบ', count: unansweredCount },
+            { key: 'all',        label: 'ทั้งหมด',   count: reviews.length },
+            { key: 'positive',   label: 'เชิงบวก',   count: positiveCount  },
+            { key: 'negative',   label: 'เชิงลบ',   count: negativeCount  },
+            { key: 'unanswered', label: 'ยังไม่ตอบ', count: unansweredCount },
+            { key: 'hidden',     label: '🙈 ซ่อนอยู่', count: hiddenCount   },
           ] as const).map(tab => (
             <button key={tab.key}
               onClick={() => setActiveFilter(tab.key as FilterTab)}
@@ -374,7 +467,13 @@ export default function ProviderReviewsClient() {
             </div>
           ) : (
             filteredReviews.map(review => (
-              <ReviewCard key={review.id} review={review} onReply={handleReply} />
+              <ReviewCard
+                key={review.id}
+                review={review}
+                onReply={handleReply}
+                onToggleVisibility={handleToggleVisibility}
+                togglingId={togglingId}
+              />
             ))
           )}
         </motion.div>
@@ -384,7 +483,7 @@ export default function ProviderReviewsClient() {
           className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
           {[
             { label: 'Analytics Charts', desc: 'ดูกราฟแนวโน้มรายได้', href: '/dashboard/provider/analytics', emoji: '📊' },
-            { label: 'AI Insights', desc: 'คำแนะนำปรับปรุงธุรกิจ', href: '/dashboard/provider/insights', emoji: '🤖' },
+            { label: 'AI Insights',      desc: 'คำแนะนำปรับปรุงธุรกิจ', href: '/dashboard/provider/insights', emoji: '🤖' },
           ].map(item => (
             <Link key={item.href} href={item.href}
               className="flex items-center gap-3 p-4 rounded-xl glass border-white/20 hover:border-amber-300 transition-all">

@@ -6,7 +6,7 @@ import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
 import {
   MapPin, Star, Shield, Clock, ChevronLeft, CheckCircle,
-  MessageCircle, ChevronRight, Calendar, Package, Award, Heart,
+  MessageCircle, ChevronRight, Calendar, Package, Award, Heart, ShieldCheck,
 } from 'lucide-react'
 import { TrustBadge } from '@/components/trust-badge'
 import Link from 'next/link'
@@ -251,8 +251,16 @@ export default function ProviderProfileClient({ id }: { id: string }) {
             {/* Reviews */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
               className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-5">
-                <h2 className="font-extrabold text-lg text-slate-900">รีวิว ({provider.reviews})</h2>
+              <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
+                <div>
+                  <h2 className="font-extrabold text-lg text-slate-900">รีวิว ({provider.reviews})</h2>
+                  {/* RV-2: Transparency indicator (mock 100% for static pages) */}
+                  <div className="flex items-center gap-1.5 mt-1.5 text-xs text-green-700 font-semibold">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    <span>ความโปร่งใส 100%</span>
+                    <span className="text-slate-400 font-normal">— แสดงรีวิวทั้งหมด</span>
+                  </div>
+                </div>
                 <div className="flex items-center gap-1.5">
                   <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
                   <span className="text-2xl font-extrabold text-slate-900">{provider.rating}</span>

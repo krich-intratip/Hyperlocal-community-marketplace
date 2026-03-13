@@ -251,19 +251,35 @@ export const reviewsApi = {
   getByBooking: (bookingId: string) =>
     apiClient.get<ApiResponse<Review | null>>(`/reviews/booking/${bookingId}`),
 
-  /** GET /reviews/provider/:id — list all reviews for a provider (public) */
+  /** GET /reviews/provider/:id — PDPA-safe public list (visible only) */
   listByProvider: (providerId: string) =>
     apiClient.get<ApiResponse<Review[]>>(`/reviews/provider/${providerId}`),
 
-  /** GET /reviews/provider/:id/stats — aggregate rating + count (public) */
+  /** GET /reviews/provider/:id/manage — all reviews incl. hidden (JWT, provider dashboard) */
+  listByProviderManage: (providerId: string) =>
+    apiClient.get<ApiResponse<Review[]>>(`/reviews/provider/${providerId}/manage`),
+
+  /** GET /reviews/provider/:id/stats — rating + count + transparencyScore (public) */
   getProviderStats: (providerId: string) =>
-    apiClient.get<ApiResponse<{ averageRating: number; totalReviews: number }>>(
+    apiClient.get<ApiResponse<{
+      averageRating: number
+      totalReviews: number
+      visibleReviews: number
+      transparencyScore: number
+    }>>(
       `/reviews/provider/${providerId}/stats`,
     ),
 
   /** PATCH /reviews/:id/reply — provider replies to a review (JWT required) */
   reply: (id: string, replyText: string) =>
     apiClient.patch<ApiResponse<{ success: boolean }>>(`/reviews/${id}/reply`, { replyText }),
+
+  /** PATCH /reviews/:id/visibility — RV-2: provider approves or hides a review (JWT required) */
+  setVisibility: (id: string, isVisible: boolean) =>
+    apiClient.patch<ApiResponse<{ success: boolean; isVisible: boolean }>>(
+      `/reviews/${id}/visibility`,
+      { isVisible },
+    ),
 }
 
 // ─── Returns ──────────────────────────────────────────────────────────────────

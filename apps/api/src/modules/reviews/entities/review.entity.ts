@@ -36,6 +36,14 @@ export class Review {
   @Column({ name: 'is_flagged', default: false })
   isFlagged: boolean
 
+  /** RV-2: Provider can hide/approve individual reviews for moderation */
+  @Column({ name: 'is_visible', default: true })
+  isVisible: boolean
+
+  /** RV-2: Timestamp when the provider approved (made visible) this review */
+  @Column({ name: 'approved_at', nullable: true, type: 'datetime' })
+  approvedAt: Date | null
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date
 
