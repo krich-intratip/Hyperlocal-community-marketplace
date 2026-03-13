@@ -25,6 +25,7 @@ import { OrdersModule } from './modules/orders/orders.module'
 import { SystemModule } from './modules/system/system.module'
 import { ReturnsModule } from './modules/returns/returns.module'
 import { RecommendationsModule } from './modules/recommendations/recommendations.module'
+import { MessagesModule } from './modules/messages/messages.module'
 
 @Module({
   imports: [
@@ -115,6 +116,7 @@ import { RecommendationsModule } from './modules/recommendations/recommendations
     SystemModule,
     ReturnsModule,
     RecommendationsModule,
+    MessagesModule,
   ],
 })
 export class AppModule {}

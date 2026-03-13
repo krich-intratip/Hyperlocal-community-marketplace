@@ -342,3 +342,53 @@ export const systemApi = {
   setMode: (trainingMode: boolean) =>
     apiClient.patch<{ success: boolean }>('/system/mode', { trainingMode }),
 }
+
+// ─── Messages (CM-1) ──────────────────────────────────────────────────────────
+
+export interface ConversationSummary {
+  id: string
+  customerId: string
+  providerId: string
+  providerUserId: string
+  providerDisplayName: string | null
+  orderId: string | null
+  lastMessagePreview: string | null
+  lastMessageAt: string | null
+  createdAt: string
+  unreadCount: number
+}
+
+export interface ChatMessage {
+  id: string
+  conversationId: string
+  senderId: string
+  body: string
+  isRead: boolean
+  createdAt: string
+}
+
+export const messagesApi = {
+  /** POST /messages — start or resume a conversation */
+  start: (dto: { providerId: string; orderId?: string; message: string }) =>
+    apiClient.post<{ conversation: ConversationSummary; messages: ChatMessage[] }>('/messages', dto),
+
+  /** GET /messages — list all conversations */
+  list: () =>
+    apiClient.get<ConversationSummary[]>('/messages'),
+
+  /** GET /messages/unread-count — total unread for navbar badge */
+  getUnreadCount: () =>
+    apiClient.get<{ count: number }>('/messages/unread-count'),
+
+  /** GET /messages/:id — messages in conversation */
+  getMessages: (id: string) =>
+    apiClient.get<ChatMessage[]>(`/messages/${id}`),
+
+  /** POST /messages/:id — send a message */
+  send: (id: string, body: string) =>
+    apiClient.post<ChatMessage>(`/messages/${id}`, { body }),
+
+  /** PATCH /messages/:id/read — mark as read */
+  markRead: (id: string) =>
+    apiClient.patch(`/messages/${id}/read`),
+}

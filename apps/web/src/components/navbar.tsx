@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart, Search, Loader2, Heart } from 'lucide-react'
+import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart, Search, Loader2, Heart, MessageSquare } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { ThemeLanguageToggle } from '@/components/theme-language-toggle'
 import { useT } from '@/hooks/useT'
@@ -13,6 +13,7 @@ import { useWishlistStore } from '@/store/wishlist.store'
 import { CartDrawer } from '@/components/cart-drawer'
 import { NotificationBell } from '@/components/notification-bell'
 import { useSearch } from '@/hooks/useSearch'
+import { useUnreadMessageCount } from '@/hooks/useMessages'
 
 // ── Search Bar component ──────────────────────────────────────────────────────
 function SearchBar() {
@@ -166,6 +167,7 @@ export function Navbar() {
   const { user, isLoggedIn, logout } = useAuthStore()
   const totalItems = useCartStore((s) => s.totalItems())
   const wishlistCount = useWishlistStore((s) => s.count())
+  const { data: unreadMessages = 0 } = useUnreadMessageCount()
   const t = useT()
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -252,6 +254,17 @@ export function Navbar() {
                 )}
               </button>
 
+              {/* Messages button */}
+              <Link href="/messages" className="relative p-2 rounded-xl hover:bg-white/25 dark:hover:bg-white/10 transition-colors"
+                title="ข้อความ">
+                <MessageSquare className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                {unreadMessages > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-indigo-500 text-white text-[10px] font-extrabold flex items-center justify-center">
+                    {unreadMessages > 9 ? '9+' : unreadMessages}
+                  </span>
+                )}
+              </Link>
+
               {/* Notification bell — dynamic badge + dropdown */}
               <NotificationBell />
 
@@ -303,6 +316,12 @@ export function Navbar() {
                 <Heart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                 {wishlistCount > 0 && (
                   <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center">{wishlistCount > 9 ? '9+' : wishlistCount}</span>
+                )}
+              </Link>
+              <Link href="/messages" className="relative p-2 rounded-lg hover:bg-white/25 dark:hover:bg-white/10 transition-colors">
+                <MessageSquare className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                {unreadMessages > 0 && (
+                  <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-indigo-500 text-white text-[9px] font-extrabold flex items-center justify-center">{unreadMessages > 9 ? '9+' : unreadMessages}</span>
                 )}
               </Link>
               <NotificationBell />

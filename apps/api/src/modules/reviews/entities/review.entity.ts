@@ -24,6 +24,10 @@ export class Review {
   @Column({ name: 'listing_title', nullable: true, type: 'text' })
   listingTitle: string | null
 
+  /** Snapshot of reviewer's first name (for PDPA-safe public display) */
+  @Column({ name: 'reviewer_name', nullable: true })
+  reviewerName: string | null
+
   @Column({ name: 'provider_reply', nullable: true, type: 'text' })
   providerReply: string | null
 

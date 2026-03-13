@@ -12,16 +12,16 @@ import { Review } from './entities/review.entity'
 import { Booking } from '../bookings/entities/booking.entity'
 import { Listing } from '../listings/entities/listing.entity'
 import { Provider } from '../providers/entities/provider.entity'
+import { User } from '../users/entities/user.entity'
 
 // ── PDPA helper ───────────────────────────────────────────────────────────────
 
 /**
- * Masks a reviewer UUID for PDPA compliance on public endpoints.
- * Shows only last 4 chars: "ผู้ใช้ ****xxxx"
+ * Extracts the first name from a full display name for PDPA-safe public display.
+ * "สมใจ รักดี" → "สมใจ" (only first name shown, last name omitted)
  */
-function maskReviewerId(id: string): string {
-  const last4 = id.slice(-4).toUpperCase()
-  return `ผู้ใช้ ****${last4}`
+function extractFirstName(displayName: string): string {
+  return displayName.split(' ')[0] ?? displayName
 }
 
 @Injectable()
@@ -38,6 +38,9 @@ export class ReviewsService {
 
     @InjectRepository(Provider)
     private readonly providerRepo: Repository<Provider>,
+
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
   ) {}
 
   async create(
@@ -60,8 +63,11 @@ export class ReviewsService {
     if (booking.status !== BookingStatus.COMPLETED)
       throw new BadRequestException('Can only review completed bookings')
 
-    // 5. Snapshot listing title (best-effort — nullable)
-    const listing = await this.listingRepo.findOne({ where: { id: booking.listingId } })
+    // 5. Snapshot listing title + reviewer first name (best-effort — nullable)
+    const [listing, reviewer] = await Promise.all([
+      this.listingRepo.findOne({ where: { id: booking.listingId } }),
+      this.userRepo.findOne({ where: { id: reviewerId } }),
+    ])
 
     const review = this.reviewRepo.create({
       reviewerId,
@@ -69,6 +75,7 @@ export class ReviewsService {
       providerId: booking.providerId,   // derived server-side — never from client
       listingId: booking.listingId,
       listingTitle: listing?.title ?? null,
+      reviewerName: reviewer ? extractFirstName(reviewer.displayName) : null,
       rating: data.rating,
       comment: data.comment,
       isVisible: true,
@@ -96,7 +103,8 @@ export class ReviewsService {
     })
     return reviews.map(r => {
       const { reviewerId, ...rest } = r
-      return { ...rest, reviewerMasked: maskReviewerId(reviewerId) }
+      // Show first name only; fall back to "ลูกค้า" for old rows without snapshot
+      return { ...rest, reviewerMasked: r.reviewerName ?? 'ลูกค้า' }
     })
   }
 

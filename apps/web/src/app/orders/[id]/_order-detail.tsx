@@ -9,7 +9,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard'
 import {
   Package, ChevronLeft, CheckCircle, Clock, Truck, ShoppingBag,
   XCircle, AlertTriangle, MapPin, CreditCard, RotateCcw,
-  Printer, Star, Phone, Navigation,
+  Printer, Star, Phone, Navigation, MessageSquare,
 } from 'lucide-react'
 
 const fadeUp = {
@@ -366,6 +366,12 @@ export default function OrderDetailClient({ id }: { id: string }) {
               <p className="text-xs text-blue-700">หากมีปัญหา กรุณาติดต่อ Community Admin ของคุณ</p>
             </div>
           )}
+          {/* ติดต่อผู้ให้บริการ — links to messages page */}
+          <Link href="/messages"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-sm border border-white/40 text-sm font-semibold text-slate-700 hover:border-indigo-300 transition-all">
+            <MessageSquare className="h-4 w-4 text-indigo-500" /> ติดต่อผู้ให้บริการ
+          </Link>
+
           <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-sm border border-white/40 text-sm font-semibold text-slate-500 hover:border-slate-300 transition-all ml-auto">
             <Printer className="h-4 w-4" /> พิมพ์ใบเสร็จ
           </button>
