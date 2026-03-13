@@ -10,7 +10,29 @@ import { ListingStatus } from '@chm/shared-types'
 import { Order } from './entities/order.entity'
 import { OrderItem } from './entities/order-item.entity'
 import { Listing } from '../listings/entities/listing.entity'
+import { Provider } from '../providers/entities/provider.entity'
 import { CreateOrderDto } from './dto/create-order.dto'
+import { UpdateOrderStatusDto, OrderStatus } from './dto/update-order-status.dto'
+
+/** Role-based status transition rules */
+const ALLOWED_TRANSITIONS: Record<string, Record<string, OrderStatus[]>> = {
+  customer: {
+    [OrderStatus.PENDING_PAYMENT]:       [OrderStatus.CANCELLED_BY_CUSTOMER],
+    [OrderStatus.PAYMENT_HELD]:          [OrderStatus.PAYMENT_HELD, OrderStatus.CANCELLED_BY_CUSTOMER],
+  },
+  provider: {
+    [OrderStatus.PAYMENT_HELD]:          [OrderStatus.CONFIRMED, OrderStatus.CANCELLED_BY_PROVIDER],
+    [OrderStatus.CONFIRMED]:             [OrderStatus.IN_PROGRESS, OrderStatus.CANCELLED_BY_PROVIDER],
+    [OrderStatus.IN_PROGRESS]:           [OrderStatus.PENDING_CONFIRMATION, OrderStatus.COMPLETED, OrderStatus.CANCELLED_BY_PROVIDER],
+    [OrderStatus.PENDING_CONFIRMATION]:  [OrderStatus.COMPLETED, OrderStatus.CANCELLED_BY_PROVIDER],
+  },
+}
+
+const TERMINAL_STATUSES = new Set([
+  OrderStatus.COMPLETED,
+  OrderStatus.CANCELLED_BY_CUSTOMER,
+  OrderStatus.CANCELLED_BY_PROVIDER,
+])
 
 @Injectable()
 export class OrdersService {
@@ -23,6 +45,9 @@ export class OrdersService {
 
     @InjectRepository(Listing)
     private readonly listingRepo: Repository<Listing>,
+
+    @InjectRepository(Provider)
+    private readonly providerRepo: Repository<Provider>,
   ) {}
 
   /**
@@ -73,7 +98,16 @@ export class OrdersService {
     const platformFee = Math.round(subtotal * 0.05 * 100) / 100
     const total = Math.round((subtotal + platformFee) * 100) / 100
 
-    // 4. Persist
+    // 4. Generate tracking ID for courier deliveries (server-side — not from client)
+    const deliveryMethod = dto.deliveryMethod ?? 'self_pickup'
+    let trackingId: string | null = null
+    if (deliveryMethod === 'lineman') {
+      trackingId = `LM-${String(Math.floor(Math.random() * 1_000_000)).padStart(6, '0')}`
+    } else if (deliveryMethod === 'grab_express') {
+      trackingId = `GX-${String(Math.floor(Math.random() * 1_000_000)).padStart(6, '0')}`
+    }
+
+    // 5. Persist
     const order = this.orderRepo.create({
       customerId,
       providerId: dto.providerId,
@@ -83,6 +117,8 @@ export class OrdersService {
       platformFee,
       total,
       deliveryAddress: dto.deliveryAddress ?? null,
+      deliveryMethod,
+      trackingId,
       paymentMethod: dto.paymentMethod ?? 'PROMPTPAY',
       note: dto.note ?? null,
       items: orderItems as OrderItem[],
@@ -109,5 +145,110 @@ export class OrdersService {
       throw new ForbiddenException('You do not have access to this order')
     }
     return order
+  }
+
+  // ── BE-1: Delivery info ──────────────────────────────────────────────────────
+
+  /**
+   * Returns delivery metadata for a given order.
+   * Accessible by customer (owns order) or provider (fulfils order) or admin/superadmin.
+   */
+  async getDelivery(id: string, userId: string, role: string): Promise<{
+    orderId: string
+    deliveryMethod: string
+    trackingId: string | null
+    carrier: 'lineman' | 'grab_express' | 'self_pickup'
+    status: string
+  }> {
+    const order = await this.orderRepo.findOne({ where: { id } })
+    if (!order) throw new NotFoundException(`Order ${id} not found`)
+
+    const isAdmin = role === 'admin' || role === 'superadmin'
+    if (!isAdmin && order.customerId !== userId) {
+      // Check if caller is the provider
+      const provider = await this.providerRepo.findOne({ where: { userId } })
+      if (!provider || order.providerId !== provider.id) {
+        throw new ForbiddenException('Access denied')
+      }
+    }
+
+    const deliveryMethod = (order.deliveryMethod ?? 'self_pickup') as 'lineman' | 'grab_express' | 'self_pickup'
+    return {
+      orderId: order.id,
+      deliveryMethod,
+      trackingId: order.trackingId,
+      carrier: deliveryMethod,
+      status: order.status,
+    }
+  }
+
+  // ── BE-2: Status transitions ─────────────────────────────────────────────────
+
+  /**
+   * Update order status with role-based transition guards.
+   * SuperAdmin can set any status. Provider and customer are restricted to valid transitions.
+   */
+  async updateStatus(
+    id: string,
+    userId: string,
+    role: string,
+    dto: UpdateOrderStatusDto,
+  ): Promise<Order> {
+    const order = await this.orderRepo.findOne({ where: { id } })
+    if (!order) throw new NotFoundException(`Order ${id} not found`)
+
+    if (TERMINAL_STATUSES.has(order.status as OrderStatus)) {
+      throw new BadRequestException(`Order is already in terminal status: ${order.status}`)
+    }
+
+    const currentStatus = order.status as OrderStatus
+    const nextStatus = dto.status
+
+    if (role === 'superadmin') {
+      // SuperAdmin can force any status
+    } else if (role === 'provider') {
+      const provider = await this.providerRepo.findOne({ where: { userId } })
+      if (!provider || order.providerId !== provider.id) {
+        throw new ForbiddenException('Not the fulfilling provider of this order')
+      }
+      const allowed = ALLOWED_TRANSITIONS.provider[currentStatus] ?? []
+      if (!allowed.includes(nextStatus)) {
+        throw new BadRequestException(
+          `Provider cannot transition order from ${currentStatus} to ${nextStatus}`,
+        )
+      }
+    } else if (role === 'customer') {
+      if (order.customerId !== userId) {
+        throw new ForbiddenException('Not your order')
+      }
+      const allowed = ALLOWED_TRANSITIONS.customer[currentStatus] ?? []
+      if (!allowed.includes(nextStatus)) {
+        throw new BadRequestException(
+          `Cannot transition order from ${currentStatus} to ${nextStatus}`,
+        )
+      }
+    } else {
+      throw new ForbiddenException('Insufficient role to update order status')
+    }
+
+    await this.orderRepo.update(id, { status: nextStatus })
+    return this.orderRepo.findOne({ where: { id } }) as Promise<Order>
+  }
+
+  // ── BE-3: Provider incoming orders ──────────────────────────────────────────
+
+  /**
+   * Returns all orders assigned to the authenticated provider, newest first.
+   * Derives providerId from the user's Provider profile.
+   */
+  async findProviderOrders(userId: string): Promise<Order[]> {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) {
+      throw new NotFoundException('Provider profile not found. Apply to a community first.')
+    }
+    return this.orderRepo.find({
+      where: { providerId: provider.id },
+      order: { createdAt: 'DESC' },
+    })
   }
 }

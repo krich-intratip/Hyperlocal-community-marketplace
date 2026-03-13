@@ -14,6 +14,7 @@ import { useT } from '@/hooks/useT'
 import { formatDateShort } from '@/lib/date'
 import type { MapListing } from '@/components/map-view'
 import { useListings } from '@/hooks/useListings'
+import { useWishlistStore } from '@/store/wishlist.store'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -115,19 +116,28 @@ function MarketplacePageInner() {
     startTransition(() => { router.replace(`${pathname}?${params.toString()}`, { scroll: false }) })
   }
 
-  const [wishlist, setWishlist] = useState<Set<string>>(new Set())
+  const t = useT()
+  const { data: allListings = [], isLoading } = useListings({ sortBy })
+
+  const wishlist = useWishlistStore()
   const toggleWishlist = useCallback((id: string, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setWishlist(prev => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
+    const listing = allListings.find((l) => l.id === id)
+    if (!listing) return
+    wishlist.toggle({
+      id: listing.id,
+      title: listing.title,
+      price: listing.price,
+      priceUnit: listing.unit,
+      image: listing.image,
+      provider: listing.provider,
+      community: listing.community,
+      category: listing.category,
+      rating: listing.rating,
+      addedAt: new Date().toISOString(),
     })
-  }, [])
-  const t = useT()
-
-  const { data: allListings = [], isLoading } = useListings({ sortBy })
+  }, [allListings, wishlist])
 
   const filtered = allListings
     .filter(l => activeCategory === 'ALL' || l.category === activeCategory)
@@ -346,6 +356,7 @@ function MarketplacePageInner() {
                             : 'bg-white/90 dark:bg-slate-700/90 text-slate-400 hover:text-red-400'
                         }`}
                         title={wishlist.has(listing.id) ? 'ถอดออกจาก Wishlist' : 'เพิ่มใน Wishlist'}
+                        aria-label={wishlist.has(listing.id) ? 'ถอดออกจาก Wishlist' : 'เพิ่มใน Wishlist'}
                       >
                         <Heart className={`h-3.5 w-3.5 ${wishlist.has(listing.id) ? 'fill-current' : ''}`} />
                       </button>

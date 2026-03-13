@@ -217,9 +217,27 @@ export const ordersApi = {
   listMy: () =>
     apiClient.get<Order[]>('/orders/my'),
 
+  /** GET /orders/provider/incoming — all orders assigned to the authenticated provider */
+  listProviderIncoming: () =>
+    apiClient.get<Order[]>('/orders/provider/incoming'),
+
   /** GET /orders/:id */
   get: (id: string) =>
     apiClient.get<Order>(`/orders/${id}`),
+
+  /** GET /orders/:id/delivery — delivery info + tracking ID */
+  getDelivery: (id: string) =>
+    apiClient.get<{
+      orderId: string
+      deliveryMethod: string
+      trackingId: string | null
+      carrier: 'lineman' | 'grab_express' | 'self_pickup'
+      status: string
+    }>(`/orders/${id}/delivery`),
+
+  /** PATCH /orders/:id/status — update order status (role-gated) */
+  updateStatus: (id: string, status: string) =>
+    apiClient.patch<Order>(`/orders/${id}/status`, { status }),
 }
 
 // ─── Reviews ──────────────────────────────────────────────────────────────────

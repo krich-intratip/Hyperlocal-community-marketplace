@@ -7,7 +7,7 @@ import { AppFooter } from '@/components/app-footer'
 import {
   ShoppingCart, Trash2, Minus, Plus, ChevronLeft, ArrowRight,
   CheckCircle, Package, MapPin, Shield, Copy, Smartphone,
-  Tag, X as XIcon,
+  Tag, X as XIcon, Truck,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -23,6 +23,14 @@ const fadeUp = {
 
 type PayMethod = 'promptpay' | 'cash'
 type Step = 'review' | 'payment' | 'done'
+type DeliveryMethod = 'self_pickup' | 'lineman' | 'grab_express'
+
+const DELIVERY_OPTIONS: { id: DeliveryMethod; label: string; emoji: string; desc: string; fee: number }[] = [
+  { id: 'self_pickup',  label: 'รับเอง',      emoji: '🚶', desc: 'ไปรับที่ร้าน', fee: 0  },
+  { id: 'lineman',      label: 'Lineman',      emoji: '🛵', desc: '~30-45 นาที', fee: 25 },
+  { id: 'grab_express', label: 'Grab Express', emoji: '🚗', desc: '~45-60 นาที', fee: 35 },
+]
+const DELIVERY_FEE: Record<DeliveryMethod, number> = { self_pickup: 0, lineman: 25, grab_express: 35 }
 
 function copyText(text: string, setCopied: (v: boolean) => void) {
   navigator.clipboard?.writeText(text).catch(() => {})
@@ -47,6 +55,7 @@ export default function CartPage() {
   const [promoInput, setPromoInput] = useState('')
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number; label: string } | null>(null)
   const [promoError, setPromoError] = useState('')
+  const [deliveryMethodByProvider, setDeliveryMethodByProvider] = useState<Record<string, DeliveryMethod>>({})
 
   // ── Promo codes ──────────────────────────────────────────────────────────────
   const PROMO_CODES: Record<string, { label: string; calc: (sub: number) => number }> = {
@@ -71,10 +80,18 @@ export default function CartPage() {
   const subtotal = totalPrice()
   const platformFee = Math.round(subtotal * 0.05)
   const discount = appliedPromo?.discount ?? 0
-  const grandTotal = subtotal + platformFee - discount
+  const deliveryFeeTotal = providerIds.reduce((s, pid) => {
+    const method = deliveryMethodByProvider[pid] ?? 'self_pickup'
+    return s + (DELIVERY_FEE[method] ?? 0)
+  }, 0)
+  const grandTotal = subtotal + platformFee + deliveryFeeTotal - discount
 
   function canCheckout() {
-    return items.length > 0 && providerIds.every((pid) => (addressByProvider[pid] ?? '').trim() !== '')
+    return items.length > 0 && providerIds.every((pid) => {
+      const method = deliveryMethodByProvider[pid] ?? 'self_pickup'
+      if (method === 'self_pickup') return true
+      return (addressByProvider[pid] ?? '').trim() !== ''
+    })
   }
 
   async function handlePlaceOrder() {
@@ -83,6 +100,7 @@ export default function CartPage() {
     for (const providerId of providerIds) {
       const provItems = grouped[providerId]
       const first = provItems[0]
+      const delivMethod = deliveryMethodByProvider[providerId] ?? 'self_pickup'
       const dto: CreateOrderDto = {
         providerId: first.providerId,
         communityId: first.communityId,
@@ -91,8 +109,9 @@ export default function CartPage() {
           qty: i.qty,
           note: noteByItem[i.id] || undefined,
         })),
-        deliveryAddress: addressByProvider[providerId] || undefined,
+        deliveryAddress: delivMethod !== 'self_pickup' ? (addressByProvider[providerId] || undefined) : undefined,
         paymentMethod: payMethod === 'promptpay' ? 'PROMPTPAY' : 'CASH',
+        note: delivMethod !== 'self_pickup' ? delivMethod : undefined,
       }
       await new Promise<void>((resolve) => {
         createOrder.mutate(dto, {
@@ -268,19 +287,51 @@ export default function CartPage() {
                       ))}
                     </div>
 
-                    {/* Delivery address per provider */}
-                    <div>
-                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1.5">
-                        <MapPin className="h-3.5 w-3.5 inline mr-1" />ที่อยู่จัดส่ง / สถานที่ <span className="text-red-500">*</span>
+                    {/* Delivery method selector */}
+                    <div className="mb-3">
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-2">
+                        <Truck className="h-3.5 w-3.5 inline mr-1" />วิธีรับสินค้า
                       </label>
-                      <textarea
-                        value={addressByProvider[providerId] ?? ''}
-                        onChange={(e) => setAddressByProvider((prev) => ({ ...prev, [providerId]: e.target.value }))}
-                        rows={2}
-                        placeholder="บ้านเลขที่, ซอย, ถนน..."
-                        className="w-full rounded-xl border border-white/20 focus:border-primary/50 px-3 py-2.5 text-sm glass text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none resize-none transition-all"
-                      />
+                      <div className="grid grid-cols-3 gap-2">
+                        {DELIVERY_OPTIONS.map((opt) => {
+                          const selected = (deliveryMethodByProvider[providerId] ?? 'self_pickup') === opt.id
+                          return (
+                            <button key={opt.id}
+                              onClick={() => setDeliveryMethodByProvider((prev) => ({ ...prev, [providerId]: opt.id }))}
+                              className={`flex flex-col items-center gap-0.5 p-2.5 rounded-xl border-2 text-xs font-bold transition-all ${
+                                selected ? 'border-primary/60 bg-primary/5 text-primary' : 'border-white/20 glass-sm text-slate-600 hover:border-white/40'
+                              }`}>
+                              <span className="text-base">{opt.emoji}</span>
+                              <span className="leading-tight">{opt.label}</span>
+                              <span className={`text-[10px] font-normal ${selected ? 'text-primary/70' : 'text-slate-400'}`}>
+                                {opt.fee === 0 ? 'ฟรี' : `฿${opt.fee}`}
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </div>
                     </div>
+
+                    {/* Delivery address — only for courier methods */}
+                    {(deliveryMethodByProvider[providerId] ?? 'self_pickup') !== 'self_pickup' ? (
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1.5">
+                          <MapPin className="h-3.5 w-3.5 inline mr-1" />ที่อยู่จัดส่ง <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          value={addressByProvider[providerId] ?? ''}
+                          onChange={(e) => setAddressByProvider((prev) => ({ ...prev, [providerId]: e.target.value }))}
+                          rows={2}
+                          placeholder="บ้านเลขที่, ซอย, ถนน, แขวง, เขต..."
+                          className="w-full rounded-xl border border-white/20 focus:border-primary/50 px-3 py-2.5 text-sm glass text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none resize-none transition-all"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2 bg-amber-50/80 border border-amber-200 rounded-xl px-3 py-2.5 text-xs text-amber-700">
+                        <MapPin className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+                        <span>รับที่ร้านโดยตรง — ผู้ให้บริการจะแจ้งสถานที่นัดรับหลังยืนยันออเดอร์</span>
+                      </div>
+                    )}
                   </motion.div>
                 )
               })}
@@ -339,6 +390,13 @@ export default function CartPage() {
               <div className="flex justify-between text-slate-400 text-xs">
                 <span>ค่าบริการแพลตฟอร์ม (5%)</span>
                 <span>฿{platformFee.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-sm text-slate-600">
+                <span className="flex items-center gap-1"><Truck className="h-3 w-3" /> ค่าจัดส่ง</span>
+                {deliveryFeeTotal === 0
+                  ? <span className="text-green-600 font-semibold">ฟรี</span>
+                  : <span>฿{deliveryFeeTotal.toLocaleString()}</span>
+                }
               </div>
               <div className="border-t border-white/20 pt-2 flex justify-between font-extrabold text-base text-slate-900 dark:text-white">
                 <span>รวมทั้งหมด</span>

@@ -47,6 +47,14 @@ export class Order {
   @Column({ nullable: true })
   deliveryAddress: string | null
 
+  /** Delivery method: self_pickup | lineman | grab_express */
+  @Column({ nullable: true })
+  deliveryMethod: string | null
+
+  /** Carrier tracking ID (e.g. LM-001234 or GX-001234) */
+  @Column({ nullable: true })
+  trackingId: string | null
+
   @Column({ default: 'PROMPTPAY' })
   paymentMethod: string
 

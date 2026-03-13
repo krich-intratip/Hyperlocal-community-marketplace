@@ -8,7 +8,7 @@ import { MarketBackground } from '@/components/market-background'
 import {
   TrendingUp, Star, CalendarCheck, DollarSign, Plus, Clock, CheckCircle, Eye,
   PauseCircle, PlayCircle, LogOut, AlertTriangle, X, MapPin, ShieldCheck,
-  BarChart3, Zap, MessageCircle, UmbrellaOff, Umbrella, Loader2,
+  BarChart3, Zap, MessageCircle, UmbrellaOff, Umbrella, Loader2, Package,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
@@ -259,7 +259,7 @@ export default function ProviderDashboardPage() {
             <BarChart3 className="h-4 w-4 text-slate-600" />
             <h2 className="font-bold text-slate-800 text-sm">Command Center</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
             {/* Analytics */}
             <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
@@ -327,6 +327,27 @@ export default function ProviderDashboardPage() {
                     <Star key={i} className={`h-3.5 w-3.5 ${i <= 5 ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
                   ))}
                   <span className="ml-1 text-xs font-bold text-amber-700">4.9</span>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Incoming Orders */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/orders"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center">
+                    <Package className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                    {MOCK_ORDERS.filter(o => o.status === 'pending').length} รอยืนยัน
+                  </span>
+                </div>
+                <p className="font-bold text-emerald-900 text-sm mb-0.5">ออเดอร์ขาเข้า</p>
+                <p className="text-xs text-emerald-600 mb-3">ยืนยัน · อัพเดทสถานะ · ติดตาม</p>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-extrabold text-emerald-800">{MOCK_ORDERS.length}</span>
+                  <span className="text-xs text-emerald-600">ออเดอร์ทั้งหมด</span>
                 </div>
               </Link>
             </motion.div>

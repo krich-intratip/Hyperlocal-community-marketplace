@@ -9,7 +9,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard'
 import {
   Package, ChevronLeft, CheckCircle, Clock, Truck, ShoppingBag,
   XCircle, AlertTriangle, MapPin, CreditCard, RotateCcw,
-  Printer, Star,
+  Printer, Star, Phone, Navigation,
 } from 'lucide-react'
 
 const fadeUp = {
@@ -58,6 +58,42 @@ interface MockOrder {
   promoCode?: string
 }
 
+// ── Mock delivery tracking ────────────────────────────────────────────────────
+type DeliveryCarrier = 'lineman' | 'grab_express' | 'self_pickup'
+interface MockDelivery {
+  carrier: DeliveryCarrier
+  trackingId: string
+  courierName: string
+  courierAvatar: string
+  courierPhone: string
+  eta: string
+  currentStep: number  // 0-3
+}
+
+const DELIVERY_STEPS = [
+  { label: 'รับออเดอร์แล้ว',      desc: 'ร้านค้ายืนยันออเดอร์' },
+  { label: 'ไรเดอร์รับสินค้า',    desc: 'ไรเดอร์กำลังไปรับที่ร้าน' },
+  { label: 'กำลังจัดส่ง',          desc: 'กำลังเดินทางมาหาคุณ' },
+  { label: 'ส่งถึงแล้ว',           desc: 'รับสินค้าเรียบร้อย' },
+]
+
+function buildMockDelivery(orderId: string): MockDelivery | null {
+  // Only show delivery for orders with courier (not self-pickup)
+  const hash = orderId.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+  if (hash % 3 === 0) return null  // ~33% self-pickup orders have no tracking
+  const isGrab = hash % 2 === 0
+  const trackNum = String(hash).padStart(6, '0')
+  return {
+    carrier: isGrab ? 'grab_express' : 'lineman',
+    trackingId: isGrab ? `GX-${trackNum}` : `LM-${trackNum}`,
+    courierName: isGrab ? 'อรรถ คล่องส่ง' : 'สมชาย ขยันส่ง',
+    courierAvatar: isGrab ? '🚗' : '🛵',
+    courierPhone: isGrab ? '082-345-6789' : '081-234-5678',
+    eta: '14:45 น.',
+    currentStep: 2,  // กำลังจัดส่ง (in transit)
+  }
+}
+
 function buildMockOrder(id: string): MockOrder {
   const items: MockOrderItem[] = [
     { name: 'ข้าวราดแกง', qty: 2, price: 80, emoji: '🍱' },
@@ -85,9 +121,11 @@ function buildMockOrder(id: string): MockOrder {
 export default function OrderDetailClient({ id }: { id: string }) {
   useAuthGuard()
   const order = buildMockOrder(id)
+  const delivery = buildMockDelivery(id)
   const isCancelled = order.status === 'CANCELLED'
   const isCompleted = order.status === 'COMPLETED'
   const currentIdx  = statusIndex(order.status)
+  const showDelivery = delivery !== null && !isCancelled && (order.status === 'PROCESSING' || order.status === 'READY' || order.status === 'COMPLETED')
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -175,8 +213,80 @@ export default function OrderDetailClient({ id }: { id: string }) {
           )}
         </motion.div>
 
+        {/* Delivery Tracking */}
+        {showDelivery && delivery && (
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
+            className="glass-card rounded-2xl p-5 mb-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                <Truck className="h-4 w-4 text-primary" /> ติดตามการจัดส่ง
+              </h2>
+              <div className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${
+                delivery.carrier === 'lineman' ? 'bg-green-100 text-green-700' : 'bg-[#00b14f]/10 text-[#00b14f]'
+              }`}>
+                <span>{delivery.carrier === 'lineman' ? '🛵' : '🚗'}</span>
+                <span>{delivery.carrier === 'lineman' ? 'Lineman' : 'Grab Express'}</span>
+              </div>
+            </div>
+
+            {/* ETA banner */}
+            <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 mb-4">
+              <Navigation className="h-4 w-4 text-amber-500 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-bold text-amber-800">กำลังจัดส่ง — คาดถึง {delivery.eta}</p>
+                <p className="text-[11px] text-amber-600">Tracking ID: {delivery.trackingId}</p>
+              </div>
+              <Link href={`/delivery/track/${delivery.trackingId}`}
+                className="ml-auto text-xs font-bold text-primary hover:underline whitespace-nowrap">
+                ดูแผนที่ →
+              </Link>
+            </div>
+
+            {/* Steps */}
+            <div className="flex items-start gap-0 mb-4 relative">
+              {DELIVERY_STEPS.map((step, i) => {
+                const done    = i < delivery.currentStep
+                const current = i === delivery.currentStep
+                const future  = i > delivery.currentStep
+                return (
+                  <div key={i} className="flex-1 flex flex-col items-center text-center relative">
+                    {i < DELIVERY_STEPS.length - 1 && (
+                      <div className={`absolute top-3.5 left-1/2 right-0 h-0.5 -translate-y-1/2 ${done ? 'bg-green-400' : 'bg-slate-200'}`} />
+                    )}
+                    <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center relative z-10 mb-1.5 transition-all ${
+                      done    ? 'bg-green-500 border-green-500 text-white' :
+                      current ? 'bg-primary border-primary text-white' :
+                                'bg-white border-slate-200 text-slate-300'
+                    }`}>
+                      {done ? <CheckCircle className="h-3.5 w-3.5" /> : <span className="text-[10px] font-bold">{i + 1}</span>}
+                    </div>
+                    <p className={`text-[10px] font-bold leading-tight ${
+                      current ? 'text-primary' : done ? 'text-green-700' : future ? 'text-slate-300' : ''
+                    }`}>{step.label}</p>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Courier card */}
+            <div className="flex items-center gap-3 glass-sm rounded-xl px-4 py-3">
+              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl flex-shrink-0">
+                {delivery.courierAvatar}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-slate-800">{delivery.courierName}</p>
+                <p className="text-xs text-slate-400">ไรเดอร์</p>
+              </div>
+              <a href={`tel:${delivery.courierPhone.replace(/-/g, '')}`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-green-500 text-white text-xs font-bold hover:bg-green-600 transition-colors">
+                <Phone className="h-3.5 w-3.5" /> โทร
+              </a>
+            </div>
+          </motion.div>
+        )}
+
         {/* Order Items */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={showDelivery ? 4 : 3}
           className="glass-card rounded-2xl p-5 mb-5">
           <h2 className="font-bold text-slate-800 mb-4 text-sm">รายการออเดอร์</h2>
           <div className="space-y-3">
@@ -214,7 +324,7 @@ export default function OrderDetailClient({ id }: { id: string }) {
         </motion.div>
 
         {/* Delivery Info */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={showDelivery ? 5 : 4}
           className="glass-card rounded-2xl p-5 mb-5">
           <h2 className="font-bold text-slate-800 mb-3 text-sm">ข้อมูลการจัดส่ง</h2>
           <div className="space-y-2 text-sm">
@@ -236,7 +346,7 @@ export default function OrderDetailClient({ id }: { id: string }) {
         </motion.div>
 
         {/* Action Buttons */}
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={showDelivery ? 6 : 5}
           className="flex flex-wrap gap-3">
           {isCompleted && (
             <>

@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart, Search, Loader2 } from 'lucide-react'
+import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart, Search, Loader2, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { ThemeLanguageToggle } from '@/components/theme-language-toggle'
 import { useT } from '@/hooks/useT'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
+import { useWishlistStore } from '@/store/wishlist.store'
 import { CartDrawer } from '@/components/cart-drawer'
 import { NotificationBell } from '@/components/notification-bell'
 import { useSearch } from '@/hooks/useSearch'
@@ -164,6 +165,7 @@ export function Navbar() {
   const [cartOpen, setCartOpen] = useState(false)
   const { user, isLoggedIn, logout } = useAuthStore()
   const totalItems = useCartStore((s) => s.totalItems())
+  const wishlistCount = useWishlistStore((s) => s.count())
   const t = useT()
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -231,6 +233,17 @@ export function Navbar() {
 
           {isLoggedIn ? (
             <>
+              {/* Wishlist button */}
+              <Link href="/saved" className="relative p-2 rounded-xl hover:bg-white/25 dark:hover:bg-white/10 transition-colors"
+                title="รายการที่บันทึกไว้">
+                <Heart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                {wishlistCount > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center">
+                    {wishlistCount > 9 ? '9+' : wishlistCount}
+                  </span>
+                )}
+              </Link>
+
               {/* Cart button */}
               <button onClick={() => setCartOpen(true)} className="relative p-2 rounded-xl hover:bg-white/25 dark:hover:bg-white/10 transition-colors">
                 <ShoppingCart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
@@ -286,6 +299,12 @@ export function Navbar() {
                   <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-primary text-white text-[9px] font-extrabold flex items-center justify-center">{totalItems > 9 ? '9+' : totalItems}</span>
                 )}
               </button>
+              <Link href="/saved" className="relative p-2 rounded-lg hover:bg-white/25 dark:hover:bg-white/10 transition-colors">
+                <Heart className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                {wishlistCount > 0 && (
+                  <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center">{wishlistCount > 9 ? '9+' : wishlistCount}</span>
+                )}
+              </Link>
               <NotificationBell />
             </>
           )}
@@ -316,6 +335,10 @@ export function Navbar() {
                   {user?.name}
                 </Link>
                 <Link href="/bookings"   onClick={() => setMenuOpen(false)} className="text-sm text-slate-600 dark:text-slate-300 py-1">การจองของฉัน</Link>
+                <Link href="/saved"      onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 py-1">
+                  <Heart className="h-3.5 w-3.5 text-rose-400" /> รายการที่บันทึกไว้
+                  {wishlistCount > 0 && <span className="ml-auto text-xs font-bold bg-rose-500 text-white px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
+                </Link>
                 <Link href="/dashboard"  onClick={() => setMenuOpen(false)} className="text-sm text-slate-600 dark:text-slate-300 py-1">Dashboard</Link>
                 <button onClick={() => { logout(); setMenuOpen(false) }} className="text-left text-sm text-red-500 py-1">ออกจากระบบ</button>
               </>

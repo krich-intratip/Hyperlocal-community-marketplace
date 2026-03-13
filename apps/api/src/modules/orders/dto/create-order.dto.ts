@@ -51,6 +51,14 @@ export class CreateOrderDto {
   @IsOptional()
   deliveryAddress?: string
 
+  @ApiPropertyOptional({
+    description: 'Delivery method: self_pickup | lineman | grab_express',
+    enum: ['self_pickup', 'lineman', 'grab_express'],
+  })
+  @IsString()
+  @IsOptional()
+  deliveryMethod?: string
+
   @ApiPropertyOptional({ description: 'Payment method', default: 'PROMPTPAY' })
   @IsString()
   @IsOptional()

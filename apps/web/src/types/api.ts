@@ -185,11 +185,13 @@ export interface CreateBookingDto {
 
 export type OrderStatus =
   | 'PENDING_PAYMENT'
-  | 'PAID'
-  | 'PROCESSING'
-  | 'READY'
+  | 'PAYMENT_HELD'
+  | 'CONFIRMED'
+  | 'IN_PROGRESS'
+  | 'PENDING_CONFIRMATION'
   | 'COMPLETED'
-  | 'CANCELLED'
+  | 'CANCELLED_BY_CUSTOMER'
+  | 'CANCELLED_BY_PROVIDER'
 
 export interface OrderItem {
   id: string
@@ -211,9 +213,11 @@ export interface Order {
   subtotal: number
   platformFee: number
   total: number
-  deliveryAddress?: string
+  deliveryAddress?: string | null
+  deliveryMethod?: string | null
+  trackingId?: string | null
   paymentMethod: string
-  note?: string
+  note?: string | null
   createdAt: string
   updatedAt: string
 }
