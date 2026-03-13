@@ -150,6 +150,9 @@ export const listingsApi = {
 
   get: (id: string) =>
     apiClient.get<ApiResponse<Listing>>(`/listings/${id}`),
+
+  setPromotion: (id: string, body: { discountPercent: number | null; discountEndsAt: string | null }) =>
+    apiClient.patch<{ success: boolean }>(`/listings/${id}/promotion`, body),
 }
 
 // ─── Notifications ────────────────────────────────────────────────────────────

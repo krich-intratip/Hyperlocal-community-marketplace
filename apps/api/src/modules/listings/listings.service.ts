@@ -95,6 +95,18 @@ export class ListingsService {
     return { success: true }
   }
 
+  async setPromotion(id: string, providerId: string, data: {
+    discountPercent: number | null
+    discountEndsAt: string | null
+  }) {
+    const listing = await this.listingRepo.findOne({ where: { id, providerId } })
+    if (!listing) throw new NotFoundException('Listing not found or not owned by provider')
+    const discountEndsAt = data.discountEndsAt ? new Date(data.discountEndsAt) : null
+    await this.listingRepo.update({ id }, { discountPercent: data.discountPercent, discountEndsAt })
+    await this.invalidateListingsCache()
+    return { success: true }
+  }
+
   private async invalidateListingsCache() {
     const store = (this.cache as any).store
     if (typeof store?.keys === 'function') {

@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart, Flame, Sparkles } from 'lucide-react'
+import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart, Flame, Sparkles, Zap, Clock } from 'lucide-react'
 import Link from 'next/link'
-import { useState, lazy, Suspense, useCallback, useTransition } from 'react'
+import { useState, lazy, Suspense, useCallback, useTransition, useEffect } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { ProviderStatusBadge } from '@/components/provider-status'
 import { TrustBadge } from '@/components/trust-badge'
@@ -67,6 +67,43 @@ type ProviderStatus = 'available' | 'busy' | 'offline'
 
 const DAY_LABELS = ['จ','อ','พ','พฤ','ศ','ส','อา']
 
+/** Returns remaining time string "Xช Yน" or null if expired/no date */
+function useCountdown(endsAt?: string): string | null {
+  const [label, setLabel] = useState<string | null>(null)
+  useEffect(() => {
+    if (!endsAt) { setLabel(null); return }
+    function calc() {
+      const diff = new Date(endsAt!).getTime() - Date.now()
+      if (diff <= 0) { setLabel(null); return }
+      const h = Math.floor(diff / 3_600_000)
+      const m = Math.floor((diff % 3_600_000) / 60_000)
+      if (h >= 24) {
+        const d = Math.floor(h / 24)
+        setLabel(`${d}วัน ${h % 24}ช`)
+      } else if (h > 0) {
+        setLabel(`${h}ช ${m}น`)
+      } else {
+        const s = Math.floor((diff % 60_000) / 1_000)
+        setLabel(`${m}น ${s}ว`)
+      }
+    }
+    calc()
+    const t = setInterval(calc, 1_000)
+    return () => clearInterval(t)
+  }, [endsAt])
+  return label
+}
+
+function FlashSaleCountdown({ endsAt }: { endsAt?: string }) {
+  const remaining = useCountdown(endsAt)
+  if (!remaining) return null
+  return (
+    <span className="flex items-center gap-0.5 text-[10px] font-bold text-rose-100">
+      <Clock className="h-2.5 w-2.5" /> {remaining}
+    </span>
+  )
+}
+
 function StockBar({ stock, max }: { stock: number; max: number }) {
   const pct = max > 0 ? (stock / max) * 100 : 0
   const color = stock === 0 ? 'bg-slate-300 dark:bg-slate-600'
@@ -96,6 +133,7 @@ function MarketplacePageInner() {
   const statusFilter   = (searchParams.get('status') as ProviderStatus | 'ALL') ?? 'ALL'
   const radiusKm       = parseFloat(searchParams.get('radius') ?? '5')
   const healthOnly     = searchParams.get('health') === '1'
+  const flashSaleOnly  = searchParams.get('flash') === '1'
   const minPrice       = searchParams.get('minPrice') ? parseInt(searchParams.get('minPrice')!) : 0
   const maxPrice       = searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!) : 0
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
@@ -114,6 +152,13 @@ function MarketplacePageInner() {
     const params = new URLSearchParams(searchParams.toString())
     if (healthOnly) params.delete('health')
     else params.set('health', '1')
+    startTransition(() => { router.replace(`${pathname}?${params.toString()}`, { scroll: false }) })
+  }
+
+  function toggleFlashSale() {
+    const params = new URLSearchParams(searchParams.toString())
+    if (flashSaleOnly) params.delete('flash')
+    else params.set('flash', '1')
     startTransition(() => { router.replace(`${pathname}?${params.toString()}`, { scroll: false }) })
   }
 
@@ -147,6 +192,7 @@ function MarketplacePageInner() {
     .filter(l => !search || l.title.includes(search) || l.provider.includes(search) || l.tags.some(tag => tag.includes(search)))
     .filter(l => parseFloat(l.distance) <= radiusKm)
     .filter(l => !healthOnly || l.isHealthOption === true)
+    .filter(l => !flashSaleOnly || (!!l.discountPercent && !!l.discountEndsAt && new Date(l.discountEndsAt) > new Date()))
     .filter(l => minPrice === 0 || l.price >= minPrice)
     .filter(l => maxPrice === 0 || l.price <= maxPrice)
 
@@ -220,6 +266,18 @@ function MarketplacePageInner() {
                 : 'glass text-slate-600 dark:text-slate-300 hover:text-emerald-600'
             }`}>
             🥗 {healthOnly ? 'ตัวเลือกสุขภาพ' : 'เพื่อสุขภาพ'}
+          </button>
+
+          {/* Flash sale filter */}
+          <button
+            onClick={toggleFlashSale}
+            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-bold transition-all ${
+              flashSaleOnly
+                ? 'bg-gradient-to-r from-rose-500 to-orange-400 text-white shadow-md shadow-rose-200/40'
+                : 'glass text-slate-600 dark:text-slate-300 hover:text-rose-600'
+            }`}>
+            <Zap className="h-3.5 w-3.5" />
+            Flash Sale
           </button>
 
           {/* View toggle */}
@@ -400,12 +458,20 @@ function MarketplacePageInner() {
                     {/* Image + status overlay */}
                     <div className="relative h-40 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 flex items-center justify-center text-6xl">
                       {listing.image}
-                      {/* Top-left: status + promoted badge */}
+                      {/* Top-left: status + promoted + flash sale badges */}
                       <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
                         <ProviderStatusBadge status={listing.status} size="sm" />
                         {listing.isPromoted && (
                           <span className="flex items-center gap-1 text-[11px] font-extrabold bg-gradient-to-r from-orange-500 to-amber-400 text-white px-2 py-0.5 rounded-full shadow-sm">
                             <Flame className="h-3 w-3" /> โปรโมท
+                          </span>
+                        )}
+                        {listing.discountPercent && listing.discountEndsAt && new Date(listing.discountEndsAt) > new Date() && (
+                          <span className="flex flex-col items-start gap-0.5 bg-gradient-to-r from-rose-600 to-rose-400 text-white px-2 py-0.5 rounded-full shadow-sm">
+                            <span className="flex items-center gap-0.5 text-[11px] font-extrabold">
+                              <Zap className="h-2.5 w-2.5" /> -{listing.discountPercent}%
+                            </span>
+                            <FlashSaleCountdown endsAt={listing.discountEndsAt} />
                           </span>
                         )}
                       </div>
@@ -492,8 +558,22 @@ function MarketplacePageInner() {
                       {/* Price */}
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-xl font-extrabold text-slate-900 dark:text-white">฿{listing.price.toLocaleString()}</span>
-                          <span className="text-sm text-slate-400 dark:text-slate-500 ml-1">/{listing.unit}</span>
+                          {listing.discountPercent && listing.discountEndsAt && new Date(listing.discountEndsAt) > new Date() ? (
+                            <>
+                              <span className="text-xl font-extrabold text-rose-600">
+                                ฿{Math.round(listing.price * (1 - listing.discountPercent / 100)).toLocaleString()}
+                              </span>
+                              <span className="text-sm text-slate-400 dark:text-slate-500 line-through ml-1.5">
+                                ฿{listing.price.toLocaleString()}
+                              </span>
+                              <span className="text-sm text-slate-400 dark:text-slate-500 ml-1">/{listing.unit}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-xl font-extrabold text-slate-900 dark:text-white">฿{listing.price.toLocaleString()}</span>
+                              <span className="text-sm text-slate-400 dark:text-slate-500 ml-1">/{listing.unit}</span>
+                            </>
+                          )}
                         </div>
                         <ChevronRight className="h-5 w-5 text-blue-400 group-hover:translate-x-1 transition-transform" />
                       </div>

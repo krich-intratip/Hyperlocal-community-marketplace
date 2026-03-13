@@ -68,6 +68,18 @@ export class ListingsController {
     return this.listingsService.update(id, req.user.id, body)
   }
 
+  @Patch(':id/promotion')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Set or clear a flash-sale promotion on a listing' })
+  setPromotion(
+    @Param('id') id: string,
+    @Req() req: any,
+    @Body() body: { discountPercent: number | null; discountEndsAt: string | null },
+  ) {
+    return this.listingsService.setPromotion(id, req.user.id, body)
+  }
+
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

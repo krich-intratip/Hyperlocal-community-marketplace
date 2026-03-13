@@ -259,7 +259,7 @@ export default function ProviderDashboardPage() {
             <BarChart3 className="h-4 w-4 text-slate-600" />
             <h2 className="font-bold text-slate-800 text-sm">Command Center</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
 
             {/* Analytics */}
             <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
@@ -348,6 +348,25 @@ export default function ProviderDashboardPage() {
                 <div className="flex items-center gap-1.5">
                   <span className="text-lg font-extrabold text-emerald-800">{MOCK_ORDERS.length}</span>
                   <span className="text-xs text-emerald-600">ออเดอร์ทั้งหมด</span>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Flash Sale & Promotions */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/promotions"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-rose-50 to-orange-50 border border-rose-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-600 to-rose-400 flex items-center justify-center">
+                    <Zap className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">Flash</span>
+                </div>
+                <p className="font-bold text-rose-900 text-sm mb-0.5">โปรโมชั่น</p>
+                <p className="text-xs text-rose-600 mb-3">Flash Sale · ลดราคา · Countdown</p>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-extrabold text-rose-700">%</span>
+                  <span className="text-xs text-rose-600">ตั้งโปรโมชั่น</span>
                 </div>
               </Link>
             </motion.div>

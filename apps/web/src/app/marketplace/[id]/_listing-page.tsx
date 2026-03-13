@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { MapPin, Star, Shield, Clock, Phone, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart, Minus, Plus, UmbrellaOff, Flame, Beef, Wheat } from 'lucide-react'
+import { MapPin, Star, Shield, Clock, Phone, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart, UmbrellaOff, Flame, Beef, Wheat, Zap, Minus, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { useState, lazy, Suspense } from 'react'
+import { useState, lazy, Suspense, useEffect } from 'react'
 import { ProviderStatusBadge } from '@/components/provider-status'
 import { useT } from '@/hooks/useT'
 import { getListingById } from '@/lib/mock-listings'
@@ -26,6 +26,26 @@ const fadeUp = {
 
 const DAY_LABELS = ['จ','อ','พ','พฤ','ศ','ส','อา']
 
+function useCountdown(endsAt?: string): string | null {
+  const [label, setLabel] = useState<string | null>(null)
+  useEffect(() => {
+    if (!endsAt) { setLabel(null); return }
+    function calc() {
+      const diff = new Date(endsAt!).getTime() - Date.now()
+      if (diff <= 0) { setLabel(null); return }
+      const h = Math.floor(diff / 3_600_000)
+      const m = Math.floor((diff % 3_600_000) / 60_000)
+      if (h >= 24) { const d = Math.floor(h / 24); setLabel(`${d}วัน ${h % 24}ช`) }
+      else if (h > 0) { setLabel(`${h}ช ${m}น`) }
+      else { const s = Math.floor((diff % 60_000) / 1_000); setLabel(`${m}น ${s}ว`) }
+    }
+    calc()
+    const t = setInterval(calc, 1_000)
+    return () => clearInterval(t)
+  }, [endsAt])
+  return label
+}
+
 function StockBar({ stock, max }: { stock: number; max: number }) {
   const pct = max > 0 ? (stock / max) * 100 : 0
   const color = stock === 0 ? 'bg-slate-300 dark:bg-slate-600'
@@ -44,50 +64,50 @@ function StockBar({ stock, max }: { stock: number; max: number }) {
 
 const REVIEWS_BY_ID: Record<string, { id: string; user: string; rating: number; comment: string; date: string; avatar: string }[]> = {
   '1': [
-    { id: 'r1', user: 'คุณวิภา', rating: 5, comment: 'อร่อยมาก ส้มตำรสจัดถูกใจ ส่งตรงเวลาทุกวัน', date: '5 มี.ค. 2569', avatar: '👩' },
-    { id: 'r2', user: 'คุณสมศักดิ์', rating: 5, comment: 'สั่งรายเดือนมา 3 เดือนแล้ว ไม่เคยผิดหวัง ราคาคุ้มมาก', date: '28 ก.พ. 2569', avatar: '👨' },
-    { id: 'r3', user: 'คุณนิตยา', rating: 4, comment: 'รสชาติดี วัตถุดิบสด ปริมาณพอดี แนะนำเมนูลาบ', date: '20 ก.พ. 2569', avatar: '👩‍💼' },
+    { id: 'r1', user: 'ว***', rating: 5, comment: 'อร่อยมาก ส้มตำรสจัดถูกใจ ส่งตรงเวลาทุกวัน', date: '5 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'ส***', rating: 5, comment: 'สั่งรายเดือนมา 3 เดือนแล้ว ไม่เคยผิดหวัง ราคาคุ้มมาก', date: '28 ก.พ. 2569', avatar: '👨' },
+    { id: 'r3', user: 'น***', rating: 4, comment: 'รสชาติดี วัตถุดิบสด ปริมาณพอดี แนะนำเมนูลาบ', date: '20 ก.พ. 2569', avatar: '👩‍💼' },
   ],
   '2': [
-    { id: 'r1', user: 'คุณประหยัด', rating: 5, comment: 'ช่างมาตรงเวลา ล้างแอร์สะอาดมาก แอร์เย็นขึ้นชัดเจน', date: '4 มี.ค. 2569', avatar: '👨' },
-    { id: 'r2', user: 'คุณสมหญิง', rating: 5, comment: 'ราคาสมเหตุสมผล งานเรียบร้อย มีใบรับประกัน แนะนำเลย', date: '25 ก.พ. 2569', avatar: '👩' },
+    { id: 'r1', user: 'ป***', rating: 5, comment: 'ช่างมาตรงเวลา ล้างแอร์สะอาดมาก แอร์เย็นขึ้นชัดเจน', date: '4 มี.ค. 2569', avatar: '👨' },
+    { id: 'r2', user: 'ส***', rating: 5, comment: 'ราคาสมเหตุสมผล งานเรียบร้อย มีใบรับประกัน แนะนำเลย', date: '25 ก.พ. 2569', avatar: '👩' },
   ],
   '3': [
-    { id: 'r1', user: 'คุณแม่บี', rating: 5, comment: 'ครูสอนเก่งมาก ลูกชอบมาก คะแนนอังกฤษดีขึ้นเยอะ', date: '6 มี.ค. 2569', avatar: '👩' },
-    { id: 'r2', user: 'คุณพ่อต้น', rating: 5, comment: 'วิธีสอนสนุก ลูกไม่เบื่อ ครูใจดีอธิบายชัดเจน', date: '1 มี.ค. 2569', avatar: '👨' },
+    { id: 'r1', user: 'ก***', rating: 5, comment: 'ครูสอนเก่งมาก ลูกชอบมาก คะแนนอังกฤษดีขึ้นเยอะ', date: '6 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'พ***', rating: 5, comment: 'วิธีสอนสนุก ลูกไม่เบื่อ ครูใจดีอธิบายชัดเจน', date: '1 มี.ค. 2569', avatar: '👨' },
   ],
   '4': [
-    { id: 'r1', user: 'คุณมาลี', rating: 5, comment: 'ทีมงานขยัน ทำสะอาดทั่วถึงทุกมุม ห้องน้ำเงาเลย', date: '7 มี.ค. 2569', avatar: '👩' },
-    { id: 'r2', user: 'คุณวิรัตน์', rating: 4, comment: 'บริการดี ตรงเวลา แต่อยากให้ใช้น้ำยาอ่อนกว่านี้หน่อย', date: '22 ก.พ. 2569', avatar: '👨' },
+    { id: 'r1', user: 'ม***', rating: 5, comment: 'ทีมงานขยัน ทำสะอาดทั่วถึงทุกมุม ห้องน้ำเงาเลย', date: '7 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'ว***', rating: 4, comment: 'บริการดี ตรงเวลา แต่อยากให้ใช้น้ำยาอ่อนกว่านี้หน่อย', date: '22 ก.พ. 2569', avatar: '👨' },
   ],
   '5': [
-    { id: 'r1', user: 'คุณลูกสาว', rating: 5, comment: 'คุณสมศรีใจดีมาก ดูแลคุณตาเหมือนญาติ ไว้วางใจได้', date: '3 มี.ค. 2569', avatar: '👩' },
+    { id: 'r1', user: 'ก***', rating: 5, comment: 'ดูแลคุณตาเหมือนญาติ ใจดีมาก ไว้วางใจได้', date: '3 มี.ค. 2569', avatar: '👩' },
   ],
   '6': [
-    { id: 'r1', user: 'คุณเจน', rating: 5, comment: 'กระเป๋าสวยมาก งานละเอียด ผ้าทนทาน สีไม่ตก คุ้มค่ามาก', date: '5 มี.ค. 2569', avatar: '👩' },
-    { id: 'r2', user: 'คุณฝ้าย', rating: 5, comment: 'ซื้อเป็นของขวัญ ผู้รับชอบมาก สั่งทำลายพิเศษได้ด้วย', date: '27 ก.พ. 2569', avatar: '👩‍💼' },
+    { id: 'r1', user: 'จ***', rating: 5, comment: 'กระเป๋าสวยมาก งานละเอียด ผ้าทนทาน สีไม่ตก คุ้มค่ามาก', date: '5 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'ฝ***', rating: 5, comment: 'ซื้อเป็นของขวัญ ผู้รับชอบมาก สั่งทำลายพิเศษได้ด้วย', date: '27 ก.พ. 2569', avatar: '👩‍💼' },
   ],
   '7': [
-    { id: 'r1', user: 'คุณปิยะ', rating: 5, comment: 'หมอนวดฝีมือดีมาก นวดถูกจุด ปวดหายเลย นัดซ้ำแน่นอน', date: '8 มี.ค. 2569', avatar: '👨' },
-    { id: 'r2', user: 'คุณนก', rating: 5, comment: 'นวดแล้วผ่อนคลายมาก มือนวดดีมาก แนะนำเมนูนวดกดจุด', date: '2 มี.ค. 2569', avatar: '👩' },
+    { id: 'r1', user: 'ป***', rating: 5, comment: 'หมอนวดฝีมือดีมาก นวดถูกจุด ปวดหายเลย นัดซ้ำแน่นอน', date: '8 มี.ค. 2569', avatar: '👨' },
+    { id: 'r2', user: 'น***', rating: 5, comment: 'นวดแล้วผ่อนคลายมาก มือนวดดีมาก แนะนำเมนูนวดกดจุด', date: '2 มี.ค. 2569', avatar: '👩' },
   ],
   '8': [
-    { id: 'r1', user: 'คุณสุ', rating: 5, comment: 'ผักสดมาก รสชาติดีกว่าซื้อห้างชัดเจน คุ้มมาก', date: '4 มี.ค. 2569', avatar: '👩' },
-    { id: 'r2', user: 'คุณบอล', rating: 4, comment: 'ผักสดดี แต่บางสัปดาห์เมนูซ้ำ ถ้าหลากหลายกว่านี้จะ 5 ดาว', date: '19 ก.พ. 2569', avatar: '👨' },
+    { id: 'r1', user: 'ส***', rating: 5, comment: 'ผักสดมาก รสชาติดีกว่าซื้อห้างชัดเจน คุ้มมาก', date: '4 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'บ***', rating: 4, comment: 'ผักสดดี แต่บางสัปดาห์เมนูซ้ำ ถ้าหลากหลายกว่านี้จะ 5 ดาว', date: '19 ก.พ. 2569', avatar: '👨' },
   ],
   '9': [
-    { id: 'r1', user: 'คุณเต้', rating: 5, comment: 'โลโก้ออกมาสวยมาก ตรงใจ แก้ไขให้จนพอใจ มืออาชีพมาก', date: '6 มี.ค. 2569', avatar: '👨' },
+    { id: 'r1', user: 'ต***', rating: 5, comment: 'โลโก้ออกมาสวยมาก ตรงใจ แก้ไขให้จนพอใจ มืออาชีพมาก', date: '6 มี.ค. 2569', avatar: '👨' },
   ],
   '10': [
-    { id: 'r1', user: 'คุณแก้ว', rating: 5, comment: 'ยืมหม้อทอดมาทำงานเลี้ยง สะดวกมาก ของสะอาด ราคาถูก', date: '3 มี.ค. 2569', avatar: '👩' },
+    { id: 'r1', user: 'แ***', rating: 5, comment: 'ยืมหม้อทอดมาทำงานเลี้ยง สะดวกมาก ของสะอาด ราคาถูก', date: '3 มี.ค. 2569', avatar: '👩' },
   ],
   '11': [
-    { id: 'r1', user: 'คุณดาว', rating: 5, comment: 'ช่างมาเร็วมาก ท่อรั่วซ่อมเสร็จในชั่วโมงเดียว ราคาตรงไปตรงมา', date: '7 มี.ค. 2569', avatar: '👩' },
-    { id: 'r2', user: 'คุณอ้น', rating: 4, comment: 'งานดี เรียบร้อย แต่โทรหาค่อนข้างยาก ควรตอบเร็วกว่านี้', date: '21 ก.พ. 2569', avatar: '👨' },
+    { id: 'r1', user: 'ด***', rating: 5, comment: 'ช่างมาเร็วมาก ท่อรั่วซ่อมเสร็จในชั่วโมงเดียว ราคาตรงไปตรงมา', date: '7 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'อ***', rating: 4, comment: 'งานดี เรียบร้อย แต่โทรหาค่อนข้างยาก ควรตอบเร็วกว่านี้', date: '21 ก.พ. 2569', avatar: '👨' },
   ],
   '12': [
-    { id: 'r1', user: 'คุณเอ', rating: 5, comment: 'อาหารสะอาด อร่อย แคลอรี่ชัดเจน ลดน้ำหนักได้ผลจริง', date: '8 มี.ค. 2569', avatar: '👩' },
-    { id: 'r2', user: 'คุณโอ๊ต', rating: 5, comment: 'สั่งรายเดือน อาหารสม่ำเสมอ ส่งตรงเวลาทุกวัน ประทับใจ', date: '3 มี.ค. 2569', avatar: '👨' },
+    { id: 'r1', user: 'อ***', rating: 5, comment: 'อาหารสะอาด อร่อย แคลอรี่ชัดเจน ลดน้ำหนักได้ผลจริง', date: '8 มี.ค. 2569', avatar: '👩' },
+    { id: 'r2', user: 'โ***', rating: 5, comment: 'สั่งรายเดือน อาหารสม่ำเสมอ ส่งตรงเวลาทุกวัน ประทับใจ', date: '3 มี.ค. 2569', avatar: '👨' },
   ],
 }
 
@@ -96,7 +116,6 @@ export default function ListingDetailClient({ id }: { id: string }) {
   const t = useT()
   const { user } = useAuthStore()
   const addItem = useCartStore((s) => s.addItem)
-  const [qty, setQty] = useState(1)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
   const [wishlisted, setWishlisted] = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
@@ -124,6 +143,9 @@ export default function ListingDetailClient({ id }: { id: string }) {
   const reviews = REVIEWS_BY_ID[id] ?? []
   const selectedMenuStock = listing.menuStock?.find((m) => m.name === selectedMenu)
   const effectivePrice = selectedMenuStock?.price ?? listing.price
+  const flashSaleActive = !!listing.discountPercent && !!listing.discountEndsAt && new Date(listing.discountEndsAt) > new Date()
+  const discountedPrice = flashSaleActive ? Math.round(effectivePrice * (1 - listing.discountPercent! / 100)) : effectivePrice
+  const flashCountdown = useCountdown(flashSaleActive ? listing.discountEndsAt ?? undefined : undefined)
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
@@ -455,10 +477,32 @@ export default function ListingDetailClient({ id }: { id: string }) {
               className="sticky top-24 bg-white/95 dark:bg-slate-800 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-700 shadow-xl p-6">
 
               <div className="mb-4">
-                <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-                  ฿{effectivePrice.toLocaleString()}
-                </span>
-                <span className="text-slate-400 dark:text-slate-500 text-base ml-1">/{listing.unit}</span>
+                {flashSaleActive ? (
+                  <>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center gap-1 bg-gradient-to-r from-rose-600 to-rose-400 text-white text-xs font-extrabold px-2.5 py-1 rounded-full">
+                        <Zap className="h-3 w-3" /> Flash Sale -{listing.discountPercent}%
+                      </span>
+                    </div>
+                    <span className="text-3xl font-extrabold text-rose-600">
+                      ฿{discountedPrice.toLocaleString()}
+                    </span>
+                    <span className="text-slate-400 line-through ml-2 text-base">฿{effectivePrice.toLocaleString()}</span>
+                    <span className="text-slate-400 dark:text-slate-500 text-base ml-1">/{listing.unit}</span>
+                    {flashCountdown && (
+                      <div className="flex items-center gap-1 mt-1 text-xs text-rose-500 font-semibold">
+                        <Clock className="h-3 w-3" /> หมดเวลา: {flashCountdown}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
+                      ฿{effectivePrice.toLocaleString()}
+                    </span>
+                    <span className="text-slate-400 dark:text-slate-500 text-base ml-1">/{listing.unit}</span>
+                  </>
+                )}
               </div>
 
               {/* Status */}
@@ -466,32 +510,11 @@ export default function ListingDetailClient({ id }: { id: string }) {
                 <ProviderStatusBadge status={listing.status} />
               </div>
 
-              <div className="space-y-3 mb-5">
-                {selectedMenu && (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl px-3 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
-                    <CheckCircle className="h-3.5 w-3.5" /> เมนู: {selectedMenu}
-                  </div>
-                )}
-
-                <div>
-                  <label className="text-sm font-bold text-slate-600 dark:text-slate-300 block mb-1.5">{t.booking.qty}</label>
-                  <div className="flex items-center gap-3">
-                    <button onClick={() => setQty(Math.max(1, qty - 1))}
-                      className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 font-bold text-lg text-slate-800 dark:text-slate-100">−</button>
-                    <span className="font-extrabold text-lg text-slate-800 dark:text-slate-100 min-w-[2ch] text-center">{qty}</span>
-                    <button onClick={() => setQty(qty + 1)}
-                      className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 font-bold text-lg text-slate-800 dark:text-slate-100">+</button>
-                    <span className="text-base text-slate-500 dark:text-slate-400">{listing.unit}</span>
-                  </div>
+              {selectedMenu && (
+                <div className="mb-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl px-3 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+                  <CheckCircle className="h-3.5 w-3.5" /> เมนู: {selectedMenu}
                 </div>
-              </div>
-
-              <div className="border-t border-slate-100 dark:border-slate-700 pt-4 mb-5">
-                <div className="flex justify-between text-base mb-1">
-                  <span className="text-slate-500 dark:text-slate-400">฿{effectivePrice} × {qty} {listing.unit}</span>
-                  <span className="font-extrabold text-slate-900 dark:text-white">฿{(effectivePrice * qty).toLocaleString()}</span>
-                </div>
-              </div>
+              )}
 
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                 <Link href={user ? `/marketplace/${id}/book` : `/auth/signin?redirect=/marketplace/${id}/book`}
@@ -518,7 +541,7 @@ export default function ListingDetailClient({ id }: { id: string }) {
                     menuName: selectedMenu ?? undefined,
                     price: effectivePrice,
                     unit: listing.unit,
-                    qty,
+                    qty: 1,
                   })
                   setAddedToCart(true)
                   setTimeout(() => setAddedToCart(false), 2000)

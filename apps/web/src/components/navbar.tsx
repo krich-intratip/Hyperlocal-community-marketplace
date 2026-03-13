@@ -208,12 +208,12 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-7">
+        <div className="hidden md:flex items-center gap-5">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href as any}
-              className={`text-base font-semibold transition-colors ${
+              className={`text-sm font-semibold transition-colors ${
                 pathname === link.href || pathname.startsWith(link.href + '/')
                   ? 'text-primary'
                   : 'text-slate-600 dark:text-slate-300 hover:text-primary'

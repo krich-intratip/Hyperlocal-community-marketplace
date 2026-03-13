@@ -44,6 +44,10 @@ export interface MockListing {
   lat: number
   lng: number
   isPromoted?: boolean
+  /** Flash sale: discount percentage (1–99). Undefined = no active promotion */
+  discountPercent?: number
+  /** Flash sale end time as ISO string. Undefined = no expiry / no promotion */
+  discountEndsAt?: string
   /** Nutritional information (FOOD category only) */
   isHealthOption?: boolean
   nutrition?: Nutrition
@@ -58,6 +62,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     providerVerified: true, providerTrustScore: 98,
     providerBio: 'แม่บ้านทำอาหารมา 15 ปี ลูกค้าประจำ 80+ ครัวเรือน รสมือแม่แท้ๆ',
     status: 'available', category: 'FOOD', price: 80, unit: 'กล่อง', isPromoted: true,
+    discountPercent: 20, discountEndsAt: '2026-03-14T20:00:00+07:00',
     rating: 4.9, reviews: 128, community: 'หมู่บ้านศรีนคร', area: 'บางแค, กรุงเทพฯ',
     distance: '0.3 กม.', image: '🍱', tags: ['ข้าว', 'ส้มตำ', 'ลาบ', 'อาหารตามสั่ง', 'ส่งถึงบ้าน'],
     availableDays: [0,1,2,3,4], openTime: '07:00', closeTime: '17:00',
@@ -94,6 +99,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     providerVerified: true, providerTrustScore: 95,
     providerBio: 'ครูภาษาอังกฤษระดับประถม วุฒิ ป.บัณฑิต ผ่านการอบรม TEFL ลูกศิษย์ 50+ คน',
     status: 'available', category: 'TUTORING', price: 300, unit: 'ชั่วโมง', isPromoted: true,
+    discountPercent: 15, discountEndsAt: '2026-03-14T23:59:00+07:00',
     rating: 5.0, reviews: 42, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
     distance: '1.2 กม.', image: '📚', tags: ['ภาษาอังกฤษ', 'ประถม', 'Online', 'สนทนา'],
     availableDays: [1,2,3,4,5,6], openTime: '14:00', closeTime: '20:00',
@@ -108,6 +114,7 @@ export const MOCK_LISTINGS: MockListing[] = [
     providerVerified: true, providerTrustScore: 96,
     providerBio: 'บริษัทบริการทำความสะอาดมืออาชีพ ทีมงาน 20 คน งาน 5,000+ ครั้ง',
     status: 'available', category: 'HOME_SERVICES', price: 800, unit: 'ครั้ง',
+    discountPercent: 10, discountEndsAt: '2026-03-15T12:00:00+07:00',
     rating: 4.7, reviews: 203, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
     distance: '0.5 กม.', image: '🏠', tags: ['บ้าน', 'คอนโด', 'รายวัน', 'ทีมงานมืออาชีพ'],
     availableDays: [0,1,2,3,4,5], openTime: '08:00', closeTime: '17:00',

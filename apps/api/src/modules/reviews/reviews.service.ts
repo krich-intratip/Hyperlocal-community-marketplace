@@ -17,11 +17,12 @@ import { User } from '../users/entities/user.entity'
 // ── PDPA helper ───────────────────────────────────────────────────────────────
 
 /**
- * Extracts the first name from a full display name for PDPA-safe public display.
- * "สมใจ รักดี" → "สมใจ" (only first name shown, last name omitted)
+ * Masks a full display name for PDPA-safe public display.
+ * "สมใจ รักดี" → "ส***" (only first character shown, last name omitted)
  */
-function extractFirstName(displayName: string): string {
-  return displayName.split(' ')[0] ?? displayName
+function maskDisplayName(displayName: string): string {
+  const firstName = displayName.split(' ')[0] ?? displayName
+  return (firstName[0] ?? '?') + '***'
 }
 
 @Injectable()
@@ -75,7 +76,7 @@ export class ReviewsService {
       providerId: booking.providerId,   // derived server-side — never from client
       listingId: booking.listingId,
       listingTitle: listing?.title ?? null,
-      reviewerName: reviewer ? extractFirstName(reviewer.displayName) : null,
+      reviewerName: reviewer ? maskDisplayName(reviewer.displayName) : null,
       rating: data.rating,
       comment: data.comment,
       isVisible: true,

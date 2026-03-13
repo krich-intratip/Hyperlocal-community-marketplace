@@ -79,6 +79,15 @@ export class Listing {
   @Column({ name: 'is_health_option', default: false })
   isHealthOption: boolean
 
+  // ─── Flash sale / promotion ──────────────────────────────────────────────────
+  /** Discount percentage 1–99. Null = no active promotion */
+  @Column({ name: 'discount_percent', nullable: true, type: 'integer' })
+  discountPercent: number | null
+
+  /** When the flash sale ends. Null = no active promotion */
+  @Column({ name: 'discount_ends_at', nullable: true, type: 'datetime' })
+  discountEndsAt: Date | null
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date
 
