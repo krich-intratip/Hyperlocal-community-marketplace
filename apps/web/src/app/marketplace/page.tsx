@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart, Flame } from 'lucide-react'
+import { Search, MapPin, Star, ChevronRight, SlidersHorizontal, Map, List, Wifi, WifiOff, Heart, Flame, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useState, lazy, Suspense, useCallback, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
@@ -15,6 +15,7 @@ import { formatDateShort } from '@/lib/date'
 import type { MapListing } from '@/components/map-view'
 import { useListings } from '@/hooks/useListings'
 import { useWishlistStore } from '@/store/wishlist.store'
+import { useRecommendations } from '@/hooks/useRecommendations'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -118,6 +119,7 @@ function MarketplacePageInner() {
 
   const t = useT()
   const { data: allListings = [], isLoading } = useListings({ sortBy })
+  const recommendations = useRecommendations(allListings)
 
   const wishlist = useWishlistStore()
   const toggleWishlist = useCallback((id: string, e: React.MouseEvent) => {
@@ -293,6 +295,66 @@ function MarketplacePageInner() {
           </div>
         </motion.div>
       </section>
+
+      {/* SR-1: Recommendations row — shown in list view when listings are available */}
+      {viewMode === 'list' && !isLoading && recommendations.listings.length > 0 && (
+        <motion.section
+          variants={fadeUp} initial="hidden" animate="show" custom={4}
+          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+          {/* Section header */}
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="h-4 w-4 text-violet-500 flex-shrink-0" />
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200">
+              {recommendations.isPersonalized ? 'แนะนำสำหรับคุณ' : 'ยอดนิยมในตลาด'}
+            </h2>
+            {recommendations.isPersonalized && (
+              <span className="text-xs bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 px-2 py-0.5 rounded-full font-medium">
+                {recommendations.reason === 'based_on_wishlist' ? 'จาก Wishlist ของคุณ' : 'จากประวัติการสั่ง'}
+              </span>
+            )}
+          </div>
+
+          {/* Horizontal scroll row */}
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+            {recommendations.listings.map((listing) => (
+              <Link
+                key={listing.id}
+                href={`/marketplace/${listing.id}`}
+                className="flex-shrink-0 w-44 rounded-2xl glass-card overflow-hidden group transition-transform hover:-translate-y-1">
+                {/* Thumbnail */}
+                <div className="relative h-24 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 flex items-center justify-center text-4xl">
+                  {listing.image}
+                  {listing.isPromoted && (
+                    <span className="absolute top-1.5 left-1.5 flex items-center gap-0.5 text-[10px] font-extrabold bg-gradient-to-r from-orange-500 to-amber-400 text-white px-1.5 py-0.5 rounded-full shadow-sm">
+                      <Flame className="h-2.5 w-2.5" /> โปรโมท
+                    </span>
+                  )}
+                </div>
+                {/* Info */}
+                <div className="p-2.5">
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-100 line-clamp-2 mb-1.5 leading-snug group-hover:text-primary transition-colors">
+                    {listing.title}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold text-primary">
+                      ฿{listing.price.toLocaleString()}
+                    </span>
+                    <div className="flex items-center gap-0.5">
+                      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                      <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                        {listing.rating}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                    {listing.provider}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </motion.section>
+      )}
 
       {/* Map view */}
       {viewMode === 'map' && (

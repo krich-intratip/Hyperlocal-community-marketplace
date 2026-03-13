@@ -318,6 +318,19 @@ export const vacationApi = {
     ),
 }
 
+// ─── Recommendations (SR-1) ───────────────────────────────────────────────────
+
+export const recommendationsApi = {
+  /**
+   * GET /recommendations?userId={uuid}&limit={n}
+   * Returns ranked Listing[] — personalized when userId provided, popular fallback otherwise.
+   */
+  get: (userId?: string, limit = 8) =>
+    apiClient.get<any[]>('/recommendations', {
+      params: { ...(userId ? { userId } : {}), limit },
+    }),
+}
+
 // ─── System mode ──────────────────────────────────────────────────────────────
 
 export const systemApi = {
