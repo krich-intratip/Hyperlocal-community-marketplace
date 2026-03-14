@@ -228,6 +228,13 @@ export const uploadApi = {
       contentType,
       purpose: 'avatar',
     }),
+
+  presignListing: (filename: string, contentType: string) =>
+    apiClient.post<ApiResponse<{ uploadUrl: string; publicUrl: string }>>('/upload/presign', {
+      filename,
+      contentType,
+      purpose: 'listing',
+    }),
 }
 
 // ─── Dashboard / Analytics ────────────────────────────────────────────────────
