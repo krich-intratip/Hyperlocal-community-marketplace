@@ -1,6 +1,6 @@
 {
   "name": "@chm/api",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/main.ts",
@@ -16,6 +16,8 @@
     "seed": "npx ts-node -r tsconfig-paths/register src/db/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1009.0",
+    "@aws-sdk/s3-request-presigner": "^3.1009.0",
     "@chm/shared-types": "workspace:*",
     "@fastify/cookie": "^9.4.0",
     "@fastify/helmet": "^11.1.1",

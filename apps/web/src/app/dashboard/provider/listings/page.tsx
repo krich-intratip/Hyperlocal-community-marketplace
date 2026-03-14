@@ -6,10 +6,11 @@ import { MarketBackground } from '@/components/market-background'
 import { AppFooter } from '@/components/app-footer'
 import {
   Plus, Pencil, Trash2, Eye, EyeOff, Star, ChevronLeft,
-  X, CheckCircle, AlertCircle, Package,
+  X, CheckCircle, AlertCircle, Package, Upload, ImageIcon,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useListingImageUpload } from '@/hooks/useListingImageUpload'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 
 const fadeUp = {
@@ -30,18 +31,21 @@ const CAT_TH: Record<string, string> = {
 
 interface Listing {
   id: string; title: string; category: string; price: number; unit: string
-  image: string; description: string; imageUrl: string
+  image: string; description: string; images: string[]
   views: number; bookings: number; rating: number; active: boolean
 }
 
 const INITIAL_LISTINGS: Listing[] = [
-  { id: '1', title: 'ทำอาหารกล่องส่งถึงที่', category: 'FOOD', price: 80, unit: 'กล่อง', image: '🍱', description: 'อาหารกล่องสดใหม่ปรุงทุกวัน ส้มตำ ลาบ ข้าวหน้าต่างๆ ส่งถึงที่ในหมู่บ้าน', imageUrl: '', views: 234, bookings: 128, rating: 4.9, active: true },
-  { id: '2', title: 'อาหารคลีนออเดอร์ล่วงหน้า', category: 'FOOD', price: 120, unit: 'กล่อง', image: '🥗', description: 'อาหารคลีนแคลอรี่ต่ำ สั่งล่วงหน้า 1 วัน เหมาะกับผู้รักสุขภาพ', imageUrl: '', views: 89, bookings: 34, rating: 4.8, active: true },
-  { id: '3', title: 'ข้าวกล่องส้มตำ', category: 'FOOD', price: 65, unit: 'กล่อง', image: '🍛', description: 'ส้มตำไทย ส้มตำปู ลาบหมู น้ำตก พร้อมข้าวสวย', imageUrl: '', views: 45, bookings: 12, rating: 4.7, active: false },
+  { id: '1', title: 'ทำอาหารกล่องส่งถึงที่', category: 'FOOD', price: 80, unit: 'กล่อง', image: '🍱', description: 'อาหารกล่องสดใหม่ปรุงทุกวัน ส้มตำ ลาบ ข้าวหน้าต่างๆ ส่งถึงที่ในหมู่บ้าน',
+    images: ['https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80'], views: 234, bookings: 128, rating: 4.9, active: true },
+  { id: '2', title: 'อาหารคลีนออเดอร์ล่วงหน้า', category: 'FOOD', price: 120, unit: 'กล่อง', image: '🥗', description: 'อาหารคลีนแคลอรี่ต่ำ สั่งล่วงหน้า 1 วัน เหมาะกับผู้รักสุขภาพ',
+    images: [], views: 89, bookings: 34, rating: 4.8, active: true },
+  { id: '3', title: 'ข้าวกล่องส้มตำ', category: 'FOOD', price: 65, unit: 'กล่อง', image: '🍛', description: 'ส้มตำไทย ส้มตำปู ลาบหมู น้ำตก พร้อมข้าวสวย',
+    images: [], views: 45, bookings: 12, rating: 4.7, active: false },
 ]
 
-interface FormData { title: string; category: string; price: string; unit: string; image: string; description: string; imageUrl: string }
-const EMPTY_FORM: FormData = { title: '', category: 'FOOD', price: '', unit: 'กล่อง', image: '🍱', description: '', imageUrl: '' }
+interface FormData { title: string; category: string; price: string; unit: string; image: string; description: string }
+const EMPTY_FORM: FormData = { title: '', category: 'FOOD', price: '', unit: 'กล่อง', image: '🍱', description: '' }
 const EMOJI_OPTIONS = ['🍱', '🥗', '🍛', '🍖', '🔧', '🏠', '📚', '💆', '🎨', '🌿', '💻', '🤝', '👴']
 
 export default function ProviderListingsPage() {
@@ -52,24 +56,30 @@ export default function ProviderListingsPage() {
   const [form, setForm] = useState<FormData>(EMPTY_FORM)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const imgUpload = useListingImageUpload([])
 
   function openNew() {
     setEditId(null)
     setForm(EMPTY_FORM)
+    imgUpload.reset()
     setShowModal(true)
   }
 
   function openEdit(l: Listing) {
     setEditId(l.id)
-    setForm({ title: l.title, category: l.category, price: String(l.price), unit: l.unit, image: l.image, description: l.description, imageUrl: l.imageUrl })
+    setForm({ title: l.title, category: l.category, price: String(l.price), unit: l.unit, image: l.image, description: l.description })
+    imgUpload.setExternalImages(l.images)
     setShowModal(true)
   }
 
   function handleSave() {
     if (!form.title || !form.price) return
+    const finalImages = imgUpload.images
     if (editId) {
       setListings(prev => prev.map(l => l.id === editId
-        ? { ...l, title: form.title, category: form.category, price: Number(form.price), unit: form.unit, image: form.image, description: form.description, imageUrl: form.imageUrl }
+        ? { ...l, title: form.title, category: form.category, price: Number(form.price), unit: form.unit, image: form.image, description: form.description, images: finalImages }
         : l
       ))
     } else {
@@ -77,7 +87,7 @@ export default function ProviderListingsPage() {
       setListings(prev => [...prev, {
         id: newId, title: form.title, category: form.category,
         price: Number(form.price), unit: form.unit, image: form.image,
-        description: form.description, imageUrl: form.imageUrl,
+        description: form.description, images: finalImages,
         views: 0, bookings: 0, rating: 0, active: true,
       }])
     }
@@ -206,20 +216,50 @@ export default function ProviderListingsPage() {
                     className="w-full rounded-xl border border-slate-200 focus:border-primary/30 px-4 py-3 text-sm text-slate-800 outline-none resize-none" />
                 </div>
 
-                {/* Image URL */}
+                {/* Image upload */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1.5">URL รูปภาพ (ถ้ามี)</label>
-                  <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                    placeholder="https://... (เช่น รูปจาก Google Drive, Imgur)"
-                    className="w-full rounded-xl border border-slate-200 focus:border-primary/30 px-4 py-3 text-sm text-slate-800 outline-none" />
-                  {form.imageUrl && (
-                    <div className="mt-2 rounded-xl overflow-hidden border border-slate-200 h-24 glass-sm">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover"
-                        onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                  <label className="block text-xs font-bold text-slate-600 mb-2">
+                    รูปภาพ ({imgUpload.images.length}/5)
+                  </label>
+
+                  {/* Thumbnail grid */}
+                  {imgUpload.images.length > 0 && (
+                    <div className="grid grid-cols-5 gap-2 mb-3">
+                      {imgUpload.images.map((url, idx) => (
+                        <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border border-slate-200">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={url} alt={`รูป ${idx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            onClick={() => imgUpload.removeImage(idx)}
+                            className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 hover:bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X className="h-3 w-3 text-white" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
-                  <p className="text-xs text-slate-400 mt-1">หากไม่ใส่ URL จะใช้ไอคอน Emoji แทน</p>
+
+                  {/* Drop zone / pick button */}
+                  {imgUpload.images.length < 5 && (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={imgUpload.uploading}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 hover:border-primary/40 hover:glass-sm py-4 text-sm text-slate-500 hover:text-primary transition-all disabled:opacity-50">
+                      {imgUpload.uploading
+                        ? <><span className="animate-spin text-base">⏳</span> กำลังอัปโหลด...</>
+                        : <><Upload className="h-4 w-4" /> อัปโหลดรูปภาพ</>}
+                    </button>
+                  )}
+                  <input ref={fileInputRef} type="file" accept="image/*" multiple hidden
+                    onChange={e => { if (e.target.files) imgUpload.addImages(e.target.files); e.target.value = '' }} />
+
+                  {imgUpload.error && (
+                    <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                      <AlertCircle className="h-3.5 w-3.5" /> {imgUpload.error}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-400 mt-1">สูงสุด 5 รูป · ไม่เกิน 8 MB ต่อรูป · หากไม่อัปโหลด จะใช้ไอคอน Emoji แทน</p>
                 </div>
 
                 <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
@@ -290,8 +330,8 @@ export default function ProviderListingsPage() {
                   }`}>
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-xl glass-sm flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
-                      {listing.imageUrl
-                        ? <img src={listing.imageUrl} alt={listing.title} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                      {listing.images[0]
+                        ? <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                         : listing.image}
                     </div>
                     <div className="flex-1 min-w-0">

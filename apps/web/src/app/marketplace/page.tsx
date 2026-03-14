@@ -380,8 +380,10 @@ function MarketplacePageInner() {
                 href={`/marketplace/${listing.id}`}
                 className="flex-shrink-0 w-44 rounded-2xl glass-card overflow-hidden group transition-transform hover:-translate-y-1">
                 {/* Thumbnail */}
-                <div className="relative h-24 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 flex items-center justify-center text-4xl">
-                  {listing.image}
+                <div className="relative h-24 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 flex items-center justify-center text-4xl overflow-hidden">
+                  {listing.images?.[0]
+                    ? <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
+                    : listing.image}
                   {listing.isPromoted && (
                     <span className="absolute top-1.5 left-1.5 flex items-center gap-0.5 text-[10px] font-extrabold bg-gradient-to-r from-orange-500 to-amber-400 text-white px-1.5 py-0.5 rounded-full shadow-sm">
                       <Flame className="h-2.5 w-2.5" /> โปรโมท
@@ -456,8 +458,10 @@ function MarketplacePageInner() {
                     className="block rounded-2xl glass-card overflow-hidden group">
 
                     {/* Image + status overlay */}
-                    <div className="relative h-40 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 flex items-center justify-center text-6xl">
-                      {listing.image}
+                    <div className="relative h-40 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/30 flex items-center justify-center text-6xl overflow-hidden">
+                      {listing.images?.[0]
+                        ? <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
+                        : listing.image}
                       {/* Top-left: status + promoted + flash sale badges */}
                       <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
                         <ProviderStatusBadge status={listing.status} size="sm" />

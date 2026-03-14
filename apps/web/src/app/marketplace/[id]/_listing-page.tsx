@@ -194,7 +194,9 @@ export default function ListingDetailClient({ id }: { id: string }) {
             {/* Hero image */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
               className="relative h-64 rounded-2xl bg-gradient-to-br from-blue-50 to-amber-50 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-8xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-              {listing.image}
+              {listing.images?.[0]
+                ? <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
+                : listing.image}
               <div className="absolute top-4 left-4">
                 <ProviderStatusBadge status={listing.status} />
               </div>
