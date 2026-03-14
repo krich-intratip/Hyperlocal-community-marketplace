@@ -313,4 +313,120 @@ export class OrdersService {
       order: { createdAt: 'DESC' },
     })
   }
+
+  // ── EARN-1: Provider earnings summary ────────────────────────────────────────
+
+  /**
+   * Aggregates earnings for the authenticated provider.
+   * - totalGross / totalFees / totalNet: from COMPLETED orders within the period.
+   * - pendingPayout: net from active non-terminal orders (money held by platform).
+   * - monthlyBreakdown: per-month aggregation for charts.
+   * - transactions: individual orders (newest first, up to 100).
+   */
+  async getProviderEarnings(userId: string, period: string): Promise<{
+    period: string
+    totalGross: number
+    totalFees: number
+    totalNet: number
+    pendingPayout: number
+    completedOrders: number
+    monthlyBreakdown: { month: string; gross: number; net: number; orderCount: number }[]
+    transactions: {
+      id: string; service: string; date: Date
+      gross: number; fee: number; net: number; status: string
+    }[]
+  }> {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) {
+      throw new NotFoundException('Provider profile not found. Apply to a community first.')
+    }
+
+    // Compute the lower bound date for the period filter
+    const now = new Date()
+    let since: Date | null = null
+    if (period === '7d')  since = new Date(now.getTime() - 7  * 86_400_000)
+    if (period === '30d') since = new Date(now.getTime() - 30 * 86_400_000)
+    if (period === '90d') since = new Date(now.getTime() - 90 * 86_400_000)
+
+    // Fetch all non-cancelled orders for this provider in the period (eager items included)
+    const where: Record<string, unknown> = { providerId: provider.id }
+    const orders = await this.orderRepo.find({
+      where,
+      order: { createdAt: 'DESC' },
+    })
+
+    // Filter by period and exclude outright-cancelled pending orders
+    const nonCancelled = orders.filter(o => {
+      if (o.status === 'CANCELLED_BY_CUSTOMER' || o.status === 'CANCELLED_BY_PROVIDER') return false
+      if (since && new Date(o.createdAt) < since) return false
+      return true
+    })
+
+    // Completed orders = earned revenue
+    const completed = nonCancelled.filter(o => o.status === 'COMPLETED')
+
+    // Active orders (money held but not yet released to provider)
+    const ACTIVE_STATUSES = new Set(['PAYMENT_HELD', 'CONFIRMED', 'IN_PROGRESS', 'PENDING_CONFIRMATION'])
+    const active = nonCancelled.filter(o => ACTIVE_STATUSES.has(o.status))
+
+    const round2 = (n: number) => Math.round(n * 100) / 100
+
+    const totalGross = round2(completed.reduce((s, o) => s + Number(o.subtotal), 0))
+    const totalFees  = round2(completed.reduce((s, o) => s + Number(o.platformFee), 0))
+    const totalNet   = round2(totalGross - totalFees)
+    const pendingPayout = round2(
+      active.reduce((s, o) => s + Number(o.subtotal) - Number(o.platformFee), 0),
+    )
+
+    // Monthly breakdown (from completed orders)
+    const monthMap = new Map<string, { gross: number; net: number; count: number }>()
+    for (const o of completed) {
+      const d = new Date(o.createdAt)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      const entry = monthMap.get(key) ?? { gross: 0, net: 0, count: 0 }
+      const g = Number(o.subtotal)
+      const f = Number(o.platformFee)
+      entry.gross += g
+      entry.net   += g - f
+      entry.count++
+      monthMap.set(key, entry)
+    }
+    const monthlyBreakdown = Array.from(monthMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, { gross, net, count }]) => ({
+        month,
+        gross: round2(gross),
+        net:   round2(net),
+        orderCount: count,
+      }))
+
+    // Transactions (all non-cancelled, up to 100, newest first)
+    const transactions = nonCancelled.slice(0, 100).map(o => {
+      const service = (o.items ?? [])
+        .map(i => `${i.listingTitle} ×${i.qty}`)
+        .join(', ') || 'บริการ'
+      const gross = Number(o.subtotal)
+      const fee   = Number(o.platformFee)
+      return {
+        id:      o.id,
+        service,
+        date:    o.createdAt,
+        gross:   round2(gross),
+        fee:     round2(fee),
+        net:     round2(gross - fee),
+        status:  o.status,
+      }
+    })
+
+    return {
+      period,
+      totalGross,
+      totalFees,
+      totalNet,
+      pendingPayout,
+      completedOrders: completed.length,
+      monthlyBreakdown,
+      transactions,
+    }
+  }
 }

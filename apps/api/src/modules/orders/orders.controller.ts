@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   Req,
+  Query,
   UseGuards,
   HttpCode,
   HttpStatus,
@@ -53,6 +54,17 @@ export class OrdersController {
   @ApiOkResponse({ type: [Order] })
   findProviderOrders(@Req() req: any): Promise<Order[]> {
     return this.ordersService.findProviderOrders(req.user.id)
+  }
+
+  // ── EARN-1: Provider earnings ────────────────────────────────────────────────
+
+  @Get('provider/earnings')
+  @ApiOperation({ summary: "Get the provider's earnings summary for a given period" })
+  getProviderEarnings(
+    @Req() req: any,
+    @Query('period') period: string = '30d',
+  ) {
+    return this.ordersService.getProviderEarnings(req.user.id, period)
   }
 
   @Get(':id')

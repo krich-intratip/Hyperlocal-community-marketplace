@@ -463,6 +463,40 @@ export const paymentsApi = {
     apiClient.post<PaymentRecord>(`/payments/${paymentId}/simulate-pay`),
 }
 
+// ─── Provider Earnings (EARN-1) ────────────────────────────────────────────────
+
+export interface EarningTransaction {
+  id: string
+  service: string
+  date: string
+  gross: number
+  fee: number
+  net: number
+  status: string
+}
+export interface MonthlyEarning {
+  month: string        // "2026-03"
+  gross: number
+  net: number
+  orderCount: number
+}
+export interface ProviderEarnings {
+  period: string
+  totalGross: number
+  totalFees: number
+  totalNet: number
+  pendingPayout: number
+  completedOrders: number
+  monthlyBreakdown: MonthlyEarning[]
+  transactions: EarningTransaction[]
+}
+
+export const earningsApi = {
+  /** GET /orders/provider/earnings?period=7d|30d|90d|all */
+  get: (period = '30d') =>
+    apiClient.get<ProviderEarnings>('/orders/provider/earnings', { params: { period } }),
+}
+
 // ─── Admin (SuperAdmin only) ───────────────────────────────────────────────────
 
 export interface AdminUser {
