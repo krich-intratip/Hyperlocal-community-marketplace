@@ -462,3 +462,50 @@ export const paymentsApi = {
   simulatePay: (paymentId: string) =>
     apiClient.post<PaymentRecord>(`/payments/${paymentId}/simulate-pay`),
 }
+
+// ─── Admin (SuperAdmin only) ───────────────────────────────────────────────────
+
+export interface AdminUser {
+  id: string; email: string; displayName: string; role: string
+  isActive: boolean; loginProvider: string; createdAt: string; avatarUrl?: string
+}
+export interface AdminUserList {
+  users: AdminUser[]; total: number; page: number; limit: number; pages: number
+}
+export interface RevenueSummary {
+  gmv: number; platformFees: number; totalOrders: number
+  completedOrders: number; cancelledOrders: number
+  paidPayments: number; totalRevenue: number
+  thisMonth: { gmv: number; fees: number; orders: number }
+  statusBreakdown: Record<string, number>
+  methodBreakdown: Record<string, number>
+  topCommunities: { communityId: string; gmv: number }[]
+}
+export interface PlatformStats {
+  totalUsers: number; activeUsers: number; totalProviders: number
+  pendingProviders: number; totalOrders: number
+}
+
+export const adminApi = {
+  // Users
+  listUsers: (params?: { search?: string; role?: string; isActive?: string; page?: number; limit?: number }) =>
+    apiClient.get<AdminUserList>('/admin/users', { params }),
+  setUserStatus: (userId: string, isActive: boolean) =>
+    apiClient.patch<{ success: boolean; user: AdminUser }>(`/admin/users/${userId}/status`, { isActive }),
+  setUserRole: (userId: string, role: string) =>
+    apiClient.patch<{ success: boolean; user: AdminUser }>(`/admin/users/${userId}/role`, { role }),
+  // Providers
+  getPendingAll: () =>
+    apiClient.get<unknown[]>('/admin/providers/pending-all'),
+  getAllProviders: (params?: { status?: string; communityId?: string }) =>
+    apiClient.get<unknown[]>('/admin/providers/all', { params }),
+  approveProvider: (id: string) =>
+    apiClient.post(`/admin/providers/${id}/approve`),
+  rejectProvider: (id: string) =>
+    apiClient.post(`/admin/providers/${id}/reject`),
+  // Revenue & Stats
+  getRevenue: () =>
+    apiClient.get<RevenueSummary>('/admin/revenue'),
+  getStats: () =>
+    apiClient.get<PlatformStats>('/admin/stats'),
+}
