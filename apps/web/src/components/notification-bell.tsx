@@ -5,21 +5,12 @@ import Link from 'next/link'
 import { Bell, CheckCheck, X, ChevronRight, Clock } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNotifications, useMarkAllRead } from '@/hooks/useNotifications'
-import { formatDateShort } from '@/lib/date'
+import { relativeTimeTH } from '@/lib/date-utils'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function relativeTime(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime()
-  const mins  = Math.floor(diff / 60_000)
-  const hours = Math.floor(diff / 3_600_000)
-  const days  = Math.floor(diff / 86_400_000)
-  if (mins < 1)   return 'เมื่อกี้'
-  if (mins < 60)  return `${mins} นาทีที่แล้ว`
-  if (hours < 24) return `${hours} ชม.ที่แล้ว`
-  if (days === 1) return 'เมื่อวาน'
-  if (days <= 7)  return `${days} วันที่แล้ว`
-  return formatDateShort(iso)
+  return relativeTimeTH(iso)
 }
 
 const TYPE_ICON: Record<string, string> = {

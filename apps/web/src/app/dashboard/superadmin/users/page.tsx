@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useAdminUsers, useSetUserStatus, useSetUserRole } from '@/hooks/useAdmin'
 import type { AdminUser } from '@/lib/api'
+import { formatDateMedTH } from '@/lib/date-utils'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -243,7 +244,7 @@ export default function AdminUsersPage() {
                           </span>
                         </td>
                         <td className="px-5 py-3.5 text-xs text-slate-400">
-                          {new Date(user.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })}
+                          {formatDateMedTH(user.createdAt)}
                         </td>
                         <td className="px-5 py-3.5">
                           {user.isActive ? (

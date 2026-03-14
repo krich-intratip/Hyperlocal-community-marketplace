@@ -7,6 +7,7 @@ import { useRef } from 'react'
 import { MarketBackground } from '@/components/market-background'
 import { useT } from '@/hooks/useT'
 import { APP_VERSION, APP_UPDATED, APP_DEVELOPER } from '@/lib/version'
+import { formatDateMedTH } from '@/lib/date-utils'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -360,7 +361,7 @@ export default function HomePage() {
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/10">
               v{APP_VERSION}
             </span>
-            <span className="text-xs text-slate-500">อัพเดทล่าสุด {APP_UPDATED}</span>
+            <span className="text-xs text-slate-500">อัพเดทล่าสุด {formatDateMedTH(APP_UPDATED)}</span>
             <span className="text-xs font-semibold text-indigo-400">by {APP_DEVELOPER}</span>
           </div>
         </div>

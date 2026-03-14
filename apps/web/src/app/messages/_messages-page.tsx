@@ -16,6 +16,7 @@ import {
   useMarkConversationRead,
 } from '@/hooks/useMessages'
 import type { ConversationSummary } from '@/lib/api'
+import { relativeTimeTH } from '@/lib/date-utils'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -30,14 +31,7 @@ function initials(name: string | null) {
 function relativeTime(iso: string | null): string {
   if (!iso) return ''
   try {
-    const diff = Date.now() - new Date(iso).getTime()
-    const mins = Math.floor(diff / 60_000)
-    if (mins < 1) return 'เมื่อกี้'
-    if (mins < 60) return `${mins} นาทีที่แล้ว`
-    const hrs = Math.floor(mins / 60)
-    if (hrs < 24) return `${hrs} ชม.ที่แล้ว`
-    const days = Math.floor(hrs / 24)
-    return `${days} วันที่แล้ว`
+    return relativeTimeTH(iso)
   } catch {
     return ''
   }

@@ -138,3 +138,10 @@ export function formatDateRangeTH(
 export function todayTH(): string {
   return formatDateTH(new Date())
 }
+
+/**
+ * Month abbreviation in Thai: "มี.ค." (for calendar widgets)
+ */
+export function getMonthShortTH(input: Date | string | number): string {
+  return MONTH_SHORT[toDate(input).getMonth()]
+}

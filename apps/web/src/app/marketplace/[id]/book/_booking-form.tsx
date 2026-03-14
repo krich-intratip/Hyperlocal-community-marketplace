@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { getListingById } from '@/lib/mock-listings'
 import { useDateFormat } from '@/hooks/useDateFormat'
+import { getMonthShortTH } from '@/lib/date-utils'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useCreateBooking } from '@/hooks/useBookings'
 import type { CreateBookingDto } from '@/types'
@@ -258,7 +259,7 @@ export default function BookingFormClient({ id }: { id: string }) {
                       }`}>
                       <span className="text-[10px] mb-0.5">{DAY_LABELS[dow]}</span>
                       <span className="text-base font-extrabold">{d.getDate()}</span>
-                      <span className="text-[10px] mt-0.5">{d.toLocaleString('th-TH', { month: 'short' })}</span>
+                      <span className="text-[10px] mt-0.5">{getMonthShortTH(d)}</span>
                     </button>
                   )
                 })}

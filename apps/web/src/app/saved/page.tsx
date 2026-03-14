@@ -7,6 +7,7 @@ import { Navbar } from '@/components/navbar'
 import { Heart, Trash2, Star, ShoppingBag, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useWishlistStore } from '@/store/wishlist.store'
+import { formatDateMedTH } from '@/lib/date-utils'
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
@@ -17,7 +18,7 @@ function relativeTime(iso: string): string {
   if (hrs < 24) return `${hrs} ชั่วโมงที่แล้ว`
   const days = Math.floor(hrs / 24)
   if (days < 30) return `${days} วันที่แล้ว`
-  return new Date(iso).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })
+  return formatDateMedTH(iso)
 }
 
 const fadeUp = {

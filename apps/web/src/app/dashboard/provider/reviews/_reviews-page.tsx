@@ -17,6 +17,7 @@ import {
   useReviewReply,
   useSetReviewVisibility,
 } from '@/hooks/useReviews'
+import { formatDateMedTH } from '@/lib/date-utils'
 import {
   MOCK_REVIEWS,
   RATING_DISTRIBUTION,
@@ -62,9 +63,7 @@ function StarRow({ rating }: { rating: number }) {
 }
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('th-TH', {
-    day: 'numeric', month: 'short', year: 'numeric',
-  })
+  return formatDateMedTH(dateStr)
 }
 
 // ── ReviewCard ────────────────────────────────────────────────────────────────

@@ -15,6 +15,7 @@ import {
   useAdminPendingProviders, useAdminAllProviders,
   useAdminApproveProvider, useAdminRejectProvider,
 } from '@/hooks/useAdmin'
+import { formatDateMedTH } from '@/lib/date-utils'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -221,7 +222,7 @@ export default function ProvidersMgmtPage() {
                           </td>
                           <td className="px-5 py-3.5 text-sm text-slate-500">ชุมชน #{p.communityId}</td>
                           <td className="px-5 py-3.5 text-xs text-slate-400">
-                            {new Date(p.createdAt).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })}
+                            {formatDateMedTH(p.createdAt)}
                           </td>
                           <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2">

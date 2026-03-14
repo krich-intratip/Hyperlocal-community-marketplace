@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { MapPin, Target, Heart, TrendingUp, Users, Zap, Globe, ArrowRight, Code2, GitBranch, FlaskConical } from 'lucide-react'
 import { APP_VERSION, APP_UPDATED, APP_DEVELOPER } from '@/lib/version'
+import { formatDateMedTH } from '@/lib/date-utils'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -261,7 +262,7 @@ export default function AboutPage() {
             </div>
             <div className="rounded-xl glass-sm px-4 py-3">
               <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Updated</p>
-              <p className="font-bold text-slate-800 dark:text-slate-100">{APP_UPDATED}</p>
+              <p className="font-bold text-slate-800 dark:text-slate-100">{formatDateMedTH(APP_UPDATED)}</p>
             </div>
             <div className="rounded-xl glass-sm px-4 py-3">
               <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Developer</p>

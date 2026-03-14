@@ -6,6 +6,7 @@ import {
     Copy, Check, Share2, Users, Clock, ChevronRight,
     Loader2, QrCode,
 } from 'lucide-react'
+import { formatDateMedTH } from '@/lib/date-utils'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://chm.app'
@@ -205,7 +206,7 @@ export default function CommunityInvitePage() {
                                     <p className="text-xs text-slate-400 truncate">{member.email}</p>
                                     <div className="flex items-center gap-1 mt-0.5 text-xs text-slate-400">
                                         <Clock className="h-3 w-3" />
-                                        <span>สมัคร {new Date(member.joinedAt).toLocaleDateString('th-TH')}</span>
+                                        <span>สมัคร {formatDateMedTH(member.joinedAt)}</span>
                                         {member.invitedByCode && (
                                             <span className="ml-1 px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600 text-[10px] font-medium">
                                                 ผ่านลิงค์เชิญ

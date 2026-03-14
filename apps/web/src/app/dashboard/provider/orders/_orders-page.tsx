@@ -12,6 +12,7 @@ import { useState } from 'react'
 import { useProviderOrders, useUpdateOrderStatus } from '@/hooks/useOrders'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import type { Order, OrderStatus } from '@/types'
+import { formatDateTimeTH } from '@/lib/date-utils'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -95,10 +96,7 @@ function OrderCard({ order, idx }: { order: Order; idx: number }) {
         <div>
           <p className="text-xs text-slate-400 font-mono">#{order.id.slice(0, 8).toUpperCase()}</p>
           <p className="text-sm text-slate-500 mt-0.5">
-            {new Date(order.createdAt).toLocaleDateString('th-TH', {
-              day: 'numeric', month: 'short', year: '2-digit',
-              hour: '2-digit', minute: '2-digit',
-            })}
+            {formatDateTimeTH(order.createdAt)}
           </p>
         </div>
         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${cfg.color}`}>
