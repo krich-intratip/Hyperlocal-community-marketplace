@@ -7,11 +7,13 @@ import { Provider } from '../providers/entities/provider.entity'
 import { OrdersController } from './orders.controller'
 import { OrdersService } from './orders.service'
 import { NotificationsModule } from '../notifications/notifications.module'
+import { LoyaltyModule } from '../loyalty/loyalty.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem, Listing, Provider]),
     NotificationsModule,
+    LoyaltyModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

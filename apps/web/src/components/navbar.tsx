@@ -14,6 +14,7 @@ import { CartDrawer } from '@/components/cart-drawer'
 import { NotificationBell } from '@/components/notification-bell'
 import { useSearch } from '@/hooks/useSearch'
 import { useUnreadMessageCount } from '@/hooks/useMessages'
+import { useLoyaltyAccount } from '@/hooks/useLoyalty'
 
 // ── Search Bar component ──────────────────────────────────────────────────────
 function SearchBar() {
@@ -168,6 +169,7 @@ export function Navbar() {
   const totalItems = useCartStore((s) => s.totalItems())
   const wishlistCount = useWishlistStore((s) => s.count())
   const { data: unreadMessages = 0 } = useUnreadMessageCount()
+  const { data: loyaltyAccount } = useLoyaltyAccount()
   const t = useT()
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -268,6 +270,13 @@ export function Navbar() {
               {/* Notification bell — dynamic badge + dropdown */}
               <NotificationBell />
 
+              {/* Loyalty points badge */}
+              {loyaltyAccount && (
+                <Link href="/profile/points" className="hidden lg:inline-flex items-center gap-1 text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium hover:bg-amber-200 transition-colors" title="แต้มสะสม">
+                  ⭐ {loyaltyAccount.points.toLocaleString()}
+                </Link>
+              )}
+
               {/* Avatar dropdown */}
               <div ref={userMenuRef} className="relative">
                 <button
@@ -354,6 +363,9 @@ export function Navbar() {
                   {user?.name}
                 </Link>
                 <Link href="/bookings"   onClick={() => setMenuOpen(false)} className="text-sm text-slate-600 dark:text-slate-300 py-1">การจองของฉัน</Link>
+                <Link href="/profile/points" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 py-1">
+                  ⭐ แต้มสะสม{loyaltyAccount ? ` (${loyaltyAccount.points.toLocaleString()} แต้ม)` : ''}
+                </Link>
                 <Link href="/saved"      onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 py-1">
                   <Heart className="h-3.5 w-3.5 text-rose-400" /> รายการที่บันทึกไว้
                   {wishlistCount > 0 && <span className="ml-auto text-xs font-bold bg-rose-500 text-white px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}

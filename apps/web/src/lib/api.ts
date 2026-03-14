@@ -514,6 +514,38 @@ export const earningsApi = {
     apiClient.get<ProviderEarnings>('/orders/provider/earnings', { params: { period } }),
 }
 
+// ─── Loyalty ──────────────────────────────────────────────────────────────────
+
+export interface LoyaltyAccount {
+  id: string
+  customerId: string
+  points: number
+  totalEarned: number
+  totalRedeemed: number
+  tier: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM'
+  nextTier: 'SILVER' | 'GOLD' | 'PLATINUM' | null
+  pointsToNextTier: number | null
+  redeemValue: number   // baht value of current points
+  createdAt: string
+  updatedAt: string
+}
+
+export interface LoyaltyTransaction {
+  id: string
+  customerId: string
+  type: 'EARN' | 'REDEEM' | 'RESTORE' | 'BONUS'
+  points: number
+  balance: number
+  description: string | null
+  orderId: string | null
+  createdAt: string
+}
+
+export const loyaltyApi = {
+  getAccount: () => apiClient.get<LoyaltyAccount>('/loyalty/me'),
+  getTransactions: (limit = 20) => apiClient.get<LoyaltyTransaction[]>(`/loyalty/transactions?limit=${limit}`),
+}
+
 // ─── Admin (SuperAdmin only) ───────────────────────────────────────────────────
 
 export interface AdminUser {

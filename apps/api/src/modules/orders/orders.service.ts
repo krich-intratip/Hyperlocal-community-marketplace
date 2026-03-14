@@ -14,6 +14,7 @@ import { Provider } from '../providers/entities/provider.entity'
 import { CreateOrderDto } from './dto/create-order.dto'
 import { UpdateOrderStatusDto, OrderStatus } from './dto/update-order-status.dto'
 import { NotificationsService } from '../notifications/notifications.service'
+import { LoyaltyService } from '../loyalty/loyalty.service'
 
 /** Short order reference (last 8 chars of UUID, uppercased) */
 function shortRef(id: string): string {
@@ -94,6 +95,7 @@ export class OrdersService {
     private readonly providerRepo: Repository<Provider>,
 
     private readonly notificationsService: NotificationsService,
+    private readonly loyaltyService: LoyaltyService,
   ) {}
 
   /**
@@ -154,7 +156,15 @@ export class OrdersService {
 
     subtotal = Math.round(subtotal * 100) / 100
     const platformFee = Math.round(subtotal * 0.05 * 100) / 100
-    const total = Math.round((subtotal + platformFee) * 100) / 100
+
+    // 3b. Loyalty points discount
+    const pointsToRedeem = dto.pointsToRedeem ?? 0
+    let loyaltyDiscount = 0
+    if (pointsToRedeem > 0) {
+      const redeemResult = await this.loyaltyService.validateRedeem(customerId, pointsToRedeem)
+      loyaltyDiscount = redeemResult.discount
+    }
+    const total = Math.round(Math.max(0, subtotal + platformFee - loyaltyDiscount) * 100) / 100
 
     // 4. Generate tracking ID for courier deliveries (server-side — not from client)
     const deliveryMethod = dto.deliveryMethod ?? 'self_pickup'
@@ -179,10 +189,16 @@ export class OrdersService {
       trackingId,
       paymentMethod: dto.paymentMethod ?? 'PROMPTPAY',
       note: dto.note ?? null,
+      pointsRedeemed: pointsToRedeem > 0 ? pointsToRedeem : null,
       items: orderItems as OrderItem[],
     })
 
     const saved = await this.orderRepo.save(order)
+
+    // 5b. Redeem loyalty points (fire-and-forget style — failure must not roll back order)
+    if (pointsToRedeem > 0) {
+      await this.loyaltyService.redeemPoints(customerId, saved.id, pointsToRedeem)
+    }
 
     // 6. Decrement stock for tracked listings
     for (const item of dto.items) {
@@ -306,6 +322,13 @@ export class OrdersService {
     await this.orderRepo.update(id, { status: nextStatus })
     const updatedOrder = await this.orderRepo.findOne({ where: { id } }) as Order
 
+    // LOYALTY-1: earn points on COMPLETED, restore redeemed points on cancellation
+    if (nextStatus === OrderStatus.COMPLETED) {
+      this.loyaltyService
+        .earnPoints(updatedOrder.customerId, updatedOrder.id, updatedOrder.total)
+        .catch(() => { /* never throw — loyalty failure must not fail the request */ })
+    }
+
     // INVENTORY-1: restore stock when order is cancelled
     const CANCELLATION = [OrderStatus.CANCELLED_BY_CUSTOMER, OrderStatus.CANCELLED_BY_PROVIDER]
     if (CANCELLATION.includes(nextStatus)) {
@@ -321,6 +344,14 @@ export class OrdersService {
               : {}),
           })
         }
+      }
+
+      // LOYALTY-1: restore redeemed points on cancellation
+      const redeemed = updatedOrder.pointsRedeemed ?? 0
+      if (redeemed > 0) {
+        this.loyaltyService
+          .restorePoints(updatedOrder.customerId, updatedOrder.id, redeemed)
+          .catch(() => { /* never throw — loyalty failure must not fail the request */ })
       }
     }
 

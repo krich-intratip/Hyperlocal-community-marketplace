@@ -35,6 +35,8 @@ const MENU_ITEMS = [
   { href: '/notifications', icon: Bell, label: 'การแจ้งเตือน', desc: 'ข่าวสารและ Updates', badge: '3 ใหม่' },
 ]
 
+const LOYALTY_ITEM = { href: '/profile/points', label: 'แต้มสะสม (Loyalty)', desc: 'ดูแต้มและประวัติ' }
+
 export default function ProfilePage() {
   const { user } = useAuthGuard()
   const { updateUser, logout } = useAuthStore()
@@ -212,8 +214,22 @@ export default function ProfilePage() {
 
         {/* Menu */}
         <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-2">
+          {/* Loyalty points link */}
+          <motion.div variants={fadeUp} custom={0} whileHover={{ y: -2 }}>
+            <Link href={LOYALTY_ITEM.href as any}
+              className="flex items-center gap-4 p-4 glass-card rounded-2xl hover:border-primary/30 hover:shadow-md transition-all group">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-lg">⭐</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">{LOYALTY_ITEM.label}</p>
+                <p className="text-xs text-slate-500">{LOYALTY_ITEM.desc}</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary/60 group-hover:translate-x-1 transition-all flex-shrink-0" />
+            </Link>
+          </motion.div>
           {MENU_ITEMS.map((item, i) => (
-            <motion.div key={item.href} variants={fadeUp} custom={i} whileHover={{ y: -2 }}>
+            <motion.div key={item.href} variants={fadeUp} custom={i + 1} whileHover={{ y: -2 }}>
               <Link href={item.href as any}
                 className="flex items-center gap-4 p-4 glass-card rounded-2xl hover:border-primary/30 hover:shadow-md transition-all group">
                 <div className="w-10 h-10 rounded-xl glass-sm group-hover:bg-white/40 flex items-center justify-center flex-shrink-0 transition-colors">

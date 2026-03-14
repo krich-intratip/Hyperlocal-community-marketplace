@@ -61,6 +61,9 @@ export class Order {
   @Column({ nullable: true })
   note: string | null
 
+  @Column({ name: 'points_redeemed', type: 'integer', nullable: true, default: null })
+  pointsRedeemed: number | null
+
   @CreateDateColumn({ type: timestampCol() })
   createdAt: Date
 

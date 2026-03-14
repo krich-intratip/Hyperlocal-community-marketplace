@@ -68,4 +68,10 @@ export class CreateOrderDto {
   @IsString()
   @IsOptional()
   note?: string
+
+  @ApiPropertyOptional({ description: 'Loyalty points to redeem (100 pts = ฿10 discount)' })
+  @IsInt()
+  @IsOptional()
+  @Min(0)
+  pointsToRedeem?: number
 }
