@@ -19,6 +19,15 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email, isActive: true } })
   }
 
+  /** Returns user WITH passwordHash (for credential verification only) */
+  async findByEmailWithPassword(email: string): Promise<User | null> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password_hash', 'user_passwordHash')
+      .where('user.email = :email AND user.isActive = :active', { email, active: true })
+      .getOne()
+  }
+
   async create(data: {
     email: string
     displayName: string
@@ -26,6 +35,8 @@ export class UsersService {
     loginProvider: string
     role: UserRole
     googleId?: string
+    passwordHash?: string
+    phone?: string
   }): Promise<User> {
     const user = this.userRepository.create(data)
     return this.userRepository.save(user)

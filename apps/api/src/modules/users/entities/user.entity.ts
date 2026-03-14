@@ -28,6 +28,10 @@ export class User {
   @Column({ type: 'simple-enum', enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole
 
+  /** bcrypt hash — null for OAuth-only accounts */
+  @Column({ name: 'password_hash', nullable: true, select: false })
+  passwordHash: string | null
+
   @Column({ name: 'login_provider', default: 'google' })
   loginProvider: string
 

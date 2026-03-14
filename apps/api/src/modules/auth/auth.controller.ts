@@ -1,10 +1,39 @@
-import { Controller, Get, Post, Req, Res, UseGuards, HttpCode, HttpStatus } from '@nestjs/common'
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
+import { Controller, Get, Post, Body, Req, Res, UseGuards, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common'
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 import { ConfigService } from '@nestjs/config'
+import { IsEmail, IsString, MinLength, IsOptional, IsIn } from 'class-validator'
 import type { FastifyRequest, FastifyReply } from 'fastify'
 import { AuthService, OAuthUser } from './auth.service'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
+import { UserRole } from '@chm/shared-types'
+
+class RegisterDto {
+  @IsEmail()
+  email: string
+
+  @IsString()
+  @MinLength(8)
+  password: string
+
+  @IsString()
+  displayName: string
+
+  @IsIn(['customer', 'provider', 'admin'])
+  role: 'customer' | 'provider' | 'admin'
+
+  @IsOptional()
+  @IsString()
+  phone?: string
+}
+
+class LoginDto {
+  @IsEmail()
+  email: string
+
+  @IsString()
+  password: string
+}
 
 const IS_PROD = process.env.APP_ENV === 'production'
 
@@ -50,6 +79,82 @@ export class AuthController {
   @ApiOperation({ summary: 'Get current authenticated user' })
   getMe(@Req() req: FastifyRequest & { user: OAuthUser }) {
     return req.user
+  }
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Register with email + password' })
+  @ApiBody({ type: RegisterDto })
+  async register(
+    @Body() body: RegisterDto,
+    @Res() res: FastifyReply,
+  ) {
+    if (!body.email || !body.password || !body.displayName || !body.role) {
+      throw new BadRequestException('กรุณากรอกข้อมูลให้ครบถ้วน')
+    }
+
+    const roleMap: Record<string, UserRole> = {
+      customer: UserRole.CUSTOMER,
+      provider: UserRole.PROVIDER,
+      admin: UserRole.COMMUNITY_ADMIN,
+    }
+
+    const result = await this.authService.registerWithEmail({
+      email: body.email,
+      password: body.password,
+      displayName: body.displayName,
+      role: roleMap[body.role] ?? UserRole.CUSTOMER,
+      phone: body.phone,
+    })
+
+    const maxAgeSec = 60 * this.configService.get<number>('JWT_EXPIRES_MINUTES', 1440)
+    const cookieFlags = [
+      `access_token=${result.accessToken}`,
+      'HttpOnly',
+      `Max-Age=${maxAgeSec}`,
+      'Path=/',
+      IS_PROD ? 'Secure' : '',
+      `SameSite=${IS_PROD ? 'Strict' : 'Lax'}`,
+    ].filter(Boolean).join('; ')
+
+    res.header('Set-Cookie', cookieFlags)
+    return res.status(HttpStatus.CREATED).send({
+      id: result.user.id,
+      email: result.user.email,
+      displayName: result.user.displayName,
+      role: result.user.role,
+      avatarUrl: result.user.avatarUrl,
+    })
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Login with email + password' })
+  @ApiBody({ type: LoginDto })
+  async login(
+    @Body() body: LoginDto,
+    @Res() res: FastifyReply,
+  ) {
+    const result = await this.authService.loginWithEmail(body.email, body.password)
+
+    const maxAgeSec = 60 * this.configService.get<number>('JWT_EXPIRES_MINUTES', 1440)
+    const cookieFlags = [
+      `access_token=${result.accessToken}`,
+      'HttpOnly',
+      `Max-Age=${maxAgeSec}`,
+      'Path=/',
+      IS_PROD ? 'Secure' : '',
+      `SameSite=${IS_PROD ? 'Strict' : 'Lax'}`,
+    ].filter(Boolean).join('; ')
+
+    res.header('Set-Cookie', cookieFlags)
+    return res.send({
+      id: result.user.id,
+      email: result.user.email,
+      displayName: result.user.displayName,
+      role: result.user.role,
+      avatarUrl: result.user.avatarUrl,
+    })
   }
 
   @Post('logout')

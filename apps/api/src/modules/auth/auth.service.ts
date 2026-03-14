@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
 import { UsersService } from '../users/users.service'
 import { UserRole } from '@chm/shared-types'
 
@@ -34,6 +35,45 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, role: user.role }
     const accessToken = this.jwtService.sign(payload)
 
+    return { accessToken, user }
+  }
+
+  async registerWithEmail(data: {
+    email: string
+    password: string
+    displayName: string
+    role: UserRole
+    phone?: string
+  }) {
+    const existing = await this.usersService.findByEmail(data.email)
+    if (existing) throw new ConflictException('อีเมลนี้มีผู้ใช้งานแล้ว')
+
+    const passwordHash = await bcrypt.hash(data.password, 12)
+    const user = await this.usersService.create({
+      email: data.email,
+      displayName: data.displayName,
+      loginProvider: 'email',
+      role: data.role,
+      phone: data.phone,
+      passwordHash,
+    })
+
+    const payload = { sub: user.id, email: user.email, role: user.role }
+    const accessToken = this.jwtService.sign(payload)
+    return { accessToken, user }
+  }
+
+  async loginWithEmail(email: string, password: string) {
+    const user = await this.usersService.findByEmailWithPassword(email)
+    if (!user || !user.passwordHash) {
+      throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+    }
+
+    const valid = await bcrypt.compare(password, user.passwordHash)
+    if (!valid) throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+
+    const payload = { sub: user.id, email: user.email, role: user.role }
+    const accessToken = this.jwtService.sign(payload)
     return { accessToken, user }
   }
 

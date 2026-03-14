@@ -3,11 +3,13 @@
 import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
-import { ArrowRight, Users, Star, Store, Eye, EyeOff, CheckCircle, ChevronLeft } from 'lucide-react'
+import { ArrowRight, Eye, EyeOff, CheckCircle, ChevronLeft } from 'lucide-react'
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuthStore } from '@/store/auth.store'
+import { useRegister } from '@/hooks/useAuthMutations'
+
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000/api/v1'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -65,13 +67,12 @@ function SignUpPageInner() {
   const [selectedRole, setSelectedRole] = useState<Role>('customer')
   const [showPass, setShowPass] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' })
-  const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<Partial<typeof form>>({})
-  const { login } = useAuthStore()
+  const [errors, setErrors] = useState<Partial<typeof form & { api: string }>>({})
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect')
 
+  const register = useRegister()
   const role = ROLES.find(r => r.id === selectedRole)!
 
   function validate() {
@@ -83,38 +84,30 @@ function SignUpPageInner() {
     return Object.keys(e).length === 0
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!validate()) return
-    setLoading(true)
-    setTimeout(() => {
-      login({
-        id: `u-${Date.now()}`,
-        name: form.name,
+    setErrors({})
+
+    try {
+      await register.mutateAsync({
         email: form.email,
-        avatar: selectedRole === 'customer' ? '🛍️' : selectedRole === 'provider' ? '⭐' : '🏘️',
-        role: selectedRole === 'admin' ? 'admin' : selectedRole,
-        verified: false,
+        password: form.password,
+        displayName: form.name,
+        role: selectedRole,
+        phone: form.phone || undefined,
       })
-      setLoading(false)
       setStep('done')
-    }, 1400)
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setErrors({ api: msg ?? 'สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่' })
+    }
   }
 
-  function handleMockGoogleSignup() {
-    setLoading(true)
-    setTimeout(() => {
-      login({
-        id: `u-${Date.now()}`,
-        name: 'Google User',
-        email: 'google@example.com',
-        avatar: selectedRole === 'customer' ? '🛍️' : selectedRole === 'provider' ? '⭐' : '🏘️',
-        role: selectedRole === 'admin' ? 'admin' : selectedRole,
-        verified: true,
-      })
-      setLoading(false)
-      setStep('done')
-    }, 1000)
+  function handleGoogleSignup() {
+    const dest = redirectTo ?? (selectedRole === 'provider' ? '/dashboard/provider' : selectedRole === 'admin' ? '/franchise/apply' : '/marketplace')
+    const callbackUrl = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(dest)}`
+    window.location.href = `${API_URL}/auth/google?state=${encodeURIComponent(callbackUrl)}`
   }
 
   useEffect(() => {
@@ -217,11 +210,10 @@ function SignUpPageInner() {
                 {role.emoji} สมัครเป็น{role.label} <ArrowRight className="h-4 w-4" />
               </motion.button>
 
-              {/* Google OAuth */}
+              {/* Google OAuth — real */}
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                onClick={handleMockGoogleSignup}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-3 rounded-xl glass border-2 px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-white/30 hover:shadow-md transition-all disabled:opacity-60">
+                onClick={handleGoogleSignup}
+                className="w-full flex items-center justify-center gap-3 rounded-xl glass border-2 px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-white/30 hover:shadow-md transition-all">
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -263,6 +255,13 @@ function SignUpPageInner() {
             <motion.form variants={fadeUp} initial="hidden" animate="show" custom={2}
               onSubmit={handleSubmit}
               className="glass-card rounded-3xl p-6 space-y-4">
+
+              {/* API error */}
+              {errors.api && (
+                <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 px-4 py-3">
+                  <p className="text-sm text-red-600 dark:text-red-400">{errors.api}</p>
+                </div>
+              )}
 
               {/* Name */}
               <div>
@@ -321,10 +320,10 @@ function SignUpPageInner() {
               </div>
 
               {/* Submit */}
-              <motion.button type="submit" disabled={loading}
-                whileHover={loading ? {} : { scale: 1.02 }} whileTap={loading ? {} : { scale: 0.97 }}
+              <motion.button type="submit" disabled={register.isPending}
+                whileHover={register.isPending ? {} : { scale: 1.02 }} whileTap={register.isPending ? {} : { scale: 0.97 }}
                 className={`w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base font-bold text-white shadow-lg transition-all ${role.ctaColor} disabled:opacity-60 disabled:cursor-not-allowed`}>
-                {loading ? (
+                {register.isPending ? (
                   <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>

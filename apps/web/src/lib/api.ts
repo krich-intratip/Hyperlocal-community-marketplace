@@ -38,6 +38,34 @@ export const authApi = {
 
   me: () =>
     apiClient.get<ApiResponse<AuthUser>>('/auth/me'),
+
+  register: (dto: {
+    email: string
+    password: string
+    displayName: string
+    role: 'customer' | 'provider' | 'admin'
+    phone?: string
+  }) => apiClient.post<{ id: string; email: string; displayName: string; role: string; avatarUrl: string | null }>(
+    '/auth/register',
+    dto,
+    { withCredentials: true },
+  ),
+
+  login: (dto: { email: string; password: string }) =>
+    apiClient.post<{ id: string; email: string; displayName: string; role: string; avatarUrl: string | null }>(
+      '/auth/login',
+      dto,
+      { withCredentials: true },
+    ),
+
+  logout: () =>
+    apiClient.post('/auth/logout', {}, { withCredentials: true }),
+
+  getMe: () =>
+    apiClient.get<{ id: string; email: string; displayName: string; role: string; avatarUrl?: string }>(
+      '/auth/me',
+      { withCredentials: true },
+    ),
 }
 
 // ─── Communities ──────────────────────────────────────────────────────────────

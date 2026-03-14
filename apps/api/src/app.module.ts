@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
+import { RolesGuard } from './modules/auth/guards/roles.guard'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ThrottlerModule } from '@nestjs/throttler'
@@ -117,6 +119,10 @@ import { MessagesModule } from './modules/messages/messages.module'
     ReturnsModule,
     RecommendationsModule,
     MessagesModule,
+  ],
+  providers: [
+    // Wire RolesGuard globally — works alongside JwtAuthGuard on individual routes
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
 export class AppModule {}
