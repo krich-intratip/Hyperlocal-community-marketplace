@@ -34,6 +34,8 @@ export interface MockListing {
   area: string
   distance: string
   image: string
+  /** Real photo URLs (Cloudflare R2 or fallback). First image shown as primary. */
+  images?: string[]
   tags: string[]
   availableDays: number[]
   openTime: string
@@ -64,7 +66,12 @@ export const MOCK_LISTINGS: MockListing[] = [
     status: 'available', category: 'FOOD', price: 80, unit: 'กล่อง', isPromoted: true,
     discountPercent: 20, discountEndsAt: '2026-03-14T20:00:00+07:00',
     rating: 4.9, reviews: 128, community: 'หมู่บ้านศรีนคร', area: 'บางแค, กรุงเทพฯ',
-    distance: '0.3 กม.', image: '🍱', tags: ['ข้าว', 'ส้มตำ', 'ลาบ', 'อาหารตามสั่ง', 'ส่งถึงบ้าน'],
+    distance: '0.3 กม.', image: '🍱',
+    images: [
+      'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80',
+      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+    ],
+    tags: ['ข้าว', 'ส้มตำ', 'ลาบ', 'อาหารตามสั่ง', 'ส่งถึงบ้าน'],
     availableDays: [0,1,2,3,4], openTime: '07:00', closeTime: '17:00',
     responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 342,
     lat: 13.726, lng: 100.482,
@@ -101,7 +108,11 @@ export const MOCK_LISTINGS: MockListing[] = [
     status: 'available', category: 'TUTORING', price: 300, unit: 'ชั่วโมง', isPromoted: true,
     discountPercent: 15, discountEndsAt: '2026-03-14T23:59:00+07:00',
     rating: 5.0, reviews: 42, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
-    distance: '1.2 กม.', image: '📚', tags: ['ภาษาอังกฤษ', 'ประถม', 'Online', 'สนทนา'],
+    distance: '1.2 กม.', image: '📚',
+    images: [
+      'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80',
+    ],
+    tags: ['ภาษาอังกฤษ', 'ประถม', 'Online', 'สนทนา'],
     availableDays: [1,2,3,4,5,6], openTime: '14:00', closeTime: '20:00',
     responseTime: 'ตอบกลับใน < 30 นาที', completedBookings: 128,
     lat: 13.729, lng: 100.479,
@@ -116,7 +127,12 @@ export const MOCK_LISTINGS: MockListing[] = [
     status: 'available', category: 'HOME_SERVICES', price: 800, unit: 'ครั้ง',
     discountPercent: 10, discountEndsAt: '2026-03-15T12:00:00+07:00',
     rating: 4.7, reviews: 203, community: 'คอนโด The Base', area: 'ลาดพร้าว, กรุงเทพฯ',
-    distance: '0.5 กม.', image: '🏠', tags: ['บ้าน', 'คอนโด', 'รายวัน', 'ทีมงานมืออาชีพ'],
+    distance: '0.5 กม.', image: '🏠',
+    images: [
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80',
+    ],
+    tags: ['บ้าน', 'คอนโด', 'รายวัน', 'ทีมงานมืออาชีพ'],
     availableDays: [0,1,2,3,4,5], openTime: '08:00', closeTime: '17:00',
     responseTime: 'ตอบกลับใน < 1 ชั่วโมง', completedBookings: 1240,
     lat: 13.724, lng: 100.490,
