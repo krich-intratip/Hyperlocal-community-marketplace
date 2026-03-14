@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { AppFooter } from '@/components/app-footer'
 import { motion } from 'framer-motion'
 import { MarketBackground } from '@/components/market-background'
-import { MapPin, Target, Heart, TrendingUp, Users, Zap, Globe, ArrowRight, Code2, GitBranch } from 'lucide-react'
+import { MapPin, Target, Heart, TrendingUp, Users, Zap, Globe, ArrowRight, Code2, GitBranch, FlaskConical } from 'lucide-react'
 import { APP_VERSION, APP_UPDATED, APP_DEVELOPER } from '@/lib/version'
 
 const fadeUp = {
@@ -191,7 +191,7 @@ export default function AboutPage() {
         </motion.div>
 
         {/* Tech Stack */}
-        <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
+        <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="mb-20">
           <h2 className="text-3xl font-extrabold text-center text-slate-900 mb-3">Tech Stack</h2>
           <p className="text-center text-slate-500 mb-12">Full-stack TypeScript Monorepo</p>
           <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}
@@ -203,6 +203,34 @@ export default function AboutPage() {
                 {t}
               </motion.span>
             ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Development Team */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
+          <h2 className="text-3xl font-extrabold text-center text-slate-900 mb-3">ทีมพัฒนา</h2>
+          <p className="text-center text-slate-500 mb-12">ผู้อยู่เบื้องหลังการสร้าง Community Hyper Marketplace</p>
+          <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}
+            className="flex justify-center">
+            <motion.div variants={fadeUp} custom={0} whileHover={{ y: -6, scale: 1.02 }}
+              className="glass-card rounded-3xl p-8 max-w-sm w-full text-center shadow-xl shadow-primary/10">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary/30">
+                <FlaskConical className="h-10 w-10 text-white" />
+              </div>
+              <h3 className="text-xl font-extrabold text-slate-900 mb-1">Pk-Research.work</h3>
+              <p className="text-sm font-semibold text-primary mb-4">Research & Development Team</p>
+              <p className="text-sm text-slate-500 leading-relaxed mb-5">
+                ทีมวิจัยและพัฒนาที่มุ่งสร้างโซลูชันด้านเศรษฐกิจชุมชน ผสานงานวิจัยเชิงลึกกับเทคโนโลยีสมัยใหม่
+                เพื่อขับเคลื่อนชุมชนไทยสู่เศรษฐกิจดิจิทัล
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {['Research', 'Full-Stack Dev', 'UX/UI', 'Community Tech'].map(tag => (
+                  <span key={tag} className="text-xs px-3 py-1 rounded-full glass-sm border border-primary/20 text-primary font-semibold">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </section>
@@ -226,7 +254,7 @@ export default function AboutPage() {
               </span>
             </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5 text-sm">
             <div className="rounded-xl glass-sm px-4 py-3">
               <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Version</p>
               <p className="font-bold text-slate-800 dark:text-slate-100">v{APP_VERSION}</p>
@@ -238,6 +266,10 @@ export default function AboutPage() {
             <div className="rounded-xl glass-sm px-4 py-3">
               <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Developer</p>
               <p className="font-bold text-slate-800 dark:text-slate-100">{APP_DEVELOPER}</p>
+            </div>
+            <div className="rounded-xl glass-sm px-4 py-3">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">ทีมพัฒนา</p>
+              <p className="font-bold text-primary">Pk-Research.work</p>
             </div>
           </div>
           <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Tech Stack</p>
