@@ -463,6 +463,23 @@ export const paymentsApi = {
     apiClient.post<PaymentRecord>(`/payments/${paymentId}/simulate-pay`),
 }
 
+// ─── Inventory (INVENTORY-1) ───────────────────────────────────────────────────
+
+export interface InventoryListing {
+  id: string; title: string; category: string; price: number; priceUnit: string | null
+  status: string; stockQty: number | null; lowStockThreshold: number
+  images: string[] | null; isPromoted: boolean; communityId: string
+}
+
+export const inventoryApi = {
+  getMyListings: () =>
+    apiClient.get<InventoryListing[]>('/listings/provider/my'),
+  getLowStock: () =>
+    apiClient.get<InventoryListing[]>('/listings/provider/low-stock'),
+  updateStock: (id: string, data: { stockQty: number | null; lowStockThreshold?: number }) =>
+    apiClient.patch<InventoryListing>(`/listings/${id}/stock`, data),
+}
+
 // ─── Provider Earnings (EARN-1) ────────────────────────────────────────────────
 
 export interface EarningTransaction {

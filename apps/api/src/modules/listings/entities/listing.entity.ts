@@ -79,6 +79,15 @@ export class Listing {
   @Column({ name: 'is_health_option', default: false })
   isHealthOption: boolean
 
+  // ─── Inventory / Stock control ──────────────────────────────────────────────
+  /** Total available stock. null = unlimited. 0 = out of stock (listing auto-deactivated). */
+  @Column({ name: 'stock_qty', nullable: true, type: 'integer' })
+  stockQty: number | null
+
+  /** Notify provider when stockQty ≤ this threshold. Default: 5. */
+  @Column({ name: 'low_stock_threshold', type: 'integer', default: 5 })
+  lowStockThreshold: number
+
   // ─── Flash sale / promotion ──────────────────────────────────────────────────
   /** Discount percentage 1–99. Null = no active promotion */
   @Column({ name: 'discount_percent', nullable: true, type: 'integer' })

@@ -4,6 +4,7 @@ import { Repository, ILike, Between, MoreThanOrEqual, LessThanOrEqual } from 'ty
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache } from 'cache-manager'
 import { Listing } from './entities/listing.entity'
+import { Provider } from '../providers/entities/provider.entity'
 import { MarketplaceCategory, ListingStatus } from '@chm/shared-types'
 
 const LISTINGS_TTL = 5 * 60 * 1000
@@ -15,6 +16,8 @@ export class ListingsService {
   constructor(
     @InjectRepository(Listing)
     private readonly listingRepo: Repository<Listing>,
+    @InjectRepository(Provider)
+    private readonly providerRepo: Repository<Provider>,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
@@ -105,6 +108,60 @@ export class ListingsService {
     await this.listingRepo.update({ id }, { discountPercent: data.discountPercent, discountEndsAt })
     await this.invalidateListingsCache()
     return { success: true }
+  }
+
+  // ── INVENTORY-1 ──────────────────────────────────────────────────────────────
+
+  /** All listings belonging to the authenticated provider (all statuses) */
+  async getProviderListings(userId: string): Promise<Listing[]> {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) throw new NotFoundException('Provider profile not found')
+    return this.listingRepo.find({
+      where: { providerId: provider.id },
+      order: { createdAt: 'DESC' },
+    })
+  }
+
+  /**
+   * Update stockQty (and optionally lowStockThreshold) for a listing.
+   * - stockQty === 0  → auto-set status INACTIVE
+   * - stockQty >  0 and was INACTIVE → re-activate
+   * - stockQty === null → unlimited (no stock tracking)
+   */
+  async updateStock(
+    id: string,
+    userId: string,
+    data: { stockQty: number | null; lowStockThreshold?: number },
+  ): Promise<Listing> {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) throw new NotFoundException('Provider profile not found')
+
+    const listing = await this.listingRepo.findOne({ where: { id, providerId: provider.id } })
+    if (!listing) throw new NotFoundException('Listing not found or not owned by provider')
+
+    const updates: Partial<Listing> = { stockQty: data.stockQty }
+    if (data.lowStockThreshold !== undefined) updates.lowStockThreshold = data.lowStockThreshold
+
+    // Auto-deactivate when stock hits zero
+    if (data.stockQty === 0) {
+      updates.status = ListingStatus.INACTIVE
+    }
+    // Re-activate when stock is restored (only if was INACTIVE, not manually closed)
+    if (data.stockQty !== null && data.stockQty > 0 && listing.status === ListingStatus.INACTIVE) {
+      updates.status = ListingStatus.ACTIVE
+    }
+
+    await this.listingRepo.update({ id }, updates)
+    await this.invalidateListingsCache()
+    return this.listingRepo.findOne({ where: { id } }) as Promise<Listing>
+  }
+
+  /** Listings with stockQty tracked and at or below lowStockThreshold */
+  async getLowStockListings(userId: string): Promise<Listing[]> {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) throw new NotFoundException('Provider profile not found')
+    const all = await this.listingRepo.find({ where: { providerId: provider.id } })
+    return all.filter(l => l.stockQty !== null && l.stockQty <= l.lowStockThreshold)
   }
 
   private async invalidateListingsCache() {

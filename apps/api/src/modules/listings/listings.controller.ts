@@ -30,6 +30,37 @@ export class ListingsController {
     })
   }
 
+  // ── INVENTORY-1: Provider listing management ─────────────────────────────────
+  // Declared BEFORE :id to avoid route collision
+
+  @Get('provider/my')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get all listings owned by the authenticated provider" })
+  getMyListings(@Req() req: any) {
+    return this.listingsService.getProviderListings(req.user.id)
+  }
+
+  @Get('provider/low-stock')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get listings with stock at or below the low-stock threshold" })
+  getLowStockListings(@Req() req: any) {
+    return this.listingsService.getLowStockListings(req.user.id)
+  }
+
+  @Patch(':id/stock')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update stock quantity for a listing' })
+  updateStock(
+    @Param('id') id: string,
+    @Req() req: any,
+    @Body() body: { stockQty: number | null; lowStockThreshold?: number },
+  ) {
+    return this.listingsService.updateStock(id, req.user.id, body)
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get listing detail' })
   findOne(@Param('id') id: string) {

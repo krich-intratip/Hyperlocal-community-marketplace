@@ -123,6 +123,18 @@ export class OrdersService {
       }
     }
 
+    // 2b. Stock availability check (if listing tracks stock)
+    for (const item of dto.items) {
+      const listing = listings.find(l => l.id === item.listingId)
+      if (listing && listing.stockQty !== null) {
+        if (listing.stockQty < item.qty) {
+          throw new BadRequestException(
+            `สินค้า "${listing.title}" มีสต็อกไม่เพียงพอ (เหลือ ${listing.stockQty} ชิ้น)`,
+          )
+        }
+      }
+    }
+
     // 3. Calculate prices server-side (use DB prices — never trust client)
     let subtotal = 0
     const orderItems: Partial<OrderItem>[] = dto.items.map((item, idx) => {
@@ -170,7 +182,21 @@ export class OrdersService {
       items: orderItems as OrderItem[],
     })
 
-    return this.orderRepo.save(order)
+    const saved = await this.orderRepo.save(order)
+
+    // 6. Decrement stock for tracked listings
+    for (const item of dto.items) {
+      const listing = listings.find(l => l.id === item.listingId)
+      if (listing && listing.stockQty !== null) {
+        const newStock = listing.stockQty - item.qty
+        await this.listingRepo.update({ id: listing.id }, {
+          stockQty: newStock,
+          ...(newStock === 0 ? { status: ListingStatus.INACTIVE } : {}),
+        })
+      }
+    }
+
+    return saved
   }
 
   /** Get all orders for the authenticated customer, newest first */
@@ -279,6 +305,24 @@ export class OrdersService {
 
     await this.orderRepo.update(id, { status: nextStatus })
     const updatedOrder = await this.orderRepo.findOne({ where: { id } }) as Order
+
+    // INVENTORY-1: restore stock when order is cancelled
+    const CANCELLATION = [OrderStatus.CANCELLED_BY_CUSTOMER, OrderStatus.CANCELLED_BY_PROVIDER]
+    if (CANCELLATION.includes(nextStatus)) {
+      for (const item of (updatedOrder.items ?? [])) {
+        const listing = await this.listingRepo.findOne({ where: { id: item.listingId } })
+        if (listing && listing.stockQty !== null) {
+          const restored = listing.stockQty + item.qty
+          await this.listingRepo.update({ id: listing.id }, {
+            stockQty: restored,
+            // Re-activate if it was deactivated due to stock running out
+            ...(listing.status === ListingStatus.INACTIVE && restored > 0
+              ? { status: ListingStatus.ACTIVE }
+              : {}),
+          })
+        }
+      }
+    }
 
     // NF-1: fire notification to customer on relevant status changes
     const notifDef = ORDER_NOTIF_MAP[nextStatus]

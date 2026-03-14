@@ -8,7 +8,7 @@ import { MarketBackground } from '@/components/market-background'
 import {
   TrendingUp, Star, CalendarCheck, DollarSign, Plus, Clock, CheckCircle, Eye,
   PauseCircle, PlayCircle, LogOut, AlertTriangle, X, MapPin, ShieldCheck,
-  BarChart3, Zap, MessageCircle, UmbrellaOff, Umbrella, Loader2, Package,
+  BarChart3, Zap, MessageCircle, UmbrellaOff, Umbrella, Loader2, Package, Boxes,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
@@ -259,7 +259,7 @@ export default function ProviderDashboardPage() {
             <BarChart3 className="h-4 w-4 text-slate-600" />
             <h2 className="font-bold text-slate-800 text-sm">Command Center</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
 
             {/* Analytics */}
             <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
@@ -367,6 +367,44 @@ export default function ProviderDashboardPage() {
                 <div className="flex items-center gap-1.5">
                   <span className="text-lg font-extrabold text-rose-700">%</span>
                   <span className="text-xs text-rose-600">ตั้งโปรโมชั่น</span>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Earnings */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/earnings"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-600 to-emerald-500 flex items-center justify-center">
+                    <DollarSign className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">฿</span>
+                </div>
+                <p className="font-bold text-green-900 text-sm mb-0.5">รายได้</p>
+                <p className="text-xs text-green-600 mb-3">ยอดขาย · สุทธิ · รอโอน · CSV</p>
+                <div className="flex items-center gap-1.5">
+                  <TrendingUp className="h-3.5 w-3.5 text-green-600" />
+                  <span className="text-xs text-green-700 font-bold">+12% เดือนนี้</span>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Inventory */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/inventory"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-500 flex items-center justify-center">
+                    <Boxes className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full">Stock</span>
+                </div>
+                <p className="font-bold text-violet-900 text-sm mb-0.5">คลังสินค้า</p>
+                <p className="text-xs text-violet-600 mb-3">Stock · แจ้งเตือนต่ำ · Auto-inactive</p>
+                <div className="flex items-center gap-1.5">
+                  <Package className="h-3.5 w-3.5 text-violet-600" />
+                  <span className="text-xs text-violet-700 font-bold">จัดการสต็อก</span>
                 </div>
               </Link>
             </motion.div>
