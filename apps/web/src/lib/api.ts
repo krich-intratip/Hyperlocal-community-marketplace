@@ -430,3 +430,35 @@ export const messagesApi = {
   markRead: (id: string) =>
     apiClient.patch(`/messages/${id}/read`),
 }
+
+// ─── Payments ─────────────────────────────────────────────────────────────────
+
+export type PaymentMethod = 'promptpay' | 'card' | 'cod'
+export type OrderPaymentStatus = 'PENDING' | 'PAID' | 'EXPIRED' | 'CANCELLED'
+
+export interface PaymentRecord {
+  id: string
+  orderId: string
+  amount: number
+  method: PaymentMethod
+  status: OrderPaymentStatus
+  qrData: string | null
+  paidAt: string | null
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
+}
+
+export const paymentsApi = {
+  /** POST /payments/initiate — create/resume a payment for an order */
+  initiate: (dto: { orderId: string; method: PaymentMethod }) =>
+    apiClient.post<PaymentRecord>('/payments/initiate', dto),
+
+  /** GET /payments/order/:orderId — get latest payment status */
+  getByOrder: (orderId: string) =>
+    apiClient.get<PaymentRecord>(`/payments/order/${orderId}`),
+
+  /** POST /payments/:id/simulate-pay — dev: simulate successful payment */
+  simulatePay: (paymentId: string) =>
+    apiClient.post<PaymentRecord>(`/payments/${paymentId}/simulate-pay`),
+}

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/store/cart.store'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useCreateOrder } from '@/hooks/useOrders'
@@ -46,6 +47,7 @@ export default function CartPage() {
   const createOrder = useCreateOrder()
 
   const [step, setStep] = useState<Step>('review')
+  const router = useRouter()
   const [payMethod, setPayMethod] = useState<PayMethod>('promptpay')
   const [payLoading, setPayLoading] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -122,8 +124,15 @@ export default function CartPage() {
     }
     setOrderIds(ids)
     setPayLoading(false)
-    setStep('done')
     clearCart()
+    // Store payment method for the payment page
+    const method = payMethod === 'cash' ? 'cod' : payMethod
+    if (typeof window !== 'undefined') sessionStorage.setItem('chm:payMethod', method)
+    if (ids.length > 0) {
+      router.push(`/checkout/payment?orderId=${ids[0]}`)
+    } else {
+      setStep('done')
+    }
   }
 
   if (step === 'done') {

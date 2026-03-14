@@ -29,6 +29,7 @@ import { ReturnsModule } from './modules/returns/returns.module'
 import { RecommendationsModule } from './modules/recommendations/recommendations.module'
 import { MessagesModule } from './modules/messages/messages.module'
 import { UploadModule } from './modules/upload/upload.module'
+import { PaymentsModule } from './modules/payments/payments.module'
 
 @Module({
   imports: [
@@ -121,6 +122,7 @@ import { UploadModule } from './modules/upload/upload.module'
     RecommendationsModule,
     MessagesModule,
     UploadModule,
+    PaymentsModule,
   ],
   providers: [
     // Wire RolesGuard globally — works alongside JwtAuthGuard on individual routes

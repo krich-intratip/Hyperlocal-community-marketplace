@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" fill="#ffffff"/>
+  <!-- Finder top-left -->
+  <rect x="10" y="10" width="50" height="50" fill="#1a1a2e" rx="4"/>
+  <rect x="18" y="18" width="34" height="34" fill="#ffffff" rx="2"/>
+  <rect x="24" y="24" width="22" height="22" fill="#1a1a2e" rx="1"/>
+  <!-- Finder top-right -->
+  <rect x="140" y="10" width="50" height="50" fill="#1a1a2e" rx="4"/>
+  <rect x="148" y="18" width="34" height="34" fill="#ffffff" rx="2"/>
+  <rect x="154" y="24" width="22" height="22" fill="#1a1a2e" rx="1"/>
+  <!-- Finder bottom-left -->
+  <rect x="10" y="140" width="50" height="50" fill="#1a1a2e" rx="4"/>
+  <rect x="18" y="148" width="34" height="34" fill="#ffffff" rx="2"/>
+  <rect x="24" y="154" width="22" height="22" fill="#1a1a2e" rx="1"/>
+  <!-- Data dots (mock pattern) -->
+  <g fill="#1a1a2e">
+    <rect x="70" y="10" width="8" height="8" rx="1"/><rect x="84" y="10" width="8" height="8" rx="1"/>
+    <rect x="98" y="10" width="8" height="8" rx="1"/><rect x="112" y="10" width="8" height="8" rx="1"/>
+    <rect x="126" y="10" width="8" height="8" rx="1"/>
+    <rect x="70" y="24" width="8" height="8" rx="1"/><rect x="98" y="24" width="8" height="8" rx="1"/>
+    <rect x="126" y="24" width="8" height="8" rx="1"/>
+    <rect x="84" y="38" width="8" height="8" rx="1"/><rect x="112" y="38" width="8" height="8" rx="1"/>
+    <rect x="70" y="52" width="8" height="8" rx="1"/><rect x="84" y="52" width="8" height="8" rx="1"/>
+    <rect x="98" y="52" width="8" height="8" rx="1"/><rect x="126" y="52" width="8" height="8" rx="1"/>
+    <rect x="10" y="70" width="8" height="8" rx="1"/><rect x="24" y="70" width="8" height="8" rx="1"/>
+    <rect x="52" y="70" width="8" height="8" rx="1"/><rect x="70" y="70" width="8" height="8" rx="1"/>
+    <rect x="84" y="70" width="8" height="8" rx="1"/><rect x="112" y="70" width="8" height="8" rx="1"/>
+    <rect x="140" y="70" width="8" height="8" rx="1"/><rect x="168" y="70" width="8" height="8" rx="1"/>
+    <rect x="182" y="70" width="8" height="8" rx="1"/>
+    <rect x="10" y="84" width="8" height="8" rx="1"/><rect x="38" y="84" width="8" height="8" rx="1"/>
+    <rect x="70" y="84" width="8" height="8" rx="1"/><rect x="98" y="84" width="8" height="8" rx="1"/>
+    <rect x="126" y="84" width="8" height="8" rx="1"/><rect x="154" y="84" width="8" height="8" rx="1"/>
+    <rect x="182" y="84" width="8" height="8" rx="1"/>
+    <rect x="24" y="98" width="8" height="8" rx="1"/><rect x="52" y="98" width="8" height="8" rx="1"/>
+    <rect x="84" y="98" width="8" height="8" rx="1"/><rect x="112" y="98" width="8" height="8" rx="1"/>
+    <rect x="140" y="98" width="8" height="8" rx="1"/><rect x="168" y="98" width="8" height="8" rx="1"/>
+    <rect x="10" y="112" width="8" height="8" rx="1"/><rect x="38" y="112" width="8" height="8" rx="1"/>
+    <rect x="70" y="112" width="8" height="8" rx="1"/><rect x="98" y="112" width="8" height="8" rx="1"/>
+    <rect x="154" y="112" width="8" height="8" rx="1"/><rect x="182" y="112" width="8" height="8" rx="1"/>
+    <rect x="10" y="126" width="8" height="8" rx="1"/><rect x="24" y="126" width="8" height="8" rx="1"/>
+    <rect x="52" y="126" width="8" height="8" rx="1"/><rect x="84" y="126" width="8" height="8" rx="1"/>
+    <rect x="112" y="126" width="8" height="8" rx="1"/><rect x="140" y="126" width="8" height="8" rx="1"/>
+    <rect x="168" y="126" width="8" height="8" rx="1"/>
+    <rect x="70" y="140" width="8" height="8" rx="1"/><rect x="98" y="140" width="8" height="8" rx="1"/>
+    <rect x="126" y="140" width="8" height="8" rx="1"/><rect x="154" y="140" width="8" height="8" rx="1"/>
+    <rect x="182" y="140" width="8" height="8" rx="1"/>
+    <rect x="70" y="154" width="8" height="8" rx="1"/><rect x="84" y="154" width="8" height="8" rx="1"/>
+    <rect x="112" y="154" width="8" height="8" rx="1"/><rect x="140" y="154" width="8" height="8" rx="1"/>
+    <rect x="168" y="154" width="8" height="8" rx="1"/>
+    <rect x="70" y="168" width="8" height="8" rx="1"/><rect x="98" y="168" width="8" height="8" rx="1"/>
+    <rect x="126" y="168" width="8" height="8" rx="1"/><rect x="154" y="168" width="8" height="8" rx="1"/>
+    <rect x="182" y="168" width="8" height="8" rx="1"/>
+    <rect x="70" y="182" width="8" height="8" rx="1"/><rect x="84" y="182" width="8" height="8" rx="1"/>
+    <rect x="98" y="182" width="8" height="8" rx="1"/><rect x="126" y="182" width="8" height="8" rx="1"/>
+    <rect x="168" y="182" width="8" height="8" rx="1"/>
+  </g>
+  <!-- DEV watermark -->
+  <text x="100" y="105" text-anchor="middle" font-family="monospace" font-size="9" font-weight="bold" fill="#6366f1" opacity="0.7">DEV MODE</text>
+</svg>
