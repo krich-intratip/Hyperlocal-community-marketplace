@@ -50,7 +50,7 @@ function SearchBar() {
         router.push(`/marketplace/${results[activeIdx].id}` as any)
         setQuery(''); setOpen(false)
       } else if (query.trim()) {
-        router.push(`/marketplace?q=${encodeURIComponent(query.trim())}` as any)
+        router.push(`/search?q=${encodeURIComponent(query.trim())}` as any)
         setQuery(''); setOpen(false)
       }
     }
@@ -103,7 +103,7 @@ function SearchBar() {
               </button>
             ))}
             {query.trim() && (
-              <button onClick={() => { router.push(`/marketplace?q=${encodeURIComponent(query.trim())}` as any); setQuery(''); setOpen(false) }}
+              <button onClick={() => { router.push(`/search?q=${encodeURIComponent(query.trim())}` as any); setQuery(''); setOpen(false) }}
                 className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-primary font-semibold border-t border-white/20 hover:bg-white/20 transition-colors">
                 <Search className="h-4 w-4" />
                 ค้นหา &ldquo;{query}&rdquo; ทั้งหมด

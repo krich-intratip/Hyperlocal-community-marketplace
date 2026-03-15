@@ -232,6 +232,14 @@ function MarketplacePageInner() {
           </select>
         </motion.div>
 
+        {/* Advanced search link */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1.5} className="flex justify-end mb-2">
+          <Link href="/search" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            ค้นหาขั้นสูง
+          </Link>
+        </motion.div>
+
         {/* Filter bar */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}
           className="flex flex-wrap items-center gap-3 mb-4">

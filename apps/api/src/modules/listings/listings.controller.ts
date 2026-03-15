@@ -3,6 +3,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { ListingsService, ListingSortOption } from './listings.service'
 import { MarketplaceCategory } from '@chm/shared-types'
+import { SearchListingsDto } from './dto/search-listings.dto'
 
 @ApiTags('Listings')
 @Controller('listings')
@@ -47,6 +48,15 @@ export class ListingsController {
   @ApiOperation({ summary: "Get listings with stock at or below the low-stock threshold" })
   getLowStockListings(@Req() req: any) {
     return this.listingsService.getLowStockListings(req.user.id)
+  }
+
+  // ── SEARCH-2: Advanced Search & Discovery ────────────────────────────────────
+  // Declared BEFORE :id to avoid route collision
+
+  @Get('search')
+  @ApiOperation({ summary: 'Advanced search with full-text, filters, and pagination' })
+  advancedSearch(@Query() dto: SearchListingsDto) {
+    return this.listingsService.advancedSearch(dto)
   }
 
   @Patch(':id/stock')

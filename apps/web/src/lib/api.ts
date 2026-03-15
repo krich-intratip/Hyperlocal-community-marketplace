@@ -691,3 +691,36 @@ export const couponApi = {
   deactivate: (id: string) => apiClient.patch<CouponV2>(`/coupons/${id}/deactivate`, {}),
   activate: (id: string) => apiClient.patch<CouponV2>(`/coupons/${id}/activate`, {}),
 }
+
+// ─── Search (SEARCH-2) ────────────────────────────────────────────────────────
+
+export type SortBy = 'newest' | 'price_asc' | 'price_desc' | 'rating' | 'popular'
+
+export interface SearchParams {
+  q?: string
+  category?: string
+  communityId?: string
+  minPrice?: number
+  maxPrice?: number
+  minRating?: number
+  sortBy?: SortBy
+  page?: number
+  limit?: number
+}
+
+export interface SearchResult {
+  data: Listing[]
+  total: number
+  page: number
+  limit: number
+}
+
+export const searchApi = {
+  search: (params: SearchParams) => {
+    const qs = new URLSearchParams()
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== '' && v !== null) qs.set(k, String(v))
+    })
+    return apiClient.get<SearchResult>(`/listings/search?${qs.toString()}`)
+  },
+}

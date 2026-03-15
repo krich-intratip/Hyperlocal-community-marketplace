@@ -6,6 +6,7 @@ import { Cache } from 'cache-manager'
 import { Listing } from './entities/listing.entity'
 import { Provider } from '../providers/entities/provider.entity'
 import { MarketplaceCategory, ListingStatus } from '@chm/shared-types'
+import { SearchListingsDto } from './dto/search-listings.dto'
 
 const LISTINGS_TTL = 5 * 60 * 1000
 
@@ -68,6 +69,65 @@ export class ListingsService {
     const result = { data, total, page, limit }
     await this.cache.set(cacheKey, result, LISTINGS_TTL)
     return result
+  }
+
+  // ── SEARCH-2: Advanced Search & Discovery ────────────────────────────────────
+
+  async advancedSearch(dto: SearchListingsDto): Promise<{ data: Listing[]; total: number; page: number; limit: number }> {
+    const page = Math.max(1, dto.page ?? 1)
+    const limit = Math.min(Math.max(1, dto.limit ?? 20), 50)
+    const skip = (page - 1) * limit
+
+    const qb = this.listingRepo.createQueryBuilder('l')
+      .where('l.status = :status', { status: ListingStatus.ACTIVE })
+
+    // Full-text search on title and description
+    if (dto.q && dto.q.trim()) {
+      const term = `%${dto.q.trim()}%`
+      qb.andWhere('(l.title LIKE :term OR l.description LIKE :term)', { term })
+    }
+
+    // Category filter
+    if (dto.category) {
+      qb.andWhere('l.category = :category', { category: dto.category })
+    }
+
+    // Community filter
+    if (dto.communityId) {
+      qb.andWhere('l.communityId = :communityId', { communityId: dto.communityId })
+    }
+
+    // Price range filters
+    if (dto.minPrice !== undefined) {
+      qb.andWhere('l.price >= :minPrice', { minPrice: dto.minPrice })
+    }
+    if (dto.maxPrice !== undefined) {
+      qb.andWhere('l.price <= :maxPrice', { maxPrice: dto.maxPrice })
+    }
+
+    // Sort
+    switch (dto.sortBy ?? 'newest') {
+      case 'price_asc':
+        qb.orderBy('l.price', 'ASC')
+        break
+      case 'price_desc':
+        qb.orderBy('l.price', 'DESC')
+        break
+      case 'rating':
+      case 'popular':
+        // Fall back to newest when no dedicated rating/order-count column exists on the entity
+        qb.orderBy('l.createdAt', 'DESC')
+        break
+      case 'newest':
+      default:
+        qb.orderBy('l.createdAt', 'DESC')
+        break
+    }
+
+    qb.skip(skip).take(limit)
+
+    const [data, total] = await qb.getManyAndCount()
+    return { data, total, page, limit }
   }
 
   async findById(id: string) {
