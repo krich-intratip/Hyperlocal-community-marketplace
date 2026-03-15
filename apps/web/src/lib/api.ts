@@ -692,6 +692,47 @@ export const couponApi = {
   activate: (id: string) => apiClient.patch<CouponV2>(`/coupons/${id}/activate`, {}),
 }
 
+// ─── Subscription ─────────────────────────────────────────────────────────────
+
+export type SubscriptionTier = 'FREE' | 'BASIC' | 'PRO' | 'ENTERPRISE'
+
+export interface PlanConfig {
+  tier: SubscriptionTier
+  nameEN: string
+  nameTH: string
+  priceMonthlyTHB: number
+  maxListings: number
+  maxImages: number
+  featuredSlots: number
+  analyticsAccess: boolean
+  prioritySupport: boolean
+  customBranding: boolean
+}
+
+export interface ProviderSubscription {
+  id: string
+  providerId: string
+  tier: SubscriptionTier
+  startsAt: string
+  expiresAt: string | null
+  priceTHB: number
+  isActive: boolean
+  autoRenew: boolean
+  cancelledAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export const subscriptionApi = {
+  getPlans: () => apiClient.get<PlanConfig[]>('/subscriptions/plans'),
+  getMySubscription: () => apiClient.get<ProviderSubscription>('/subscriptions/me'),
+  cancel: () => apiClient.post<ProviderSubscription>('/subscriptions/me/cancel', {}),
+  adminSetTier: (providerId: string, tier: SubscriptionTier, months?: number) =>
+    apiClient.patch<ProviderSubscription>('/subscriptions/admin/set-tier', { providerId, tier, months }),
+  adminListAll: (tier?: SubscriptionTier) =>
+    apiClient.get<ProviderSubscription[]>('/subscriptions/admin/list', { params: tier ? { tier } : {} }),
+}
+
 // ─── Search (SEARCH-2) ────────────────────────────────────────────────────────
 
 export type SortBy = 'newest' | 'price_asc' | 'price_desc' | 'rating' | 'popular'

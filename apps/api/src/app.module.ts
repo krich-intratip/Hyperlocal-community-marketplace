@@ -35,6 +35,7 @@ import { ReferralModule } from './modules/referral/referral.module'
 import { ProviderScheduleModule } from './modules/schedule/schedule.module'
 import { CouponModule } from './modules/coupon/coupon.module'
 import { AnalyticsModule } from './modules/analytics/analytics.module'
+import { SubscriptionModule } from './modules/subscription/subscription.module'
 
 @Module({
   imports: [
@@ -133,6 +134,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module'
     ProviderScheduleModule,
     CouponModule,
     AnalyticsModule,
+    SubscriptionModule,
   ],
   providers: [
     // Wire RolesGuard globally — works alongside JwtAuthGuard on individual routes

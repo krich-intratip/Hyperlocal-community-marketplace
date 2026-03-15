@@ -491,3 +491,19 @@ export enum ShopStatus {
   VACATION = 'VACATION',
   CLOSED   = 'CLOSED',
 }
+
+// ─── Feature: Provider Subscription Plans (SUB-1) ───────────────────────────
+
+/**
+ * Subscription tier for a Provider account.
+ * FREE      = ฟรี (default)
+ * BASIC     = พื้นฐาน (299 THB/mo)
+ * PRO       = โปร (699 THB/mo)
+ * ENTERPRISE = องค์กร (1,999 THB/mo)
+ */
+export enum SubscriptionTier {
+  FREE       = 'FREE',
+  BASIC      = 'BASIC',
+  PRO        = 'PRO',
+  ENTERPRISE = 'ENTERPRISE',
+}

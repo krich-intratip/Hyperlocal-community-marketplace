@@ -428,6 +428,24 @@ export default function ProviderDashboardPage() {
               </Link>
             </motion.div>
 
+            {/* Subscription */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/subscription"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center">
+                    <Package className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">แผน</span>
+                </div>
+                <p className="font-bold text-indigo-900 text-sm mb-0.5">Subscription</p>
+                <p className="text-xs text-indigo-600 mb-3">แผนสมาชิก · อัปเกรด · ยกเลิก</p>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-indigo-700 font-bold">📦 ดูแผนของคุณ</span>
+                </div>
+              </Link>
+            </motion.div>
+
             {/* Location */}
             <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
               <Link href="/dashboard/provider/location"

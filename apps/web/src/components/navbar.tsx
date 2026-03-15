@@ -180,6 +180,7 @@ export function Navbar() {
     { href: '/stores',      label: 'ร้านค้า' },
     { href: '/communities', label: t.nav.communities },
     { href: '/franchise', label: t.nav.franchise },
+    { href: '/pricing', label: '💳 ราคา' },
     { href: '/guide', label: t.nav.guide },
     { href: '/about', label: t.nav.about },
   ]
