@@ -736,6 +736,44 @@ export const subscriptionApi = {
     apiClient.get<ProviderSubscription[]>('/subscriptions/admin/list', { params: tier ? { tier } : {} }),
 }
 
+// ─── Reports ──────────────────────────────────────────────────────────────────
+
+export type ReportType = 'LISTING' | 'PROVIDER' | 'REVIEW' | 'MESSAGE'
+export type ReportReason = 'SPAM' | 'INAPPROPRIATE' | 'FAKE' | 'SCAM' | 'HARASSMENT' | 'OTHER'
+export type ReportStatus = 'PENDING' | 'REVIEWED' | 'RESOLVED' | 'DISMISSED'
+
+export interface Report {
+  id: string
+  reporterId: string
+  type: ReportType
+  targetId: string
+  reason: ReportReason
+  description: string | null
+  status: ReportStatus
+  adminNote: string | null
+  resolvedBy: string | null
+  resolvedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ReportStats {
+  pending: number
+  resolved: number
+  dismissed: number
+  total: number
+}
+
+export const reportApi = {
+  create: (data: { type: ReportType; targetId: string; reason: ReportReason; description?: string }) =>
+    apiClient.post<Report>('/reports', data),
+  listAll: (params?: { status?: ReportStatus; type?: ReportType }) =>
+    apiClient.get<Report[]>('/reports', { params }),
+  getStats: () => apiClient.get<ReportStats>('/reports/stats'),
+  resolve: (id: string, data: { status: 'RESOLVED' | 'DISMISSED'; adminNote?: string }) =>
+    apiClient.patch<Report>(`/reports/${id}/resolve`, data),
+}
+
 // ─── Search (SEARCH-2) ────────────────────────────────────────────────────────
 
 export type SortBy = 'newest' | 'price_asc' | 'price_desc' | 'rating' | 'popular'

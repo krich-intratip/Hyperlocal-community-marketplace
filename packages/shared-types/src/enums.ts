@@ -507,3 +507,28 @@ export enum SubscriptionTier {
   PRO        = 'PRO',
   ENTERPRISE = 'ENTERPRISE',
 }
+
+// ─── Feature: Report & Flag System (REPORT-1) ────────────────────────────────
+
+export enum ReportType {
+  LISTING  = 'LISTING',
+  PROVIDER = 'PROVIDER',
+  REVIEW   = 'REVIEW',
+  MESSAGE  = 'MESSAGE',
+}
+
+export enum ReportReason {
+  SPAM          = 'SPAM',
+  INAPPROPRIATE = 'INAPPROPRIATE',
+  FAKE          = 'FAKE',
+  SCAM          = 'SCAM',
+  HARASSMENT    = 'HARASSMENT',
+  OTHER         = 'OTHER',
+}
+
+export enum ReportStatus {
+  PENDING   = 'PENDING',
+  REVIEWED  = 'REVIEWED',
+  RESOLVED  = 'RESOLVED',
+  DISMISSED = 'DISMISSED',
+}

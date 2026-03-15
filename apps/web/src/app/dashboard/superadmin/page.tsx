@@ -67,6 +67,7 @@ const QUICK_LINKS = [
   { href: '/dashboard/superadmin/system', icon: Settings, label: 'ตั้งค่าระบบ', desc: 'โหมดฝึกอบรม / ใช้งาน', color: 'text-slate-600', bg: 'bg-slate-100' },
   { href: '/dashboard/superadmin/coupons', icon: Tag, label: 'จัดการคูปอง', desc: 'สร้าง/ปิดใช้งานโค้ดส่วนลด', color: 'text-rose-600', bg: 'bg-rose-50' },
   { href: '/dashboard/superadmin/subscriptions', icon: Layers, label: '💳 Subscriptions', desc: 'จัดการแผนสมาชิก Provider', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  { href: '/dashboard/superadmin/reports', icon: ShieldCheck, label: '🚩 รายงาน', desc: 'จัดการรายงานจากผู้ใช้', color: 'text-red-600', bg: 'bg-red-50' },
 ]
 
 // ── Component ──────────────────────────────────────────────────────────────────

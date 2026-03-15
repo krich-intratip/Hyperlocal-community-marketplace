@@ -14,6 +14,7 @@ import { getListingById } from '@/lib/mock-listings'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
+import { ReportButton } from '@/components/report-button'
 
 const MapView = lazy(() => import('@/components/map-view').then(m => ({ default: m.MapView })))
 
@@ -473,6 +474,11 @@ export default function ListingDetailClient({ id }: { id: string }) {
                 ))}
               </div>
             </motion.div>
+
+            {/* Report listing */}
+            <div className="mt-4 flex justify-end">
+              <ReportButton type="LISTING" targetId={listing.id} />
+            </div>
           </div>
 
           {/* ── Right: Booking card ── */}
