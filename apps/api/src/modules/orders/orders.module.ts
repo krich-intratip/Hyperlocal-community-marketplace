@@ -9,6 +9,7 @@ import { OrdersService } from './orders.service'
 import { NotificationsModule } from '../notifications/notifications.module'
 import { LoyaltyModule } from '../loyalty/loyalty.module'
 import { ReferralModule } from '../referral/referral.module'
+import { CouponModule } from '../coupon/coupon.module'
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ReferralModule } from '../referral/referral.module'
     NotificationsModule,
     LoyaltyModule,
     ReferralModule,
+    CouponModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

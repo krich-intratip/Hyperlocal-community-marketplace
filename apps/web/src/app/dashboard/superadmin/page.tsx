@@ -9,7 +9,7 @@ import Link from 'next/link'
 import {
   Crown, Building2, Users, TrendingUp, DollarSign, ShieldCheck,
   Clock, CheckCircle, Pause, ArrowRightLeft, BarChart3,
-  Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star, Layers, Store,
+  Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star, Layers, Store, Tag,
 } from 'lucide-react'
 import { useT } from '@/hooks/useT'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
@@ -65,6 +65,7 @@ const QUICK_LINKS = [
   { href: '/communities', icon: Users, label: 'ชุมชนทั้งหมด', desc: 'ดูภาพรวมชุมชน', color: 'text-green-600', bg: 'bg-green-50' },
   { href: '/dashboard/superadmin/templates', icon: Layers, label: 'Template Builder', desc: 'Business Templates & Modules', color: 'text-violet-600', bg: 'bg-violet-50' },
   { href: '/dashboard/superadmin/system', icon: Settings, label: 'ตั้งค่าระบบ', desc: 'โหมดฝึกอบรม / ใช้งาน', color: 'text-slate-600', bg: 'bg-slate-100' },
+  { href: '/dashboard/superadmin/coupons', icon: Tag, label: 'จัดการคูปอง', desc: 'สร้าง/ปิดใช้งานโค้ดส่วนลด', color: 'text-rose-600', bg: 'bg-rose-50' },
 ]
 
 // ── Component ──────────────────────────────────────────────────────────────────

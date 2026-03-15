@@ -646,3 +646,48 @@ export const scheduleApi = {
   removeHoliday: (date: string) => apiClient.delete<{ removed: boolean }>(`/providers/me/holidays/${date}`),
   getPublicSchedule: (providerId: string) => apiClient.get<PublicSchedule>(`/providers/${providerId}/schedule`),
 }
+
+// ─── Coupon (COUPON-1) ────────────────────────────────────────────────────────
+
+export type CouponType = 'PERCENT' | 'FIXED' | 'FREE_DELIVERY'
+export type CouponScope = 'PLATFORM' | 'PROVIDER'
+
+export interface CouponV2 {
+  id: string
+  code: string
+  description: string | null
+  type: CouponType
+  discountValue: number
+  minOrderAmount: number
+  maxDiscountAmount: number | null
+  scope: CouponScope
+  providerId: string | null
+  maxUses: number | null
+  maxUsesPerUser: number
+  usedCount: number
+  isActive: boolean
+  startsAt: string | null
+  expiresAt: string | null
+  createdAt: string
+}
+
+export interface CouponValidation {
+  valid: boolean
+  coupon?: CouponV2
+  discountAmount: number
+  message: string
+}
+
+export const couponApi = {
+  validate: (code: string, orderTotal: number, providerId?: string) =>
+    apiClient.post<CouponValidation>('/coupons/validate', { code, orderTotal, providerId }),
+  list: () => apiClient.get<CouponV2[]>('/coupons'),
+  create: (dto: {
+    code: string; description?: string; type: CouponType; discountValue: number;
+    minOrderAmount?: number; maxDiscountAmount?: number; scope?: CouponScope;
+    providerId?: string; maxUses?: number; maxUsesPerUser?: number;
+    startsAt?: string; expiresAt?: string
+  }) => apiClient.post<CouponV2>('/coupons', dto),
+  deactivate: (id: string) => apiClient.patch<CouponV2>(`/coupons/${id}/deactivate`, {}),
+  activate: (id: string) => apiClient.patch<CouponV2>(`/coupons/${id}/activate`, {}),
+}

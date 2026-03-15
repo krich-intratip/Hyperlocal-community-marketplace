@@ -74,4 +74,9 @@ export class CreateOrderDto {
   @IsOptional()
   @Min(0)
   pointsToRedeem?: number
+
+  @ApiPropertyOptional({ description: 'Coupon code for discount' })
+  @IsString()
+  @IsOptional()
+  couponCode?: string
 }

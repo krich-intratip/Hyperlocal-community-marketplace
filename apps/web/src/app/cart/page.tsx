@@ -9,6 +9,7 @@ import {
   CheckCircle, Package, MapPin, Shield, Copy, Smartphone,
   Tag, X as XIcon, Truck,
 } from 'lucide-react'
+import { CouponInput } from '@/components/coupon-input'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -57,6 +58,8 @@ export default function CartPage() {
   const [promoInput, setPromoInput] = useState('')
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number; label: string } | null>(null)
   const [promoError, setPromoError] = useState('')
+  const [couponCode, setCouponCode] = useState('')
+  const [couponDiscount, setCouponDiscount] = useState(0)
   const [deliveryMethodByProvider, setDeliveryMethodByProvider] = useState<Record<string, DeliveryMethod>>({})
 
   // ── Promo codes ──────────────────────────────────────────────────────────────
@@ -81,12 +84,12 @@ export default function CartPage() {
 
   const subtotal = totalPrice()
   const platformFee = Math.round(subtotal * 0.05)
-  const discount = appliedPromo?.discount ?? 0
+  const discount = (appliedPromo?.discount ?? 0) + couponDiscount
   const deliveryFeeTotal = providerIds.reduce((s, pid) => {
     const method = deliveryMethodByProvider[pid] ?? 'self_pickup'
     return s + (DELIVERY_FEE[method] ?? 0)
   }, 0)
-  const grandTotal = subtotal + platformFee + deliveryFeeTotal - discount
+  const grandTotal = Math.max(0, subtotal + platformFee + deliveryFeeTotal - discount)
 
   function canCheckout() {
     return items.length > 0 && providerIds.every((pid) => {
@@ -383,17 +386,38 @@ export default function CartPage() {
               )}
             </motion.div>
 
-            {/* Order summary */}
+            {/* Coupon code (COUPON-1) */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={providerIds.length + 3}
+              className="glass rounded-2xl p-4 mb-4">
+              <p className="text-xs font-bold text-slate-600 mb-2.5 flex items-center gap-1.5">
+                <Tag className="h-3.5 w-3.5 text-primary" /> คูปองส่วนลด
+              </p>
+              <CouponInput
+                orderTotal={subtotal}
+                onApply={(code, disc) => { setCouponCode(code); setCouponDiscount(disc) }}
+                onRemove={() => { setCouponCode(''); setCouponDiscount(0) }}
+                appliedCode={couponCode || undefined}
+                appliedDiscount={couponDiscount}
+              />
+            </motion.div>
+
+            {/* Order summary */}
+            <motion.div variants={fadeUp} initial="hidden" animate="show" custom={providerIds.length + 4}
               className="glass rounded-2xl p-5 mb-5 space-y-2 text-sm">
               <div className="flex justify-between text-slate-600 dark:text-slate-300">
                 <span>ยอดรวมสินค้า</span>
                 <span>฿{subtotal.toLocaleString()}</span>
               </div>
-              {discount > 0 && (
+              {(appliedPromo?.discount ?? 0) > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span className="flex items-center gap-1"><Tag className="h-3 w-3" /> ส่วนลด ({appliedPromo?.code})</span>
-                  <span>-฿{discount.toLocaleString()}</span>
+                  <span>-฿{(appliedPromo?.discount ?? 0).toLocaleString()}</span>
+                </div>
+              )}
+              {couponDiscount > 0 && (
+                <div className="flex justify-between text-emerald-600 font-medium">
+                  <span>ส่วนลดคูปอง ({couponCode})</span>
+                  <span>-฿{couponDiscount.toLocaleString()}</span>
                 </div>
               )}
               <div className="flex justify-between text-slate-400 text-xs">
@@ -415,7 +439,7 @@ export default function CartPage() {
 
             <motion.button
               variants={fadeUp} initial="hidden" animate="show"
-              custom={providerIds.length + 4}
+              custom={providerIds.length + 5}
               whileHover={canCheckout() ? { scale: 1.02 } : {}}
               whileTap={canCheckout() ? { scale: 0.97 } : {}}
               disabled={!canCheckout()}

@@ -16,6 +16,7 @@ import { UpdateOrderStatusDto, OrderStatus } from './dto/update-order-status.dto
 import { NotificationsService } from '../notifications/notifications.service'
 import { LoyaltyService } from '../loyalty/loyalty.service'
 import { ReferralService } from '../referral/referral.service'
+import { CouponService } from '../coupon/coupon.service'
 
 /** Short order reference (last 8 chars of UUID, uppercased) */
 function shortRef(id: string): string {
@@ -98,6 +99,7 @@ export class OrdersService {
     private readonly notificationsService: NotificationsService,
     private readonly loyaltyService: LoyaltyService,
     private readonly referralService: ReferralService,
+    private readonly couponService: CouponService,
   ) {}
 
   /**
@@ -166,7 +168,23 @@ export class OrdersService {
       const redeemResult = await this.loyaltyService.validateRedeem(customerId, pointsToRedeem)
       loyaltyDiscount = redeemResult.discount
     }
-    const total = Math.round(Math.max(0, subtotal + platformFee - loyaltyDiscount) * 100) / 100
+
+    // 3c. Coupon discount (pre-validate only — usage is recorded after order save)
+    let couponDiscount = 0
+    if (dto.couponCode) {
+      const couponResult = await this.couponService.validate(customerId, {
+        code: dto.couponCode,
+        orderTotal: subtotal,
+        providerId: dto.providerId,
+      })
+      if (couponResult.valid) {
+        couponDiscount = couponResult.discountAmount
+      }
+    }
+
+    const total = Math.round(
+      Math.max(0, subtotal + platformFee - loyaltyDiscount - couponDiscount) * 100,
+    ) / 100
 
     // 4. Generate tracking ID for courier deliveries (server-side — not from client)
     const deliveryMethod = dto.deliveryMethod ?? 'self_pickup'
@@ -200,6 +218,13 @@ export class OrdersService {
     // 5b. Redeem loyalty points (fire-and-forget style — failure must not roll back order)
     if (pointsToRedeem > 0) {
       await this.loyaltyService.redeemPoints(customerId, saved.id, pointsToRedeem)
+    }
+
+    // 5c. Record coupon usage after order is persisted (fire-and-forget — invalid coupon must not fail order)
+    if (dto.couponCode && couponDiscount > 0) {
+      this.couponService
+        .applyCoupon(customerId, dto.couponCode, subtotal, saved.id, dto.providerId)
+        .catch(() => { /* never throw — coupon failure must not fail the request */ })
     }
 
     // 6. Decrement stock for tracked listings
