@@ -614,3 +614,35 @@ export const adminApi = {
   getStats: () =>
     apiClient.get<PlatformStats>('/admin/stats'),
 }
+
+// ─── Schedule ─────────────────────────────────────────────────────────────────
+
+export interface DaySchedule {
+  dayOfWeek: number  // 0=Sun 6=Sat
+  isOpen: boolean
+  openTime: string   // HH:mm
+  closeTime: string  // HH:mm
+}
+
+export interface ProviderHolidayEntry {
+  id: string
+  date: string       // YYYY-MM-DD
+  reason: string | null
+  createdAt: string
+}
+
+export interface PublicSchedule {
+  schedule: DaySchedule[]
+  holidays: ProviderHolidayEntry[]
+  todayOpen: boolean
+  todayHours: string
+}
+
+export const scheduleApi = {
+  getMySchedule: () => apiClient.get<DaySchedule[]>('/providers/me/schedule'),
+  setMySchedule: (days: DaySchedule[]) => apiClient.patch<DaySchedule[]>('/providers/me/schedule', { days }),
+  getMyHolidays: () => apiClient.get<ProviderHolidayEntry[]>('/providers/me/holidays'),
+  addHoliday: (date: string, reason?: string) => apiClient.post<ProviderHolidayEntry>('/providers/me/holidays', { date, reason }),
+  removeHoliday: (date: string) => apiClient.delete<{ removed: boolean }>(`/providers/me/holidays/${date}`),
+  getPublicSchedule: (providerId: string) => apiClient.get<PublicSchedule>(`/providers/${providerId}/schedule`),
+}
