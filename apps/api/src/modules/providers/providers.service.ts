@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { IsNull, Not, Repository } from 'typeorm'
 import { Provider } from './entities/provider.entity'
 import { VerificationStatus, ProviderStatus, ShopStatus } from '@chm/shared-types'
+import { SetLocationDto } from './dto/set-location.dto'
+import { NearbyQueryDto } from './dto/nearby-query.dto'
 
 @Injectable()
 export class ProvidersService {
@@ -157,6 +159,51 @@ export class ProvidersService {
     return this.providerRepo.find({
       where: { communityId, verificationStatus: VerificationStatus.PENDING },
     })
+  }
+
+  // ─── GEO-1: Geolocation & Nearby Discovery ────────────────────────────────
+
+  /** Haversine formula — returns distance in km between two lat/lng points */
+  private haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371 // Earth radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLon = (lon2 - lon1) * Math.PI / 180
+    const a = Math.sin(dLat / 2) ** 2
+      + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180)
+      * Math.sin(dLon / 2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  }
+
+  /** Provider: update own GPS coordinates */
+  async setLocation(userId: string, dto: SetLocationDto): Promise<Provider> {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) throw new NotFoundException('ไม่พบข้อมูล Provider')
+    provider.locationLat = dto.latitude
+    provider.locationLng = dto.longitude
+    return this.providerRepo.save(provider)
+  }
+
+  /** Public: list providers within radius km, sorted by distance */
+  async getNearby(dto: NearbyQueryDto): Promise<Array<Provider & { distanceKm: number }>> {
+    const radius = dto.radius ?? 10
+
+    const providers = await this.providerRepo
+      .createQueryBuilder('p')
+      .where('p.location_lat IS NOT NULL')
+      .andWhere('p.location_lng IS NOT NULL')
+      .andWhere('p.is_active = :active', { active: true })
+      .andWhere('p.verification_status = :status', { status: VerificationStatus.APPROVED })
+      .getMany()
+
+    const results = providers
+      .map(p => ({
+        ...p,
+        distanceKm: this.haversine(dto.lat, dto.lng, p.locationLat!, p.locationLng!),
+      }))
+      .filter(p => p.distanceKm <= radius)
+      .sort((a, b) => a.distanceKm - b.distanceKm)
+
+    return results
   }
 
   /** Provider: set shop vacation status (VAC-1) */

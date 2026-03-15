@@ -8,7 +8,7 @@ import { MarketBackground } from '@/components/market-background'
 import {
   TrendingUp, Star, CalendarCheck, DollarSign, Plus, Clock, CheckCircle, Eye,
   PauseCircle, PlayCircle, LogOut, AlertTriangle, X, MapPin, ShieldCheck,
-  BarChart3, Zap, MessageCircle, UmbrellaOff, Umbrella, Loader2, Package, Boxes, CalendarClock,
+  BarChart3, Zap, MessageCircle, UmbrellaOff, Umbrella, Loader2, Package, Boxes, CalendarClock, Navigation,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useDateFormat } from '@/hooks/useDateFormat'
@@ -424,6 +424,25 @@ export default function ProviderDashboardPage() {
                 <div className="flex items-center gap-1.5">
                   <CalendarClock className="h-3.5 w-3.5 text-sky-600" />
                   <span className="text-xs text-sky-700 font-bold">จัดการเวลา</span>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Location */}
+            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/dashboard/provider/location"
+                className="flex flex-col p-5 rounded-2xl bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-200 shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
+                    <Navigation className="h-4.5 w-4.5 text-white" />
+                  </div>
+                  <span className="text-xs font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">GPS</span>
+                </div>
+                <p className="font-bold text-rose-900 text-sm mb-0.5">ตำแหน่งร้าน</p>
+                <p className="text-xs text-rose-600 mb-3">ตั้งค่า GPS · ค้นหาใกล้บ้าน</p>
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-rose-600" />
+                  <span className="text-xs text-rose-700 font-bold">ตั้งค่าตำแหน่ง</span>
                 </div>
               </Link>
             </motion.div>

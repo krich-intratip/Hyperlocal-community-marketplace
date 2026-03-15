@@ -5,6 +5,8 @@ import { RolesGuard } from '../auth/guards/roles.guard'
 import { Roles } from '../auth/decorators/roles.decorator'
 import { ProvidersService } from './providers.service'
 import { UserRole } from '@chm/shared-types'
+import { SetLocationDto } from './dto/set-location.dto'
+import { NearbyQueryDto } from './dto/nearby-query.dto'
 
 @ApiTags('Providers')
 @Controller('providers')
@@ -36,6 +38,24 @@ export class ProvidersController {
   getMyProfile(@Req() req: any) {
     return this.providersService.findMyProfile(req.user.id)
   }
+
+  // ─── GEO-1: Geolocation & Nearby Discovery ────────────────────────────────
+
+  @Get('nearby')
+  @ApiOperation({ summary: 'Get providers near a location (public)' })
+  getNearby(@Query() dto: NearbyQueryDto) {
+    return this.providersService.getNearby(dto)
+  }
+
+  @Patch('me/location')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Set my GPS location (provider)' })
+  setLocation(@Req() req: any, @Body() dto: SetLocationDto) {
+    return this.providersService.setLocation(req.user.id, dto)
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
 
   @Get(':id')
   @ApiOperation({ summary: 'Get provider public profile' })

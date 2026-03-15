@@ -756,3 +756,30 @@ export interface PlatformAnalytics {
 export const analyticsApi = {
   getPlatform: () => apiClient.get<PlatformAnalytics>('/analytics/platform'),
 }
+
+// ─── Geolocation ─────────────────────────────────────────────────────────────
+
+export interface NearbyProvider {
+  id: string
+  displayName: string
+  bio: string | null
+  category: string | null
+  avatarUrl: string | null
+  rating: number
+  reviewCount: number
+  distanceKm: number
+  latitude: number
+  longitude: number
+  isVerified?: boolean
+}
+
+export const geoApi = {
+  getNearby: (lat: number, lng: number, radius?: number, category?: string) => {
+    const qs = new URLSearchParams({ lat: String(lat), lng: String(lng) })
+    if (radius) qs.set('radius', String(radius))
+    if (category) qs.set('category', category)
+    return apiClient.get<NearbyProvider[]>(`/providers/nearby?${qs.toString()}`)
+  },
+  setMyLocation: (latitude: number, longitude: number) =>
+    apiClient.patch('/providers/me/location', { latitude, longitude }),
+}
