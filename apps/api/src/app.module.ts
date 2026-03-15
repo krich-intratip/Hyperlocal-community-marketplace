@@ -37,6 +37,7 @@ import { CouponModule } from './modules/coupon/coupon.module'
 import { AnalyticsModule } from './modules/analytics/analytics.module'
 import { SubscriptionModule } from './modules/subscription/subscription.module'
 import { ReportModule } from './modules/report/report.module'
+import { PushModule } from './modules/push/push.module'
 
 @Module({
   imports: [
@@ -137,6 +138,7 @@ import { ReportModule } from './modules/report/report.module'
     AnalyticsModule,
     SubscriptionModule,
     ReportModule,
+    PushModule,
   ],
   providers: [
     // Wire RolesGuard globally — works alongside JwtAuthGuard on individual routes

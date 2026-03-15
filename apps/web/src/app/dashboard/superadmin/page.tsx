@@ -9,7 +9,7 @@ import Link from 'next/link'
 import {
   Crown, Building2, Users, TrendingUp, DollarSign, ShieldCheck,
   Clock, CheckCircle, Pause, ArrowRightLeft, BarChart3, BarChart2,
-  Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star, Layers, Store, Tag,
+  Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star, Layers, Store, Tag, Bell,
 } from 'lucide-react'
 import { useT } from '@/hooks/useT'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
@@ -68,6 +68,7 @@ const QUICK_LINKS = [
   { href: '/dashboard/superadmin/coupons', icon: Tag, label: 'จัดการคูปอง', desc: 'สร้าง/ปิดใช้งานโค้ดส่วนลด', color: 'text-rose-600', bg: 'bg-rose-50' },
   { href: '/dashboard/superadmin/subscriptions', icon: Layers, label: '💳 Subscriptions', desc: 'จัดการแผนสมาชิก Provider', color: 'text-indigo-600', bg: 'bg-indigo-50' },
   { href: '/dashboard/superadmin/reports', icon: ShieldCheck, label: '🚩 รายงาน', desc: 'จัดการรายงานจากผู้ใช้', color: 'text-red-600', bg: 'bg-red-50' },
+  { href: '/dashboard/superadmin/push', icon: Bell, label: '🔔 Push', desc: 'ส่ง Broadcast Notifications', color: 'text-sky-600', bg: 'bg-sky-50' },
 ]
 
 // ── Component ──────────────────────────────────────────────────────────────────

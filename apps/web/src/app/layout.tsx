@@ -5,6 +5,7 @@ import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import { JsonLd } from '@/components/json-ld'
 import { buildMetadata, websiteJsonLd, organizationJsonLd, marketplaceJsonLd } from '@/lib/seo'
+import Script from 'next/script'
 
 const sarabun = Sarabun({
   subsets: ['thai', 'latin'],
@@ -37,12 +38,21 @@ export default function RootLayout({
       <head>
         <JsonLd data={[websiteJsonLd(), organizationJsonLd(), marketplaceJsonLd()]} />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#2563eb" />
-        <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
+        <meta name="theme-color" content="#4f46e5" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className={`${sarabun.variable} font-sans antialiased`}>
         <Providers>{children}</Providers>
         <Toaster richColors position="top-right" />
+        <Script id="sw-register" strategy="afterInteractive">{`
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').catch(function(err) {
+        console.log('SW registration failed:', err)
+      })
+    })
+  }
+`}</Script>
       </body>
     </html>
   )

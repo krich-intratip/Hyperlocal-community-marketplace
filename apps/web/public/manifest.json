@@ -1,20 +1,22 @@
 {
-  "name": "Community Hyper Marketplace",
-  "short_name": "CHM",
-  "description": "แพลตฟอร์มตลาดบริการชุมชนแบบดิจิทัล",
+  "name": "Community Hyperlocal Marketplace",
+  "short_name": "CHMarket",
+  "description": "ตลาดออนไลน์ชุมชน — ค้นหาร้านค้าและบริการใกล้บ้านคุณ",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
   "orientation": "portrait-primary",
-  "lang": "th",
   "icons": [
-    { "src": "/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" },
-    { "src": "/icons/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ],
-  "screenshots": [],
-  "categories": ["shopping", "lifestyle"],
+  "categories": ["shopping", "lifestyle", "food"],
+  "lang": "th",
+  "dir": "ltr",
   "shortcuts": [
     { "name": "Marketplace", "url": "/marketplace", "description": "ค้นหาบริการในชุมชน" },
     { "name": "การจองของฉัน", "url": "/bookings", "description": "ดูการจองทั้งหมด" }

@@ -736,6 +736,37 @@ export const subscriptionApi = {
     apiClient.get<ProviderSubscription[]>('/subscriptions/admin/list', { params: tier ? { tier } : {} }),
 }
 
+// ─── Push Notifications ────────────────────────────────────────────────────────
+
+export interface PushSubscriptionData {
+  id: string
+  userId: string
+  endpoint: string
+  p256dh: string
+  auth: string
+  userAgent: string | null
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PushStats {
+  total: number
+  active: number
+}
+
+export const pushApi = {
+  subscribe: (data: { endpoint: string; p256dh: string; auth: string; userAgent?: string }) =>
+    apiClient.post<PushSubscriptionData>('/push/subscribe', data),
+  unsubscribe: (endpoint: string) =>
+    apiClient.delete('/push/unsubscribe', { params: { endpoint } }),
+  getMySubscriptions: () =>
+    apiClient.get<PushSubscriptionData[]>('/push/my-subscriptions'),
+  send: (data: { userIds?: string[]; title: string; body: string; url?: string }) =>
+    apiClient.post<{ sent: number; failed: number }>('/push/send', data),
+  getStats: () => apiClient.get<PushStats>('/push/stats'),
+}
+
 // ─── Reports ──────────────────────────────────────────────────────────────────
 
 export type ReportType = 'LISTING' | 'PROVIDER' | 'REVIEW' | 'MESSAGE'

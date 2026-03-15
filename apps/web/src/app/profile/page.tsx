@@ -14,6 +14,7 @@ import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { useAuthStore } from '@/store/auth.store'
 import { useAvatarUpload } from '@/hooks/useAvatarUpload'
 import { usersApi } from '@/lib/api'
+import { PushNotificationToggle } from '@/components/push-notification-toggle'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -210,6 +211,11 @@ export default function ProfilePage() {
               </motion.button>
             )}
           </div>
+        </motion.div>
+
+        {/* Push notification toggle */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-4">
+          <PushNotificationToggle />
         </motion.div>
 
         {/* Menu */}
