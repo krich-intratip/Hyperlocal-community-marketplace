@@ -15,6 +15,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { useAvatarUpload } from '@/hooks/useAvatarUpload'
 import { usersApi } from '@/lib/api'
 import { PushNotificationToggle } from '@/components/push-notification-toggle'
+import { LangSwitcher } from '@/components/lang-switcher'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -216,6 +217,17 @@ export default function ProfilePage() {
         {/* Push notification toggle */}
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-4">
           <PushNotificationToggle />
+        </motion.div>
+
+        {/* Language preference */}
+        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0} className="mb-4">
+          <div className="glass-sm rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-slate-700">🌐 ภาษา / Language</p>
+              <p className="text-xs text-slate-500">เลือกภาษาที่ต้องการแสดง</p>
+            </div>
+            <LangSwitcher />
+          </div>
         </motion.div>
 
         {/* Menu */}

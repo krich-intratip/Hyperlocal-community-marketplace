@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin, Menu, X, Bell, User, Package, LayoutDashboard, LogOut, ChevronDown, ShoppingCart, Search, Loader2, Heart, MessageSquare } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { ThemeLanguageToggle } from '@/components/theme-language-toggle'
+import { LangSwitcher } from '@/components/lang-switcher'
 import { useT } from '@/hooks/useT'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
@@ -236,6 +237,7 @@ export function Navbar() {
 
         {/* Desktop right */}
         <div className="hidden md:flex items-center gap-3">
+          <LangSwitcher className="hidden md:flex" />
           <ThemeLanguageToggle />
 
           {isLoggedIn ? (

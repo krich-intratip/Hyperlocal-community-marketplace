@@ -15,6 +15,23 @@ export const apiClient = axios.create({
   },
 })
 
+// Send Accept-Language header based on stored lang preference
+apiClient.interceptors.request.use(config => {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('chm-lang')
+      if (stored) {
+        const parsed = JSON.parse(stored) as { state?: { lang?: string } }
+        const lang = parsed?.state?.lang ?? 'th'
+        config.headers['Accept-Language'] = lang
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }
+  return config
+})
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {

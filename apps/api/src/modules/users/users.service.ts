@@ -48,4 +48,9 @@ export class UsersService {
     if (!updated) throw new NotFoundException('User not found')
     return updated
   }
+
+  async setLanguage(userId: string, language: 'th' | 'en'): Promise<{ preferredLanguage: string }> {
+    await this.userRepository.update(userId, { preferredLanguage: language })
+    return { preferredLanguage: language }
+  }
 }

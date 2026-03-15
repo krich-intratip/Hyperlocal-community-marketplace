@@ -8,6 +8,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ConfigService } from '@nestjs/config'
 import { AppModule } from './app.module'
 import { HttpExceptionFilter } from './common/filters/http-exception.filter'
+import { LangInterceptor } from './common/lang.interceptor'
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap')
@@ -85,6 +86,9 @@ async function bootstrap() {
 
   // ── Global exception filter: sanitised error responses ──
   app.useGlobalFilters(new HttpExceptionFilter())
+
+  // ── i18n: parse Accept-Language header, attach req.lang ('th' | 'en') ──
+  app.useGlobalInterceptors(new LangInterceptor())
 
   if (appEnv !== 'production') {
     const config = new DocumentBuilder()

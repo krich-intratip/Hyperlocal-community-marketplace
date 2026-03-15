@@ -61,6 +61,9 @@ export class User {
   @Column({ name: 'id_verified_at', nullable: true, type: 'datetime' })
   idVerifiedAt: Date | null
 
+  @Column({ name: 'preferred_language', type: 'varchar', length: 5, default: 'th' })
+  preferredLanguage: string // 'th' | 'en'
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date
 

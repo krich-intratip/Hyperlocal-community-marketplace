@@ -321,3 +321,134 @@ export const en: typeof th = {
 }
 
 export const translations = { th, en }
+
+// ─── Flat i18n API (LANG-1) ───────────────────────────────────────────────────
+
+import type { Lang } from '@/store/lang-store'
+
+export type TranslationKey =
+  | 'marketplace'
+  | 'nearby'
+  | 'map'
+  | 'pricing'
+  | 'search'
+  | 'login'
+  | 'register'
+  | 'profile'
+  | 'orders'
+  | 'cart'
+  | 'notifications'
+  | 'settings'
+  | 'logout'
+  | 'loading'
+  | 'noResults'
+  | 'seeAll'
+  | 'viewShop'
+  | 'addToCart'
+  | 'report'
+  | 'reviews'
+  | 'rating'
+  | 'distance'
+  | 'category'
+  | 'price'
+  | 'sort'
+  | 'filter'
+  | 'save'
+  | 'cancel'
+  | 'confirm'
+  | 'delete'
+  | 'edit'
+  | 'submit'
+  | 'search_placeholder'
+  | 'welcome'
+  | 'featuredProviders'
+  | 'newListings'
+
+const flatTranslations: Record<Lang, Record<TranslationKey, string>> = {
+  th: {
+    marketplace: 'ตลาด',
+    nearby: 'ใกล้บ้าน',
+    map: 'แผนที่',
+    pricing: 'ราคา',
+    search: 'ค้นหา',
+    login: 'เข้าสู่ระบบ',
+    register: 'สมัครสมาชิก',
+    profile: 'โปรไฟล์',
+    orders: 'คำสั่งซื้อ',
+    cart: 'ตะกร้า',
+    notifications: 'การแจ้งเตือน',
+    settings: 'ตั้งค่า',
+    logout: 'ออกจากระบบ',
+    loading: 'กำลังโหลด...',
+    noResults: 'ไม่พบผลลัพธ์',
+    seeAll: 'ดูทั้งหมด',
+    viewShop: 'ดูร้าน',
+    addToCart: 'ใส่ตะกร้า',
+    report: 'รายงาน',
+    reviews: 'รีวิว',
+    rating: 'คะแนน',
+    distance: 'ระยะทาง',
+    category: 'หมวดหมู่',
+    price: 'ราคา',
+    sort: 'เรียงตาม',
+    filter: 'กรอง',
+    save: 'บันทึก',
+    cancel: 'ยกเลิก',
+    confirm: 'ยืนยัน',
+    delete: 'ลบ',
+    edit: 'แก้ไข',
+    submit: 'ส่ง',
+    search_placeholder: 'ค้นหาร้านค้า สินค้า หรือบริการ...',
+    welcome: 'ยินดีต้อนรับ',
+    featuredProviders: 'ร้านค้าแนะนำ',
+    newListings: 'สินค้าใหม่',
+  },
+  en: {
+    marketplace: 'Marketplace',
+    nearby: 'Nearby',
+    map: 'Map',
+    pricing: 'Pricing',
+    search: 'Search',
+    login: 'Login',
+    register: 'Sign Up',
+    profile: 'Profile',
+    orders: 'Orders',
+    cart: 'Cart',
+    notifications: 'Notifications',
+    settings: 'Settings',
+    logout: 'Logout',
+    loading: 'Loading...',
+    noResults: 'No results found',
+    seeAll: 'See All',
+    viewShop: 'View Shop',
+    addToCart: 'Add to Cart',
+    report: 'Report',
+    reviews: 'Reviews',
+    rating: 'Rating',
+    distance: 'Distance',
+    category: 'Category',
+    price: 'Price',
+    sort: 'Sort by',
+    filter: 'Filter',
+    save: 'Save',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    delete: 'Delete',
+    edit: 'Edit',
+    submit: 'Submit',
+    search_placeholder: 'Search shops, products, or services...',
+    welcome: 'Welcome',
+    featuredProviders: 'Featured Providers',
+    newListings: 'New Listings',
+  },
+}
+
+/** Hook-free translate function — use inside components with lang from store */
+export function t(key: TranslationKey, lang: Lang): string {
+  return flatTranslations[lang][key] ?? flatTranslations.th[key] ?? key
+}
+
+/** Get full flat translations for a lang */
+export function getTranslations(lang: Lang): Record<TranslationKey, string> {
+  return flatTranslations[lang]
+}

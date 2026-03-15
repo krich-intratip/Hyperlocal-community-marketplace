@@ -207,6 +207,9 @@ export const usersApi = {
 
   updateProfile: (dto: Partial<Pick<UserProfile, 'name' | 'phone' | 'avatarUrl'>>) =>
     apiClient.patch<ApiResponse<UserProfile>>('/users/me', dto),
+
+  setLanguage: (language: 'th' | 'en') =>
+    apiClient.patch<{ preferredLanguage: string }>('/users/me/language', { language }),
 }
 
 // ─── Follow / Unfollow provider ───────────────────────────────────────────────
