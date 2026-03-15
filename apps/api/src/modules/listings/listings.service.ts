@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Inject } from '@nestjs/common'
+import { Injectable, NotFoundException, ForbiddenException, Inject } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, ILike, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
@@ -222,6 +222,47 @@ export class ListingsService {
     if (!provider) throw new NotFoundException('Provider profile not found')
     const all = await this.listingRepo.find({ where: { providerId: provider.id } })
     return all.filter(l => l.stockQty !== null && l.stockQty <= l.lowStockThreshold)
+  }
+
+  // ── MULTI-1: Multi-Image Listings ─────────────────────────────────────────────
+
+  /**
+   * Replace the images array for a listing.
+   * Validates ownership: the authenticated user must be the owning provider.
+   * The first image in the array is the cover/primary image.
+   */
+  async setImages(listingId: string, userId: string, images: string[]): Promise<Listing> {
+    const provider = await this.providerRepo.findOne({ where: { userId } })
+    if (!provider) throw new NotFoundException('Provider profile not found')
+
+    const listing = await this.listingRepo.findOne({ where: { id: listingId } })
+    if (!listing) throw new NotFoundException('Listing not found')
+
+    if (listing.providerId !== provider.id) {
+      throw new ForbiddenException('ไม่มีสิทธิ์แก้ไข listing นี้')
+    }
+
+    listing.images = images
+    const saved = await this.listingRepo.save(listing)
+    await this.invalidateListingsCache()
+    return saved
+  }
+
+  /**
+   * Return the images array for a listing, falling back gracefully if the
+   * column is null or contains invalid JSON (legacy data).
+   */
+  parseImages(listing: Listing): string[] {
+    if (!listing.images) return []
+    // When stored via jsonCol() TypeORM already deserialises the value,
+    // so we may receive a plain array rather than a JSON string.
+    if (Array.isArray(listing.images)) return listing.images
+    try {
+      const parsed: unknown = JSON.parse(listing.images as unknown as string)
+      return Array.isArray(parsed) ? (parsed as string[]) : []
+    } catch {
+      return []
+    }
   }
 
   private async invalidateListingsCache() {

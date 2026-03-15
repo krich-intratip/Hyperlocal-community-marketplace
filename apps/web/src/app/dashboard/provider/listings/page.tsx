@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useState, useRef } from 'react'
 import { useListingImageUpload } from '@/hooks/useListingImageUpload'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
+import { ImageUrlInput } from '@/components/image-url-input'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -59,11 +60,13 @@ export default function ProviderListingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const imgUpload = useListingImageUpload([])
+  const [imageUrls, setImageUrls] = useState<string[]>([])
 
   function openNew() {
     setEditId(null)
     setForm(EMPTY_FORM)
     imgUpload.reset()
+    setImageUrls([])
     setShowModal(true)
   }
 
@@ -71,12 +74,19 @@ export default function ProviderListingsPage() {
     setEditId(l.id)
     setForm({ title: l.title, category: l.category, price: String(l.price), unit: l.unit, image: l.image, description: l.description })
     imgUpload.setExternalImages(l.images)
+    setImageUrls(l.images)
     setShowModal(true)
   }
 
   function handleSave() {
     if (!form.title || !form.price) return
-    const finalImages = imgUpload.images
+    // Merge uploaded images + URL images, deduplicated
+    const uploadedImages = imgUpload.images
+    const mergedImages = [
+      ...uploadedImages,
+      ...imageUrls.filter(u => !uploadedImages.includes(u)),
+    ]
+    const finalImages = mergedImages
     if (editId) {
       setListings(prev => prev.map(l => l.id === editId
         ? { ...l, title: form.title, category: form.category, price: Number(form.price), unit: form.unit, image: form.image, description: form.description, images: finalImages }
@@ -261,6 +271,14 @@ export default function ProviderListingsPage() {
                   )}
                   <p className="text-xs text-slate-400 mt-1">สูงสุด 5 รูป · ไม่เกิน 8 MB ต่อรูป · หากไม่อัปโหลด จะใช้ไอคอน Emoji แทน</p>
                 </div>
+
+                {/* URL-based image input */}
+                <ImageUrlInput
+                  value={imageUrls}
+                  onChange={setImageUrls}
+                  maxImages={20}
+                  label="เพิ่มรูปจาก URL"
+                />
 
                 <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   onClick={handleSave}

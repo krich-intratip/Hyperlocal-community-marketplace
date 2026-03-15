@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { ListingsService, ListingSortOption } from './listings.service'
 import { MarketplaceCategory } from '@chm/shared-types'
 import { SearchListingsDto } from './dto/search-listings.dto'
+import { SetImagesDto } from './dto/set-images.dto'
 
 @ApiTags('Listings')
 @Controller('listings')
@@ -89,6 +90,21 @@ export class ListingsController {
     },
   ) {
     return this.listingsService.create(req.user.id, body)
+  }
+
+  // ── MULTI-1: Multi-Image Listings ─────────────────────────────────────────────
+  // Declared BEFORE generic :id PATCH to avoid route collision
+
+  @Patch(':id/images')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Set/replace the images array for a listing (provider owner only)' })
+  setImages(
+    @Param('id') id: string,
+    @Req() req: any,
+    @Body() body: SetImagesDto,
+  ) {
+    return this.listingsService.setImages(id, req.user.id, body.images)
   }
 
   @Patch(':id')

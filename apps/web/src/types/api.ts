@@ -307,6 +307,7 @@ export interface Listing {
   communityId: string
   tags: string[]
   imageUrl?: string
+  images?: string[]
   lat?: number
   lng?: number
   address?: string

@@ -181,6 +181,9 @@ export const listingsApi = {
 
   setPromotion: (id: string, body: { discountPercent: number | null; discountEndsAt: string | null }) =>
     apiClient.patch<{ success: boolean }>(`/listings/${id}/promotion`, body),
+
+  setImages: (id: string, images: string[]) =>
+    apiClient.patch<Listing>(`/listings/${id}/images`, { images }),
 }
 
 // ─── Notifications ────────────────────────────────────────────────────────────

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { AppFooter } from '@/components/app-footer'
 import { MarketBackground } from '@/components/market-background'
 import { Navbar } from '@/components/navbar'
+import { ImageGallery } from '@/components/image-gallery'
 import { MapPin, Star, Shield, Clock, Phone, ChevronLeft, ChevronRight, CheckCircle, MessageCircle, Package, AlertCircle, Heart, ShoppingCart, UmbrellaOff, Flame, Beef, Wheat, Zap, Minus, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { useState, lazy, Suspense, useEffect } from 'react'
@@ -191,23 +192,24 @@ export default function ListingDetailClient({ id }: { id: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* ── Left: details ── */}
           <div className="lg:col-span-2 space-y-5">
-            {/* Hero image */}
+            {/* Hero image gallery */}
             <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}
-              className="relative h-64 rounded-2xl bg-gradient-to-br from-blue-50 to-amber-50 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-8xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-              {listing.images?.[0]
-                ? <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
-                : listing.image}
-              <div className="absolute top-4 left-4">
+              className="relative rounded-2xl shadow-sm overflow-hidden">
+              <ImageGallery
+                images={listing.images && listing.images.length > 0 ? listing.images : []}
+                alt={listing.title}
+              />
+              <div className="absolute top-4 left-4 z-10">
                 <ProviderStatusBadge status={listing.status} />
               </div>
               {listing.providerVerified && (
-                <div className="absolute top-4 right-4 flex items-center gap-1 text-sm bg-blue-600 text-white px-3 py-1 rounded-full font-bold">
+                <div className="absolute top-4 right-4 z-10 flex items-center gap-1 text-sm bg-blue-600 text-white px-3 py-1 rounded-full font-bold">
                   <Shield className="h-3.5 w-3.5" /> ยืนยันแล้ว
                 </div>
               )}
               <button
                 onClick={() => setWishlisted(w => !w)}
-                className={`absolute bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all shadow-md ${
+                className={`absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all shadow-md ${
                   wishlisted
                     ? 'bg-red-500 text-white'
                     : 'bg-white/90 dark:bg-slate-700/90 text-slate-500 hover:text-red-500'

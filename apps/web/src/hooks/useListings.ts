@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { MOCK_LISTINGS, getListingById, type MockListing } from '@/lib/mock-listings'
 import { listingsApi } from '@/lib/api'
 
@@ -89,5 +89,14 @@ export function useListing(id: string) {
     queryFn: () => fetchListingById(id),
     staleTime: 60 * 1000,
     enabled: !!id,
+  })
+}
+
+export function useSetListingImages() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, images }: { id: string; images: string[] }) =>
+      listingsApi.setImages(id, images),
+    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: ['listings', id] }),
   })
 }
