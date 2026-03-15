@@ -69,6 +69,7 @@ const QUICK_LINKS = [
   { href: '/dashboard/superadmin/subscriptions', icon: Layers, label: '💳 Subscriptions', desc: 'จัดการแผนสมาชิก Provider', color: 'text-indigo-600', bg: 'bg-indigo-50' },
   { href: '/dashboard/superadmin/reports', icon: ShieldCheck, label: '🚩 รายงาน', desc: 'จัดการรายงานจากผู้ใช้', color: 'text-red-600', bg: 'bg-red-50' },
   { href: '/dashboard/superadmin/push', icon: Bell, label: '🔔 Push', desc: 'ส่ง Broadcast Notifications', color: 'text-sky-600', bg: 'bg-sky-50' },
+  { href: '/dashboard/superadmin/audit', icon: ShieldCheck, label: '🔐 Audit Log', desc: 'Security event log & ตรวจสอบกิจกรรม', color: 'text-slate-600', bg: 'bg-slate-100' },
 ]
 
 // ── Component ──────────────────────────────────────────────────────────────────

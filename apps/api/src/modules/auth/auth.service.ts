@@ -2,8 +2,9 @@ import { Injectable, ConflictException, UnauthorizedException, Inject, forwardRe
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { UsersService } from '../users/users.service'
-import { UserRole } from '@chm/shared-types'
+import { AuditAction, UserRole } from '@chm/shared-types'
 import { ReferralService } from '../referral/referral.service'
+import { AuditService } from '../audit/audit.service'
 
 export interface OAuthUser {
   googleId?: string
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     @Inject(forwardRef(() => ReferralService))
     private readonly referralService: ReferralService,
+    private readonly auditService: AuditService,
   ) {}
 
   async loginWithOAuth(oauthUser: OAuthUser) {
@@ -37,6 +39,13 @@ export class AuthService {
 
     const payload = { sub: user.id, email: user.email, role: user.role }
     const accessToken = this.jwtService.sign(payload)
+
+    this.auditService.log({
+      userId: user.id,
+      action: AuditAction.LOGIN_SUCCESS,
+      meta: { provider: oauthUser.provider },
+      success: true,
+    })
 
     return { accessToken, user }
   }
@@ -66,6 +75,13 @@ export class AuthService {
       await this.referralService.applyReferralCode(data.referralCode, user.id).catch(() => {})
     }
 
+    this.auditService.log({
+      userId: user.id,
+      action: AuditAction.REGISTER,
+      meta: { role: data.role },
+      success: true,
+    })
+
     const payload = { sub: user.id, email: user.email, role: user.role }
     const accessToken = this.jwtService.sign(payload)
     return { accessToken, user }
@@ -74,11 +90,32 @@ export class AuthService {
   async loginWithEmail(email: string, password: string) {
     const user = await this.usersService.findByEmailWithPassword(email)
     if (!user || !user.passwordHash) {
+      this.auditService.log({
+        userId: null,
+        action: AuditAction.LOGIN_FAILED,
+        meta: { email },
+        success: false,
+      })
       throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
     }
 
     const valid = await bcrypt.compare(password, user.passwordHash)
-    if (!valid) throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+    if (!valid) {
+      this.auditService.log({
+        userId: user.id,
+        action: AuditAction.LOGIN_FAILED,
+        meta: { email },
+        success: false,
+      })
+      throw new UnauthorizedException('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+    }
+
+    this.auditService.log({
+      userId: user.id,
+      action: AuditAction.LOGIN_SUCCESS,
+      meta: { provider: 'email' },
+      success: true,
+    })
 
     const payload = { sub: user.id, email: user.email, role: user.role }
     const accessToken = this.jwtService.sign(payload)

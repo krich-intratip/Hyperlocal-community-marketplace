@@ -8,6 +8,7 @@ import { GoogleStrategy } from './strategies/google.strategy'
 import { JwtStrategy } from './strategies/jwt.strategy'
 import { UsersModule } from '../users/users.module'
 import { ReferralModule } from '../referral/referral.module'
+import { AuditModule } from '../audit/audit.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ReferralModule } from '../referral/referral.module'
     }),
     UsersModule,
     forwardRef(() => ReferralModule),
+    AuditModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, JwtStrategy],

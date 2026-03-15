@@ -739,6 +739,46 @@ export const subscriptionApi = {
     apiClient.get<ProviderSubscription[]>('/subscriptions/admin/list', { params: tier ? { tier } : {} }),
 }
 
+// ─── Audit Logs ───────────────────────────────────────────────────────────────
+
+export type AuditAction =
+  | 'LOGIN_SUCCESS' | 'LOGIN_FAILED' | 'LOGOUT' | 'REGISTER' | 'PASSWORD_RESET' | 'TOKEN_REFRESH'
+  | 'ACCESS_DENIED'
+  | 'USER_UPDATED' | 'PROVIDER_APPROVED' | 'PROVIDER_REJECTED'
+  | 'LISTING_CREATED' | 'LISTING_DELETED'
+  | 'ORDER_STATUS_CHANGED' | 'REPORT_RESOLVED' | 'SUBSCRIPTION_CHANGED'
+  | 'COUPON_CREATED' | 'SYSTEM_MODE_CHANGED'
+
+export interface AuditLog {
+  id: string
+  userId: string | null
+  action: AuditAction
+  resource: string | null
+  resourceId: string | null
+  meta: string | null
+  ipAddress: string | null
+  userAgent: string | null
+  success: boolean
+  createdAt: string
+}
+
+export interface AuditStats {
+  total: number
+  failedLast24h: number
+  loginFailedLast24h: number
+}
+
+export interface AuditLogsResponse {
+  logs: AuditLog[]
+  total: number
+}
+
+export const auditApi = {
+  getLogs: (params?: { userId?: string; action?: AuditAction; resource?: string; success?: boolean; limit?: number; offset?: number }) =>
+    apiClient.get<AuditLogsResponse>('/audit/logs', { params }),
+  getStats: () => apiClient.get<AuditStats>('/audit/stats'),
+}
+
 // ─── Push Notifications ────────────────────────────────────────────────────────
 
 export interface PushSubscriptionData {

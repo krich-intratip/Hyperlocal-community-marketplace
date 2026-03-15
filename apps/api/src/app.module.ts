@@ -38,6 +38,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module'
 import { SubscriptionModule } from './modules/subscription/subscription.module'
 import { ReportModule } from './modules/report/report.module'
 import { PushModule } from './modules/push/push.module'
+import { AuditModule } from './modules/audit/audit.module'
 
 @Module({
   imports: [
@@ -139,6 +140,7 @@ import { PushModule } from './modules/push/push.module'
     SubscriptionModule,
     ReportModule,
     PushModule,
+    AuditModule,
   ],
   providers: [
     // Wire RolesGuard globally — works alongside JwtAuthGuard on individual routes
