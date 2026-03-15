@@ -15,6 +15,7 @@ import { CreateOrderDto } from './dto/create-order.dto'
 import { UpdateOrderStatusDto, OrderStatus } from './dto/update-order-status.dto'
 import { NotificationsService } from '../notifications/notifications.service'
 import { LoyaltyService } from '../loyalty/loyalty.service'
+import { ReferralService } from '../referral/referral.service'
 
 /** Short order reference (last 8 chars of UUID, uppercased) */
 function shortRef(id: string): string {
@@ -96,6 +97,7 @@ export class OrdersService {
 
     private readonly notificationsService: NotificationsService,
     private readonly loyaltyService: LoyaltyService,
+    private readonly referralService: ReferralService,
   ) {}
 
   /**
@@ -327,6 +329,11 @@ export class OrdersService {
       this.loyaltyService
         .earnPoints(updatedOrder.customerId, updatedOrder.id, updatedOrder.total)
         .catch(() => { /* never throw — loyalty failure must not fail the request */ })
+
+      // REFER-1: award referral bonus to referrer on first completed order
+      this.referralService
+        .awardReferralBonus(updatedOrder.customerId, updatedOrder.id)
+        .catch(() => { /* never throw — referral failure must not fail the request */ })
     }
 
     // INVENTORY-1: restore stock when order is cancelled

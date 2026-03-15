@@ -1,8 +1,9 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common'
+import { Injectable, ConflictException, UnauthorizedException, Inject, forwardRef } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { UsersService } from '../users/users.service'
 import { UserRole } from '@chm/shared-types'
+import { ReferralService } from '../referral/referral.service'
 
 export interface OAuthUser {
   googleId?: string
@@ -17,6 +18,8 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    @Inject(forwardRef(() => ReferralService))
+    private readonly referralService: ReferralService,
   ) {}
 
   async loginWithOAuth(oauthUser: OAuthUser) {
@@ -44,6 +47,7 @@ export class AuthService {
     displayName: string
     role: UserRole
     phone?: string
+    referralCode?: string
   }) {
     const existing = await this.usersService.findByEmail(data.email)
     if (existing) throw new ConflictException('อีเมลนี้มีผู้ใช้งานแล้ว')
@@ -57,6 +61,10 @@ export class AuthService {
       phone: data.phone,
       passwordHash,
     })
+
+    if (data.referralCode) {
+      await this.referralService.applyReferralCode(data.referralCode, user.id).catch(() => {})
+    }
 
     const payload = { sub: user.id, email: user.email, role: user.role }
     const accessToken = this.jwtService.sign(payload)

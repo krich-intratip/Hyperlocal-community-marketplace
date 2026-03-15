@@ -228,8 +228,21 @@ export default function ProfilePage() {
               <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary/60 group-hover:translate-x-1 transition-all flex-shrink-0" />
             </Link>
           </motion.div>
+          {/* Referral link */}
+          <motion.div variants={fadeUp} custom={1} whileHover={{ y: -2 }}>
+            <Link href="/profile/referral" className="flex items-center gap-4 p-4 glass-card rounded-2xl hover:border-primary/30 hover:shadow-md transition-all group">
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-lg">🎁</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">แนะนำเพื่อน</p>
+                <p className="text-xs text-slate-500">รับ 50 แต้มต่อการแนะนำ</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary/60 group-hover:translate-x-1 transition-all flex-shrink-0" />
+            </Link>
+          </motion.div>
           {MENU_ITEMS.map((item, i) => (
-            <motion.div key={item.href} variants={fadeUp} custom={i + 1} whileHover={{ y: -2 }}>
+            <motion.div key={item.href} variants={fadeUp} custom={i + 2} whileHover={{ y: -2 }}>
               <Link href={item.href as any}
                 className="flex items-center gap-4 p-4 glass-card rounded-2xl hover:border-primary/30 hover:shadow-md transition-all group">
                 <div className="w-10 h-10 rounded-xl glass-sm group-hover:bg-white/40 flex items-center justify-center flex-shrink-0 transition-colors">

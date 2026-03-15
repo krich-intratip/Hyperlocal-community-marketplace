@@ -120,6 +120,24 @@ export class LoyaltyService {
     }))
   }
 
+  /** Award bonus points (e.g. referral reward) — no multiplier applied */
+  async awardBonus(customerId: string, orderId: string, points: number, description: string): Promise<void> {
+    const account = await this.getOrCreateAccount(customerId)
+    account.points += points
+    account.totalEarned += points
+    account.tier = calcTier(account.totalEarned)
+    await this.accountRepo.save(account)
+
+    await this.txRepo.save(this.txRepo.create({
+      customerId,
+      type: 'BONUS',
+      points,
+      balance: account.points,
+      description,
+      orderId,
+    }))
+  }
+
   /** Called when order is cancelled — restore redeemed points */
   async restorePoints(customerId: string, orderId: string, pointsRedeemed: number): Promise<void> {
     if (!pointsRedeemed || pointsRedeemed <= 0) return

@@ -8,12 +8,14 @@ import { OrdersController } from './orders.controller'
 import { OrdersService } from './orders.service'
 import { NotificationsModule } from '../notifications/notifications.module'
 import { LoyaltyModule } from '../loyalty/loyalty.module'
+import { ReferralModule } from '../referral/referral.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem, Listing, Provider]),
     NotificationsModule,
     LoyaltyModule,
+    ReferralModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

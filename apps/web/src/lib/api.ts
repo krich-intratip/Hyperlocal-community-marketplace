@@ -546,6 +546,28 @@ export const loyaltyApi = {
   getTransactions: (limit = 20) => apiClient.get<LoyaltyTransaction[]>(`/loyalty/transactions?limit=${limit}`),
 }
 
+// ─── Referral ─────────────────────────────────────────────────────────────────
+
+export interface ReferralStats {
+  code: string
+  referralLink: string
+  totalReferred: number
+  completedReferrals: number
+  totalBonusEarned: number
+  referrals: Array<{
+    id: string
+    status: 'PENDING' | 'COMPLETED'
+    bonusPoints: number
+    createdAt: string
+    completedAt: string | null
+  }>
+}
+
+export const referralApi = {
+  getMyCode: () => apiClient.get<{ code: string; referralLink: string }>('/referral/my-code'),
+  getStats: () => apiClient.get<ReferralStats>('/referral/stats'),
+}
+
 // ─── Admin (SuperAdmin only) ───────────────────────────────────────────────────
 
 export interface AdminUser {

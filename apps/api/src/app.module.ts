@@ -31,6 +31,7 @@ import { MessagesModule } from './modules/messages/messages.module'
 import { UploadModule } from './modules/upload/upload.module'
 import { PaymentsModule } from './modules/payments/payments.module'
 import { LoyaltyModule } from './modules/loyalty/loyalty.module'
+import { ReferralModule } from './modules/referral/referral.module'
 
 @Module({
   imports: [
@@ -125,6 +126,7 @@ import { LoyaltyModule } from './modules/loyalty/loyalty.module'
     UploadModule,
     PaymentsModule,
     LoyaltyModule,
+    ReferralModule,
   ],
   providers: [
     // Wire RolesGuard globally — works alongside JwtAuthGuard on individual routes

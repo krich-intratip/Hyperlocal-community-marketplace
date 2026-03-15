@@ -25,6 +25,10 @@ class RegisterDto {
   @IsOptional()
   @IsString()
   phone?: string
+
+  @IsOptional()
+  @IsString()
+  referralCode?: string
 }
 
 class LoginDto {
@@ -105,6 +109,7 @@ export class AuthController {
       displayName: body.displayName,
       role: roleMap[body.role] ?? UserRole.CUSTOMER,
       phone: body.phone,
+      referralCode: body.referralCode,
     })
 
     const maxAgeSec = 60 * this.configService.get<number>('JWT_EXPIRES_MINUTES', 1440)

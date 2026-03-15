@@ -72,6 +72,8 @@ function SignUpPageInner() {
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect')
 
+  const refCode = searchParams.get('ref') ?? ''
+
   const register = useRegister()
   const role = ROLES.find(r => r.id === selectedRole)!
 
@@ -96,6 +98,7 @@ function SignUpPageInner() {
         displayName: form.name,
         role: selectedRole,
         phone: form.phone || undefined,
+        ...(refCode ? { referralCode: refCode } : {}),
       })
       setStep('done')
     } catch (err: unknown) {
@@ -255,6 +258,16 @@ function SignUpPageInner() {
             <motion.form variants={fadeUp} initial="hidden" animate="show" custom={2}
               onSubmit={handleSubmit}
               className="glass-card rounded-3xl p-6 space-y-4">
+
+              {/* Referral banner */}
+              {refCode && (
+                <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 px-4 py-3 flex items-center gap-2">
+                  <span className="text-lg">🎁</span>
+                  <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">
+                    คุณถูกชวนโดยเพื่อน — สมัครแล้วเพื่อนจะได้รับแต้มโบนัส!
+                  </p>
+                </div>
+              )}
 
               {/* API error */}
               {errors.api && (
