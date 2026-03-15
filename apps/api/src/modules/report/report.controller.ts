@@ -1,5 +1,6 @@
 import { Controller, Post, Get, Patch, Body, Param, Query, Req, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger'
+import { Throttle } from '@nestjs/throttler'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
 import { Roles } from '../auth/decorators/roles.decorator'
@@ -15,6 +16,7 @@ export class ReportController {
 
   /** Authenticated user — submit a report */
   @Post()
+  @Throttle({ short: { ttl: 60000, limit: 5 } })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Submit a report' })

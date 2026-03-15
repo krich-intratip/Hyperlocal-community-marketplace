@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common'
+import { Module, type Type } from '@nestjs/common'
+import type { CanActivate } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { RolesGuard } from './modules/auth/guards/roles.guard'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ThrottlerModule } from '@nestjs/throttler'
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import { ScheduleModule } from '@nestjs/schedule'
 import { CacheModule } from '@nestjs/cache-manager'
 import { redisStore } from 'cache-manager-redis-yet'
@@ -78,18 +79,18 @@ import { AuditModule } from './modules/audit/audit.module'
       },
     }),
 
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        throttlers: [
-          {
-            ttl: 60000,
-            limit: configService.get<number>('RATE_LIMIT_PER_MINUTE', 60),
-          },
-        ],
-      }),
-    }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,   // 1 second window
+        limit: 20,   // max 20 req/s globally
+      },
+      {
+        name: 'medium',
+        ttl: 60000,  // 1 minute window
+        limit: 300,  // max 300 req/min globally
+      },
+    ]),
 
     ScheduleModule.forRoot(),
 
@@ -143,6 +144,11 @@ import { AuditModule } from './modules/audit/audit.module'
     AuditModule,
   ],
   providers: [
+    // Global rate-limiting guard — runs before role/auth guards
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard as Type<CanActivate>,
+    },
     // Wire RolesGuard globally — works alongside JwtAuthGuard on individual routes
     { provide: APP_GUARD, useClass: RolesGuard },
   ],

@@ -184,6 +184,7 @@ export function Navbar() {
     { href: '/pricing', label: '💳 ราคา' },
     { href: '/guide', label: t.nav.guide },
     { href: '/about', label: t.nav.about },
+    { href: '/status', label: '📡 สถานะ' },
   ]
 
   useEffect(() => {

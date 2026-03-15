@@ -5,6 +5,7 @@ import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import { JsonLd } from '@/components/json-ld'
 import { buildMetadata, websiteJsonLd, organizationJsonLd, marketplaceJsonLd } from '@/lib/seo'
+import { RateLimitToast } from '@/components/rate-limit-toast'
 import Script from 'next/script'
 
 const sarabun = Sarabun({
@@ -43,6 +44,7 @@ export default function RootLayout({
       </head>
       <body className={`${sarabun.variable} font-sans antialiased`}>
         <Providers>{children}</Providers>
+        <RateLimitToast />
         <Toaster richColors position="top-right" />
         <Script id="sw-register" strategy="afterInteractive">{`
   if ('serviceWorker' in navigator) {

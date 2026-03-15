@@ -34,12 +34,21 @@ apiClient.interceptors.request.use(config => {
 
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
+  async (error: { response?: { status?: number; headers?: Record<string, string> } }) => {
+    if (error?.response?.status === 429) {
+      const retryAfter = error.response.headers?.['retry-after']
+      const message = retryAfter
+        ? `คำขอถี่เกินไป กรุณารอ ${retryAfter} วินาที`
+        : 'คำขอถี่เกินไป กรุณารอสักครู่แล้วลองใหม่'
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('rate-limit', { detail: { message } }))
+      }
+    }
+    if ((error as { response?: { status?: number } }).response?.status === 401) {
       if (typeof window !== 'undefined') {
         window.location.href = '/auth/signin'
       }
     }
-    return Promise.reject(error)
+    return Promise.reject(error as Error)
   },
 )

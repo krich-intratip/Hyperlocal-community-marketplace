@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { ConfigService } from '@nestjs/config'
 import { IsEmail, IsString, MinLength, IsOptional, IsIn } from 'class-validator'
 import type { FastifyRequest, FastifyReply } from 'fastify'
+import { Throttle } from '@nestjs/throttler'
 import { AuthService, OAuthUser } from './auth.service'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { UserRole } from '@chm/shared-types'
@@ -86,6 +87,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @Throttle({ short: { ttl: 60000, limit: 3 }, medium: { ttl: 3600000, limit: 10 } })
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Register with email + password' })
   @ApiBody({ type: RegisterDto })
@@ -133,6 +135,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Throttle({ short: { ttl: 60000, limit: 5 }, medium: { ttl: 3600000, limit: 20 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email + password' })
   @ApiBody({ type: LoginDto })
