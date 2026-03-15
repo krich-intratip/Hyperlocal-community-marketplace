@@ -6,6 +6,13 @@ import { AppFooter } from '@/components/app-footer'
 import { MapPin, Navigation, Star, CheckCircle, RefreshCw, SlidersHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
+
+const ProvidersMap = dynamic(
+  () => import('@/components/providers-map').then(m => m.ProvidersMap),
+  { ssr: false, loading: () => <div className="h-full flex items-center justify-center text-slate-500">กำลังโหลดแผนที่...</div> },
+)
 
 const RADII = [1, 3, 5, 10, 20]
 const CATEGORIES = [
@@ -30,6 +37,7 @@ function DistanceBadge({ km }: { km: number }) {
 
 export function NearbyPageInner() {
   const { coords, geoState, radius, setRadius, category, setCategory, providers, isLoading, isFetching, refetch, requestLocation } = useNearby()
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -140,6 +148,22 @@ export function NearbyPageInner() {
         {/* Results */}
         {coords && (
           <div>
+            {/* View mode toggle */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-white/60 text-slate-600 hover:bg-white'}`}
+              >
+                ☰ รายการ
+              </button>
+              <button
+                onClick={() => setViewMode('map')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${viewMode === 'map' ? 'bg-primary text-white' : 'bg-white/60 text-slate-600 hover:bg-white'}`}
+              >
+                🗺️ แผนที่
+              </button>
+            </div>
+
             {isLoading ? (
               <div className="space-y-3">
                 {[1,2,3,4].map(i => <div key={i} className="glass-card rounded-2xl h-24 animate-pulse" />)}
@@ -154,6 +178,17 @@ export function NearbyPageInner() {
                   ขยายเป็น {Math.min(50, radius * 2)} กม.
                 </button>
               </div>
+            ) : viewMode === 'map' ? (
+              <>
+                <p className="text-sm text-slate-500 mb-3">พบ {providers.length} ร้านในรัศมี {radius} กม.</p>
+                <div className="h-[500px] rounded-xl overflow-hidden shadow-lg">
+                  <ProvidersMap
+                    providers={providers}
+                    center={[coords.lat, coords.lng]}
+                    zoom={13}
+                  />
+                </div>
+              </>
             ) : (
               <>
                 <p className="text-sm text-slate-500 mb-3">พบ {providers.length} ร้านในรัศมี {radius} กม.</p>

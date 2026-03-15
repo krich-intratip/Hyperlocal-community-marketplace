@@ -780,6 +780,8 @@ export const geoApi = {
     if (category) qs.set('category', category)
     return apiClient.get<NearbyProvider[]>(`/providers/nearby?${qs.toString()}`)
   },
+  getInBounds: (params: { north: number; south: number; east: number; west: number }) =>
+    apiClient.get<NearbyProvider[]>('/providers/in-bounds', { params }),
   setMyLocation: (latitude: number, longitude: number) =>
     apiClient.patch('/providers/me/location', { latitude, longitude }),
 }

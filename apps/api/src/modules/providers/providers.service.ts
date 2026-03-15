@@ -5,6 +5,7 @@ import { Provider } from './entities/provider.entity'
 import { VerificationStatus, ProviderStatus, ShopStatus } from '@chm/shared-types'
 import { SetLocationDto } from './dto/set-location.dto'
 import { NearbyQueryDto } from './dto/nearby-query.dto'
+import { InBoundsQueryDto } from './dto/in-bounds-query.dto'
 
 @Injectable()
 export class ProvidersService {
@@ -204,6 +205,19 @@ export class ProvidersService {
       .sort((a, b) => a.distanceKm - b.distanceKm)
 
     return results
+  }
+
+  /** Public: list providers within a map viewport bounding box */
+  async getInBounds(dto: InBoundsQueryDto): Promise<Provider[]> {
+    return this.providerRepo
+      .createQueryBuilder('p')
+      .where('p.location_lat IS NOT NULL')
+      .andWhere('p.location_lng IS NOT NULL')
+      .andWhere('p.is_active = :active', { active: true })
+      .andWhere('p.verification_status = :status', { status: VerificationStatus.APPROVED })
+      .andWhere('p.location_lat BETWEEN :south AND :north', { south: dto.south, north: dto.north })
+      .andWhere('p.location_lng BETWEEN :west AND :east', { west: dto.west, east: dto.east })
+      .getMany()
   }
 
   /** Provider: set shop vacation status (VAC-1) */

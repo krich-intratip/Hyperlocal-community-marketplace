@@ -7,6 +7,7 @@ import { ProvidersService } from './providers.service'
 import { UserRole } from '@chm/shared-types'
 import { SetLocationDto } from './dto/set-location.dto'
 import { NearbyQueryDto } from './dto/nearby-query.dto'
+import { InBoundsQueryDto } from './dto/in-bounds-query.dto'
 
 @ApiTags('Providers')
 @Controller('providers')
@@ -53,6 +54,12 @@ export class ProvidersController {
   @ApiOperation({ summary: 'Set my GPS location (provider)' })
   setLocation(@Req() req: any, @Body() dto: SetLocationDto) {
     return this.providersService.setLocation(req.user.id, dto)
+  }
+
+  @Get('in-bounds')
+  @ApiOperation({ summary: 'Get providers within map viewport bounds (public)' })
+  getInBounds(@Query() dto: InBoundsQueryDto) {
+    return this.providersService.getInBounds(dto)
   }
 
   // ──────────────────────────────────────────────────────────────────────────

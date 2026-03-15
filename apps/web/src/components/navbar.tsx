@@ -176,6 +176,7 @@ export function Navbar() {
   const NAV_LINKS = [
     { href: '/marketplace', label: t.nav.marketplace },
     { href: '/nearby',      label: '📍 ใกล้บ้าน' },
+    { href: '/map',         label: '🗺️ แผนที่' },
     { href: '/stores',      label: 'ร้านค้า' },
     { href: '/communities', label: t.nav.communities },
     { href: '/franchise', label: t.nav.franchise },
