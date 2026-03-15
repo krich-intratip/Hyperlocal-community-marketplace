@@ -724,3 +724,35 @@ export const searchApi = {
     return apiClient.get<SearchResult>(`/listings/search?${qs.toString()}`)
   },
 }
+
+// ─── Platform Analytics ───────────────────────────────────────────────────────
+
+export interface PlatformKPI {
+  totalRevenue: number
+  totalOrders: number
+  completedOrders: number
+  activeListings: number
+  uniqueCustomers: number
+  conversionRate: number
+  revenueGrowth: number   // % vs last month
+  ordersGrowth: number    // % vs last month
+}
+
+export interface DailyRevenuePt { date: string; revenue: number; orders: number }
+export interface MonthlyRevenuePt { month: string; revenue: number; orders: number }
+export interface StatusBreakdown { status: string; count: number }
+export interface CategoryDist { category: string; count: number }
+export interface TopProvider { providerId: string; orderCount: number; revenue: number }
+
+export interface PlatformAnalytics {
+  kpi: PlatformKPI
+  dailyRevenue: DailyRevenuePt[]
+  monthlyRevenue: MonthlyRevenuePt[]
+  orderStatusBreakdown: StatusBreakdown[]
+  categoryDistribution: CategoryDist[]
+  topProviders: TopProvider[]
+}
+
+export const analyticsApi = {
+  getPlatform: () => apiClient.get<PlatformAnalytics>('/analytics/platform'),
+}

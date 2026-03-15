@@ -8,7 +8,7 @@ import { AppFooter } from '@/components/app-footer'
 import Link from 'next/link'
 import {
   Crown, Building2, Users, TrendingUp, DollarSign, ShieldCheck,
-  Clock, CheckCircle, Pause, ArrowRightLeft, BarChart3,
+  Clock, CheckCircle, Pause, ArrowRightLeft, BarChart3, BarChart2,
   Megaphone, Settings, ChevronRight, AlertTriangle, Globe, Flame, Star, Layers, Store, Tag,
 } from 'lucide-react'
 import { useT } from '@/hooks/useT'
@@ -60,7 +60,7 @@ const QUICK_LINKS = [
   { href: '/dashboard/superadmin/users', icon: Users, label: 'จัดการผู้ใช้', desc: 'ดู / แก้ Role / ระงับผู้ใช้', color: 'text-blue-600', bg: 'bg-blue-50' },
   { href: '/dashboard/superadmin/revenue', icon: TrendingUp, label: 'รายได้แพลตฟอร์ม', desc: 'GMV / ค่าธรรมเนียม / สถิติ', color: 'text-green-600', bg: 'bg-green-50' },
   { href: '/dashboard/superadmin/providers-mgmt', icon: Store, label: 'จัดการ Provider', desc: 'อนุมัติ / ปฏิเสธ ทั่วแพลตฟอร์ม', color: 'text-amber-600', bg: 'bg-amber-50' },
-  { href: '/dashboard/superadmin/analytics', icon: BarChart3, label: 'Analytics', desc: 'ยอดขาย ออเดอร์ คอมมิชชัน', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  { href: '/dashboard/superadmin/analytics', icon: BarChart2, label: 'Platform Analytics', desc: 'รายได้ คำสั่งซื้อ และ KPIs', color: 'text-indigo-600', bg: 'bg-indigo-50' },
   { href: '/marketplace', icon: Globe, label: 'Marketplace', desc: 'ดูตลาดในฐานะผู้ใช้', color: 'text-purple-600', bg: 'bg-purple-50' },
   { href: '/communities', icon: Users, label: 'ชุมชนทั้งหมด', desc: 'ดูภาพรวมชุมชน', color: 'text-green-600', bg: 'bg-green-50' },
   { href: '/dashboard/superadmin/templates', icon: Layers, label: 'Template Builder', desc: 'Business Templates & Modules', color: 'text-violet-600', bg: 'bg-violet-50' },

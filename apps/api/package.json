@@ -1,6 +1,6 @@
 {
   "name": "@chm/api",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/main.ts",
