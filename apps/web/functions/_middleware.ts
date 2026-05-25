@@ -25,6 +25,13 @@ export async function onRequest(
     return response
   }
 
+  // Skip HTMLRewriter for prefetch requests to save CPU time on Cloudflare Workers/Pages
+  const purpose = context.request.headers.get('purpose') ?? ''
+  const secPurpose = context.request.headers.get('sec-purpose') ?? ''
+  if (purpose === 'prefetch' || secPurpose === 'prefetch') {
+    return response
+  }
+
   // Generate a cryptographically random nonce (128-bit, base64-encoded)
   const nonceBytes = new Uint8Array(16)
   crypto.getRandomValues(nonceBytes)
